@@ -114,22 +114,19 @@ namespace GeometryNamespace {
 
 	public:
 		// ctor / dtor / operators
-		Standard_EXPORT Plane(const arrayS4& theEC) throw (ZeroVectorException);
-		Standard_EXPORT Plane(const vectorInput1D& theEC) throw (ZeroVectorException);
+		Standard_EXPORT Plane(const arrayS4& theEC);
+		Standard_EXPORT Plane(const vectorInput1D& theEC);
 		Standard_EXPORT Plane(
 			ARGCOPY(PointBase) thePoint,
-			ARGCOPY(VectorBase) theNormalVector) throw (NullptrException);
+			ARGCOPY(VectorBase) theNormalVector);
 		Standard_EXPORT Plane(
 			ARGCOPY(PointBase) thePoint,
 			ARGCOPY(VectorBase) theInPlaneVectorO,
-			ARGCOPY(VectorBase) theInPlaneVector1) throw (NullptrException);
+			ARGCOPY(VectorBase) theInPlaneVector1);
 		Standard_EXPORT Plane(
 			ARGCOPY(PointBase) thePoint0,
 			ARGCOPY(PointBase) thePoint1,
-			ARGCOPY(PointBase) thePoint2) throw (
-				NullptrException,
-				CoincidenceException,
-				ColinearPointsException);
+			ARGCOPY(PointBase) thePoint2);
 
 		Standard_EXPORT Plane(const Plane& rhs);
 		Standard_EXPORT Plane& operator=(const Plane& rhs);
@@ -153,44 +150,44 @@ namespace GeometryNamespace {
 		Standard_EXPORT OUTVAL(VectorBase) getNormalVector() const;
 		Standard_EXPORT arrayS4 getEC() const;
 		Standard_EXPORT OUTVAL(CoordSystem) getCommonReferenceCoordSystem() const;
-		Standard_EXPORT void setMembers(const arrayS4& theEC) throw (ZeroVectorException);
-		Standard_EXPORT void setMembers(const vectorInput1D& theEC) throw (ZeroVectorException);
+		Standard_EXPORT void setMembers(const arrayS4& theEC);
+		Standard_EXPORT void setMembers(const vectorInput1D& theEC);
 		Standard_EXPORT void setMembers(
 			ARGCOPY(PointBase) thePassingPoint,
-			ARGCOPY(VectorBase) theNormalVector) throw (NullptrException);
-		Standard_EXPORT void setPassingPoint(ARGCOPY(PointBase) thePassingPoint) throw (NullptrException);
-		Standard_EXPORT void setNormalVector(ARGCOPY(VectorBase) theNormalVector) throw (NullptrException);
-		Standard_EXPORT void setEC(const arrayS4& theEC) throw (ZeroVectorException);
-		Standard_EXPORT void setEC(const vectorInput1D& theEC) throw (ZeroVectorException);
+			ARGCOPY(VectorBase) theNormalVector);
+		Standard_EXPORT void setPassingPoint(ARGCOPY(PointBase) thePassingPoint);
+		Standard_EXPORT void setNormalVector(ARGCOPY(VectorBase) theNormalVector);
+		Standard_EXPORT void setEC(const arrayS4& theEC);
+		Standard_EXPORT void setEC(const vectorInput1D& theEC);
 
-		Standard_EXPORT bool intersects(ARGCOPY(Axis) theAxis) const throw (NullptrException);
-		Standard_EXPORT bool intersects(ARGCOPY(Line) theLine) const throw (NullptrException);
-		Standard_EXPORT bool includes(ARGCOPY(PointBase) thePoint) const throw (NullptrException);
-		Standard_EXPORT bool includes(ARGCOPY(Axis) theAxis) const throw (NullptrException);
-		Standard_EXPORT bool includes(ARGCOPY(Line) theLine) const throw (NullptrException);
+		Standard_EXPORT bool intersects(ARGCOPY(Axis) theAxis) const;
+		Standard_EXPORT bool intersects(ARGCOPY(Line) theLine) const;
+		Standard_EXPORT bool includes(ARGCOPY(PointBase) thePoint) const;
+		Standard_EXPORT bool includes(ARGCOPY(Axis) theAxis) const;
+		Standard_EXPORT bool includes(ARGCOPY(Line) theLine) const;
 		Standard_EXPORT std::pair<bool, double> calculateCoordX(const double& theCoordY, const double& theCoordZ) const;
 		Standard_EXPORT std::pair<bool, double> calculateCoordY(const double& theCoordZ, const double& theCoordX) const;
 		Standard_EXPORT std::pair<bool, double> calculateCoordZ(const double& theCoordX, const double& theCoordY) const;
 		Standard_EXPORT std::pair<bool, std::array<double, 2>> calculateCoordXY(const double& theCoordZ) const;
 		Standard_EXPORT std::pair<bool, std::array<double, 2>> calculateCoordYZ(const double& theCoordX) const;
 		Standard_EXPORT std::pair<bool, std::array<double, 2>> calculateCoordZX(const double& theCoordY) const;
-		Standard_EXPORT double calculateDistance(ARGCOPY(Plane) thePlane) const throw (NullptrException);
-		Standard_EXPORT double calculateDistance(ARGCOPY(PointBase) thePoint) const throw (NullptrException);
-		Standard_EXPORT double calculateDistance(ARGCOPY(Axis) theAxis) const throw (NullptrException);
-		Standard_EXPORT double calculateDistance(ARGCOPY(Line) theLine) const throw (NullptrException);
-		Standard_EXPORT std::pair<INTERSECTION2, Handle(Axis)> intersect(ARGCOPY(Plane) thePlane) const throw (NullptrException);
-		Standard_EXPORT std::pair<INTERSECTION2, Handle(Point3D)> intersect(ARGCOPY(Axis) theAxis) const throw (NullptrException);
-		Standard_EXPORT std::pair<INTERSECTION2, Handle(Point3D)> intersect(ARGCOPY(Line) theLine) const throw (NullptrException);
-		Standard_EXPORT OUTVAL(Point3D) project(ARGCOPY(PointBase) thePoint) const throw (NullptrException);
-		Standard_EXPORT OUTVAL(Vector3D) project(ARGCOPY(VectorBase) theVector) const throw (NullptrException);
-		Standard_EXPORT OUTVAL(Axis) project(ARGCOPY(Axis) theAxis) const throw (NullptrException);
-		Standard_EXPORT OUTVAL(Line) project(ARGCOPY(Line) theLine) const throw (NullptrException);
-		Standard_EXPORT OUTVAL(Point3D) createPoint(const double& theFactor) const throw(UncaughtException);
+		Standard_EXPORT double calculateDistance(ARGCOPY(Plane) thePlane) const;
+		Standard_EXPORT double calculateDistance(ARGCOPY(PointBase) thePoint) const;
+		Standard_EXPORT double calculateDistance(ARGCOPY(Axis) theAxis) const;
+		Standard_EXPORT double calculateDistance(ARGCOPY(Line) theLine) const;
+		Standard_EXPORT std::pair<INTERSECTION2, Handle(Axis)> intersect(ARGCOPY(Plane) thePlane) const;
+		Standard_EXPORT std::pair<INTERSECTION2, Handle(Point3D)> intersect(ARGCOPY(Axis) theAxis) const;
+		Standard_EXPORT std::pair<INTERSECTION2, Handle(Point3D)> intersect(ARGCOPY(Line) theLine) const;
+		Standard_EXPORT OUTVAL(Point3D) project(ARGCOPY(PointBase) thePoint) const;
+		Standard_EXPORT OUTVAL(Vector3D) project(ARGCOPY(VectorBase) theVector) const;
+		Standard_EXPORT OUTVAL(Axis) project(ARGCOPY(Axis) theAxis) const;
+		Standard_EXPORT OUTVAL(Line) project(ARGCOPY(Line) theLine) const;
+		Standard_EXPORT OUTVAL(Point3D) createPoint(const double& theFactor) const;
 
 	private:
 		Standard_EXPORT bool equalsBase(ARGCOPY(Plane) thePlane) const;
-		Standard_EXPORT void inspectEC(const arrayS4& theEC) throw (ZeroVectorException);
-		Standard_EXPORT void inspectEC(const vectorInput1D& theEC) throw (ZeroVectorException);
+		Standard_EXPORT void inspectEC(const arrayS4& theEC);
+		Standard_EXPORT void inspectEC(const vectorInput1D& theEC);
 		Standard_EXPORT void updateEC();
 		Standard_EXPORT void applyEC();
 	};

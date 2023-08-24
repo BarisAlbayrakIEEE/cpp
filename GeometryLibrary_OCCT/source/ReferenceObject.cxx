@@ -201,7 +201,6 @@ namespace GeometryNamespace {
 	/// Otherwise, returns a new point with the same reference CS (global coords are kept the same)
 	//! </summary>
 	OUTVAL(Point3D) ReferenceObject::getPointWithMyCoordSystem(ARGCOPY(PointBase) thePoint) const
-		throw (NullptrException)
 	{
 		if (c_referenceCoordSystem.IsNull()) throw NullptrException();
 		if (c_referenceCoordSystem->equals(thePoint->getReferenceCoordSystem()))
@@ -216,7 +215,6 @@ namespace GeometryNamespace {
 	/// Otherwise, returns a new vector with the same reference CS (global components are kept the same)
 	/// </summary>
 	OUTVAL(Vector3D) ReferenceObject::getVectorWithMyCoordSystem(ARGCOPY(VectorBase) theVector) const
-		throw (NullptrException)
 	{
 		if (c_referenceCoordSystem.IsNull()) throw NullptrException();
 		if (c_referenceCoordSystem->equals(theVector->getReferenceCoordSystem()))
@@ -260,7 +258,7 @@ namespace GeometryNamespace {
 	/// Inspect dimension count
 	/// </summary>
 	/// <exception> DimensionalityException </exception>
-	void ReferenceObject::inspectDimensionCount(const int theDimensionCount) const throw (DimensionalityException)
+	void ReferenceObject::inspectDimensionCount(const int theDimensionCount) const
 	{
 		if (theDimensionCount != DIMENSIONS::D2 && theDimensionCount != DIMENSIONS::D3)
 		{

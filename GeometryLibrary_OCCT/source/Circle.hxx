@@ -122,18 +122,11 @@ namespace GeometryNamespace {
 		Standard_EXPORT Circle(
 			ARGCOPY(Plane) theReferencePlane,
 			ARGCOPY(PointBase) theCenterPoint,
-			const double& theRadius) throw (
-				NullptrException,
-				ZeroDimensionException,
-				GeometricalMismatchException);
+			const double& theRadius);
 		Standard_EXPORT Circle(
 			ARGCOPY(PointBase) thePoint0,
 			ARGCOPY(PointBase) thePoint1,
-			ARGCOPY(PointBase) thePoint2) throw (
-				NullptrException,
-				CoincidenceException,
-				ColinearPointsException,
-				UncaughtException);
+			ARGCOPY(PointBase) thePoint2);
 
 		Standard_EXPORT Circle(const Circle& rhs);
 		Standard_EXPORT Circle& operator=(const Circle& rhs);
@@ -157,24 +150,18 @@ namespace GeometryNamespace {
 		Standard_EXPORT OUTVAL(PointBase) getCenterPoint() const;
 		Standard_EXPORT double getRadius() const;
 		Standard_EXPORT OUTVAL(CoordSystem) getCommonReferenceCoordSystem() const;
-		Standard_EXPORT void setReferencePlane(ARGCOPY(Plane) theReferencePlane) throw (
-			NullptrException,
-			GeometricalMismatchException);
-		Standard_EXPORT void setCenterPoint(ARGCOPY(PointBase) theCenterPoint) throw (
-			NullptrException,
-			GeometricalMismatchException);
-		Standard_EXPORT void setRadius(const double& theRadius) throw (ZeroDimensionException);
+		Standard_EXPORT void setReferencePlane(ARGCOPY(Plane) theReferencePlane);
+		Standard_EXPORT void setCenterPoint(ARGCOPY(PointBase) theCenterPoint);
+		Standard_EXPORT void setRadius(const double& theRadius);
 		Standard_EXPORT bool isPointOn(ARGCOPY(PointBase) thePoint) const;
 		Standard_EXPORT bool isPointInvolved(ARGCOPY(PointBase) thePoint) const;
-		Standard_EXPORT int analyzePoint(ARGCOPY(PointBase) thePoint) const throw (NullptrException); // See method docstring
+		Standard_EXPORT int analyzePoint(ARGCOPY(PointBase) thePoint) const; // See method docstring
 
 	private:
 		Standard_EXPORT void setMembers(
 			ARGCOPY(Plane) theReferencePlane,
 			ARGCOPY(PointBase) theCenterPoint,
-			const double& theRadius) throw (
-				NullptrException,
-				ZeroDimensionException);
+			const double& theRadius);
 
 		Standard_EXPORT bool equalsBase(ARGCOPY(Circle) theCircle) const;
 	};

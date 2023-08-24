@@ -209,15 +209,15 @@ namespace GeometryNamespace {
 		Standard_EXPORT double getToleranceSensitive() const;
 		Standard_EXPORT void setToleranceGeneral(const double& theToleranceGeneral);
 		Standard_EXPORT void setToleranceSensitive(const double& theToleranceSensitive);
-		Standard_EXPORT void inspectTolerance(const double& theTolerance) const throw (ZeroToleranceException);
+		Standard_EXPORT void inspectTolerance(const double& theTolerance) const;
 		Standard_EXPORT static bool inspectNullEquality(
 			ARGCOPY(GeometryObject) theGeometry0,
 			ARGCOPY(GeometryObject) theGeometry1);
 		Standard_EXPORT static bool inspectReferenceCoordSystems(
 			ARGCOPY(ReferenceObject) theReference0,
-			ARGCOPY(ReferenceObject) theReference1) throw (NullptrException);
-		Standard_EXPORT void inspectVectorInput(const vectorInput1D& theVector) const throw (ArraySizeException);
-		Standard_EXPORT void inspectVectorInputS32(const vectorInput2D& theVector) const throw (ArraySizeException);
+			ARGCOPY(ReferenceObject) theReference1);
+		Standard_EXPORT void inspectVectorInput(const vectorInput1D& theVector) const;
+		Standard_EXPORT void inspectVectorInputS32(const vectorInput2D& theVector) const;
 	};
 }
 

@@ -45,11 +45,7 @@ namespace GeometryNamespace {
 	CoordSystem::CoordSystem(
 		ARGCOPY(Point3D) theOriginPoint,
 		ARGCOPY(Point3D) thePointOnAxisX,
-		ARGCOPY(Point3D) thePointOnAxisY) throw (
-			NullptrException,
-			GeometryException,
-			ColinearPointsException,
-			UncaughtException)
+		ARGCOPY(Point3D) thePointOnAxisY)
 		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
 	{
 		setMembers(theOriginPoint, thePointOnAxisX, thePointOnAxisY);
@@ -65,10 +61,7 @@ namespace GeometryNamespace {
 	CoordSystem::CoordSystem(
 		ARGCOPY(Point3D) theOriginPoint,
 		ARGCOPY(Vector3D) theAxisVectorX,
-		ARGCOPY(Vector3D) theAxisVectorY) throw (
-			NullptrException,
-			ColinearPointsException,
-			UncaughtException)
+		ARGCOPY(Vector3D) theAxisVectorY)
 		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
 	{
 		setMembers(theOriginPoint, theAxisVectorX, theAxisVectorY);
@@ -295,11 +288,7 @@ namespace GeometryNamespace {
 	void CoordSystem::setMembers(
 		ARGCOPY(Point3D) theOriginPoint,
 		ARGCOPY(Point3D) thePointOnAxisX,
-		ARGCOPY(Point3D) thePointOnAxisY) throw (
-			NullptrException,
-			GeometryException,
-			ColinearPointsException,
-			UncaughtException)
+		ARGCOPY(Point3D) thePointOnAxisY)
 	{
 		if (thePointOnAxisX.IsNull()) throw NullptrException();
 		if (thePointOnAxisY.IsNull()) throw NullptrException();
@@ -333,10 +322,7 @@ namespace GeometryNamespace {
 	void CoordSystem::setMembers(
 		ARGCOPY(Point3D) theOriginPoint,
 		ARGCOPY(Vector3D) theAxisVectorX,
-		ARGCOPY(Vector3D) theAxisVectorY) throw (
-			NullptrException,
-			ColinearPointsException,
-			UncaughtException)
+		ARGCOPY(Vector3D) theAxisVectorY)
 	{
 		if (theAxisVectorX.IsNull()) throw NullptrException();
 		if (theAxisVectorY.IsNull()) throw NullptrException();
@@ -394,7 +380,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// Determines if the CSs are parallel
 	/// </summary>
-	bool CoordSystem::isParallel(ARGCOPY(CoordSystem) theCoordSystem) const throw (NullptrException)
+	bool CoordSystem::isParallel(ARGCOPY(CoordSystem) theCoordSystem) const
 	{
 		if (theCoordSystem.IsNull())
 		{
@@ -418,7 +404,7 @@ namespace GeometryNamespace {
 	/// <summary>
 	/// Determines if the CSs are identical
 	/// </summary>
-	bool CoordSystem::isIdentical(ARGCOPY(CoordSystem) theCoordSystem) const throw (NullptrException)
+	bool CoordSystem::isIdentical(ARGCOPY(CoordSystem) theCoordSystem) const
 	{
 		if (theCoordSystem.IsNull())
 		{
@@ -444,7 +430,7 @@ namespace GeometryNamespace {
 	/// Measures coords of the input point wrt this CS.
 	/// Returns the local coords of the point if the reference CS of the point is this CS
 	/// </summary>
-	arrayS3 CoordSystem::measurePointCoords(ARGCOPY(PointBase) thePoint) const throw (NullptrException)
+	arrayS3 CoordSystem::measurePointCoords(ARGCOPY(PointBase) thePoint) const
 	{
 		if (thePoint.IsNull())
 		{
@@ -479,7 +465,7 @@ namespace GeometryNamespace {
 	/// Measures components of the input vector wrt this CS.
 	/// Returns the local components of the vector if the reference CS of the vector is this CS
 	/// </summary>
-	arrayS3 CoordSystem::measureVectorComponents(ARGCOPY(VectorBase) theVector) const throw (NullptrException)
+	arrayS3 CoordSystem::measureVectorComponents(ARGCOPY(VectorBase) theVector) const
 	{
 		if (theVector.IsNull())
 		{
@@ -533,7 +519,7 @@ namespace GeometryNamespace {
 		const double& theAngle,
 		int theAxis0,
 		int theAxis1,
-		int theAxis2) throw (NullptrException)
+		int theAxis2)
 	{
 		if (thePoint.IsNull())
 		{

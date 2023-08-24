@@ -118,7 +118,7 @@ namespace GeometryNamespace {
 		Standard_EXPORT PointBase(const int theDimensionCount);
 		Standard_EXPORT PointBase(
 			const int theDimensionCount,
-			ARGCOPY(CoordSystem) theReferenceCoordSystem) throw (NullptrException);
+			ARGCOPY(CoordSystem) theReferenceCoordSystem);
 
 	public:
 		Standard_EXPORT PointBase(
@@ -164,12 +164,12 @@ namespace GeometryNamespace {
 		Standard_EXPORT void setLocalCoordZ(const double& theLocalCoordZ);
 		Standard_EXPORT void setLocalCoords(const arrayS3& theLocalCoords);
 		Standard_EXPORT void setLocalCoords(const vectorInput1D& theLocalCoords);
-		Standard_EXPORT bool coincides(ARGCOPY(PointBase) thePoint) const throw (NullptrException);
-		Standard_EXPORT double calculateDistance(ARGCOPY(PointBase) thePoint) const throw (NullptrException);
+		Standard_EXPORT bool coincides(ARGCOPY(PointBase) thePoint) const;
+		Standard_EXPORT double calculateDistance(ARGCOPY(PointBase) thePoint) const;
 		Standard_EXPORT OUTVAL(PointBase) createMidPoint(ARGCOPY(PointBase) thePoint) const;
 		Standard_EXPORT OUTVAL(PointBase) createInterpolationPoint(
 			ARGCOPY(PointBase) thePoint,
-			const double& theFactor) const throw (NullptrException);
+			const double& theFactor) const;
 
 	public:
 		Standard_EXPORT static OUTVAL(PointBase) createPointAtOrigin(int theDimensionCount);

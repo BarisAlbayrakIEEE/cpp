@@ -60,7 +60,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	Point2D::Point2D(ARGCOPY(CoordSystem) theReferenceCoordSystem) throw (NullptrException)
+	Point2D::Point2D(ARGCOPY(CoordSystem) theReferenceCoordSystem)
 		: PointBase(DIMENSIONS::D2, theReferenceCoordSystem, arrayS3{}) { }
 
 	/// <summary>
@@ -71,7 +71,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	Point2D::Point2D(
 		ARGCOPY(CoordSystem) theReferenceCoordSystem,
-		const arrayS2& theLocalComponents) throw (NullptrException)
+		const arrayS2& theLocalComponents)
 		: PointBase(DIMENSIONS::D2, theReferenceCoordSystem)
 	{
 		c_localCoords = GeometryMath::convertArrayS2ToS3(theLocalComponents);
@@ -84,7 +84,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	Point2D::Point2D(
 		ARGCOPY(CoordSystem) theReferenceCoordSystem,
-		const arrayS3& theLocalCoords) throw (NullptrException)
+		const arrayS3& theLocalCoords)
 		: PointBase(DIMENSIONS::D2, theReferenceCoordSystem, theLocalCoords) { }
 
 	/// <summary>
@@ -94,7 +94,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	Point2D::Point2D(
 		ARGCOPY(CoordSystem) theReferenceCoordSystem,
-		const vectorInput1D& theLocalCoords) throw (NullptrException)
+		const vectorInput1D& theLocalCoords)
 		: PointBase(DIMENSIONS::D2, theReferenceCoordSystem, theLocalCoords) { }
 
 	/// <summary>

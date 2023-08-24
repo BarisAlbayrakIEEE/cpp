@@ -36,7 +36,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	PointBase::PointBase(
 		const int theDimensionCount,
-		ARGCOPY(CoordSystem) theReferenceCoordSystem) throw (NullptrException)
+		ARGCOPY(CoordSystem) theReferenceCoordSystem)
 		: ReferenceObject(theDimensionCount, theReferenceCoordSystem)
 	{
 		c_localCoords = arrayS3{};
@@ -396,7 +396,7 @@ namespace GeometryNamespace {
 	/// Returns if the point coincides with the input point
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool PointBase::coincides(ARGCOPY(PointBase) thePoint) const throw (NullptrException)
+	bool PointBase::coincides(ARGCOPY(PointBase) thePoint) const
 	{
 		if (thePoint.IsNull())
 		{
@@ -411,7 +411,7 @@ namespace GeometryNamespace {
 	/// Calculates distance to point
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	double PointBase::calculateDistance(ARGCOPY(PointBase) thePoint) const throw (NullptrException)
+	double PointBase::calculateDistance(ARGCOPY(PointBase) thePoint) const
 	{
 		if (thePoint.IsNull())
 		{
@@ -443,7 +443,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	OUTVAL(PointBase) PointBase::createInterpolationPoint(
 		ARGCOPY(PointBase) thePoint,
-		const double& theFactor) const throw (NullptrException)
+		const double& theFactor) const
 	{
 		if (thePoint.IsNull())
 		{

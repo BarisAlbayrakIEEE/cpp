@@ -30,7 +30,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-		Vector3D::Vector3D(const arrayS3& theLocalComponents) throw (ZeroVectorException)
+		Vector3D::Vector3D(const arrayS3& theLocalComponents)
 		: VectorBase(DIMENSIONS::D3, GlobalCoordSystem::getGlobalCoordSystem(), theLocalComponents) { }
 
 	/// <summary>
@@ -39,7 +39,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	Vector3D::Vector3D(const vectorInput1D& theLocalComponents) throw (ZeroVectorException)
+	Vector3D::Vector3D(const vectorInput1D& theLocalComponents)
 		: VectorBase(DIMENSIONS::D3, GlobalCoordSystem::getGlobalCoordSystem(), theLocalComponents) { }
 
 	/// <summary>
@@ -78,7 +78,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	/// <exception> ZeroVectorException </exception>
-	Vector3D::Vector3D(ARGCOPY(PointBase) thePoint) throw (NullptrException, ZeroVectorException)
+	Vector3D::Vector3D(ARGCOPY(PointBase) thePoint)
 		: VectorBase(DIMENSIONS::D3, thePoint->getReferenceCoordSystem(), thePoint->getLocalCoords()) { }
 
 	/// <summary>
@@ -92,7 +92,7 @@ namespace GeometryNamespace {
 	/// <exception> ZeroVectorException </exception>
 	Vector3D::Vector3D(
 		ARGCOPY(PointBase) thePoint0,
-		ARGCOPY(PointBase) thePoint1) throw (NullptrException, CoordSystemMismatchException, ZeroVectorException)
+		ARGCOPY(PointBase) thePoint1)
 		: VectorBase(DIMENSIONS::D3, thePoint0, thePoint1) { }
 
 	/// <summary>
@@ -103,7 +103,7 @@ namespace GeometryNamespace {
 	/// <exception> ZeroVectorException </exception>
 	Vector3D::Vector3D(
 		ARGCOPY(CoordSystem) theReferenceCoordSystem,
-		const arrayS3& theLocalComponents) throw (NullptrException, ZeroVectorException)
+		const arrayS3& theLocalComponents)
 		: VectorBase(DIMENSIONS::D3, theReferenceCoordSystem, theLocalComponents) { }
 
 	/// <summary>
@@ -114,7 +114,7 @@ namespace GeometryNamespace {
 	/// <exception> ZeroVectorException </exception>
 	Vector3D::Vector3D(
 		ARGCOPY(CoordSystem) theReferenceCoordSystem,
-		const vectorInput1D& theLocalComponents) throw (NullptrException, ZeroVectorException)
+		const vectorInput1D& theLocalComponents)
 		: VectorBase(DIMENSIONS::D3, theReferenceCoordSystem, theLocalComponents) { }
 
 	/// <summary>
@@ -125,7 +125,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	Vector3D::Vector3D(
 		ARGCOPY(CoordSystem) theReferenceCoordSystem,
-		const arrayS3& theAngles, int* theNull) throw (NullptrException)
+		const arrayS3& theAngles, int* theNull)
 		: VectorBase(DIMENSIONS::D3, theReferenceCoordSystem, arrayS3{})
 	{
 		setLocalComponentsUsingAngles(theAngles);
@@ -139,7 +139,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	Vector3D::Vector3D(
 		ARGCOPY(CoordSystem) theReferenceCoordSystem,
-		const vectorInput1D& theAngles, int* theNull) throw (NullptrException)
+		const vectorInput1D& theAngles, int* theNull)
 		: VectorBase(DIMENSIONS::D3, theReferenceCoordSystem, arrayS3{})
 	{
 		setLocalComponentsUsingAngles(theAngles);
@@ -151,7 +151,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	Vector3D::Vector3D(ARGCOPY(Vector2D) theVector) throw (NullptrException)
+	Vector3D::Vector3D(ARGCOPY(Vector2D) theVector)
 		: VectorBase(DIMENSIONS::D3)
 	{
 		if (theVector.IsNull())
@@ -241,7 +241,7 @@ namespace GeometryNamespace {
 	/// <summary>
 	/// Setter - Local components - By angles
 	/// </summary>
-	void Vector3D::setLocalComponentsUsingAngles(const vectorInput1D& theAngles) throw (ArraySizeException)
+	void Vector3D::setLocalComponentsUsingAngles(const vectorInput1D& theAngles)
 	{
 		if (theAngles.size() != DIMENSIONS::D3)
 		{

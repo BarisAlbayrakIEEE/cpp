@@ -23,7 +23,7 @@ namespace GeometryNamespace {
 	class GeometryException : public std::exception
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "TBD";
 		}
@@ -32,7 +32,7 @@ namespace GeometryNamespace {
 	class UncaughtException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "Uncaught Exception";
 		}
@@ -41,7 +41,7 @@ namespace GeometryNamespace {
 	class AlreadyExistingObjectException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "An object with the input name aalready exists.";
 		}
@@ -50,7 +50,7 @@ namespace GeometryNamespace {
 	class ObjectTypeException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "The type of the object does not math the type of the requested object.";
 		}
@@ -59,7 +59,7 @@ namespace GeometryNamespace {
 	class NullptrException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "Null pointer for an input.";
 		}
@@ -68,7 +68,7 @@ namespace GeometryNamespace {
 	class BadInputException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "Bad data for an input.";
 		}
@@ -77,7 +77,7 @@ namespace GeometryNamespace {
 	class DivideByZeraException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "Division by zero";
 		}
@@ -86,7 +86,7 @@ namespace GeometryNamespace {
 	class ZeroToleranceException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "The tolerance value set less than or equal to zero which must be positive real value.";
 		}
@@ -95,7 +95,7 @@ namespace GeometryNamespace {
 	class ZeroDeterminantException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "Determinant of the matrix is zerom. Inverse matrix does not exist.";
 		}
@@ -104,7 +104,7 @@ namespace GeometryNamespace {
 	class ArraySizeException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "Array size is zero ar not same as the expected";
 		}
@@ -113,7 +113,7 @@ namespace GeometryNamespace {
 	class MaxIterationReachedException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "No solution. Max iteration has reached.";
 		}
@@ -122,7 +122,7 @@ namespace GeometryNamespace {
 	class DimensionalityException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "The dimensionality of the instance is not suitable for the requested operation.";
 		}
@@ -131,7 +131,7 @@ namespace GeometryNamespace {
 	class ZeroDimensionException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "The instance is defined in 2D space.";
 		}
@@ -140,7 +140,7 @@ namespace GeometryNamespace {
 	class GeometricalMismatchException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "Two or more entities in the operation do not match (e.g. a point does not lie on the plane or non-perpandicular vectors for a CS).";
 		}
@@ -149,7 +149,7 @@ namespace GeometryNamespace {
 	class CoordSystemMismatchException : public GeometricalMismatchException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "Reference CSs are not the same.";
 		}
@@ -158,7 +158,7 @@ namespace GeometryNamespace {
 	class NoIntersectionException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "No intersection between the two components.";
 		}
@@ -167,7 +167,7 @@ namespace GeometryNamespace {
 	class ZeroVectorException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "Vector magnitude is zero. nullptr vector";
 		}
@@ -176,7 +176,7 @@ namespace GeometryNamespace {
 	class CoincidenceException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "Coincident items";
 		}
@@ -185,7 +185,7 @@ namespace GeometryNamespace {
 	class ColinearPointsException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "Points are colinear.";
 		}
@@ -194,7 +194,7 @@ namespace GeometryNamespace {
 	class ParallelAxisException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "Axes are parallel.";
 		}
@@ -203,7 +203,7 @@ namespace GeometryNamespace {
 	class AssymptoticLineException : public GeometryException
 	{
 	public:
-		char const* what() const
+		const char* what() const noexcept
 		{
 			return "The line is parallel to one of the axes.";
 		}

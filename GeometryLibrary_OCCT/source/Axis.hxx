@@ -128,18 +128,18 @@ namespace GeometryNamespace {
 		// ctor / dtor / operators
 		Standard_EXPORT Axis(
 			ARGCOPY(PointBase) thePassingPoint,
-			ARGCOPY(VectorBase) theDirectionVector) throw(NullptrException);
+			ARGCOPY(VectorBase) theDirectionVector);
 		Standard_EXPORT Axis(
 			ARGCOPY(PointBase) thePoint0,
-			ARGCOPY(PointBase) thePoint1) throw(NullptrException);
+			ARGCOPY(PointBase) thePoint1);
 		Standard_EXPORT Axis(
 			ARGCOPY(Point2D) thePassingPoint,
-			const double& theAngle) throw(NullptrException);
+			const double& theAngle);
 		Standard_EXPORT Axis(
 			ARGCOPY(PointBase) thePassingPoint,
-			const arrayS3& theAngles) throw(NullptrException);
-		Standard_EXPORT Axis(const arrayS32& theEC) throw(ZeroVectorException);
-		Standard_EXPORT Axis(vectorInput2D theEC) throw(ZeroVectorException);
+			const arrayS3& theAngles);
+		Standard_EXPORT Axis(const arrayS32& theEC);
+		Standard_EXPORT Axis(vectorInput2D theEC);
 
 		Standard_EXPORT Axis(const Axis& rhs);
 		Standard_EXPORT Axis& operator=(const Axis& rhs);
@@ -162,78 +162,68 @@ namespace GeometryNamespace {
 		Standard_EXPORT OUTVAL(VectorBase) getDirectionVector() const;
 		Standard_EXPORT arrayS32 getEC() const;
 		Standard_EXPORT OUTVAL(PointBase) createPoint(const double& theFactor) const;
-		Standard_EXPORT OUTVAL(Vector3D) getPassingPointAsVector() const throw(ZeroVectorException);
-		Standard_EXPORT OUTVAL(Vector3D) getPointAsVector(const double& theFactor) const throw(ZeroVectorException);
+		Standard_EXPORT OUTVAL(Vector3D) getPassingPointAsVector() const;
+		Standard_EXPORT OUTVAL(Vector3D) getPointAsVector(const double& theFactor) const;
 		Standard_EXPORT OUTVAL(CoordSystem) getCommonReferenceCoordSystem() const;
-		Standard_EXPORT void setPassingPoint(ARGCOPY(PointBase) thePassingPoint) throw(NullptrException);
-		Standard_EXPORT void setDirectionVector(ARGCOPY(VectorBase) theDirectionVector) throw(NullptrException);
-		Standard_EXPORT void setEC(const arrayS32& theEC) throw(ZeroVectorException);
-		Standard_EXPORT void setEC(const vectorInput2D& theEC) throw(ZeroVectorException);
-		Standard_EXPORT bool isParallel(ARGCOPY(Axis) theAxis) const throw(NullptrException);
+		Standard_EXPORT void setPassingPoint(ARGCOPY(PointBase) thePassingPoint);
+		Standard_EXPORT void setDirectionVector(ARGCOPY(VectorBase) theDirectionVector);
+		Standard_EXPORT void setEC(const arrayS32& theEC);
+		Standard_EXPORT void setEC(const vectorInput2D& theEC);
+		Standard_EXPORT bool isParallel(ARGCOPY(Axis) theAxis) const;
 		Standard_EXPORT bool isParallel(
 			ARGCOPY(Axis) theAxis,
-			const double& theTolerance) const throw(NullptrException);
-		Standard_EXPORT bool isInTheSameDirection(ARGCOPY(Axis) theAxis) const throw(NullptrException);
+			const double& theTolerance) const;
+		Standard_EXPORT bool isInTheSameDirection(ARGCOPY(Axis) theAxis) const;
 		Standard_EXPORT bool isInTheSameDirection(
 			ARGCOPY(Axis) theAxis,
-			const double& theTolerance) const throw(NullptrException);
-		Standard_EXPORT bool isNormal(ARGCOPY(Axis) theAxis) const throw(NullptrException);
+			const double& theTolerance) const;
+		Standard_EXPORT bool isNormal(ARGCOPY(Axis) theAxis) const;
 		Standard_EXPORT bool isNormal(
 			ARGCOPY(Axis) theAxis,
-			const double& theTolerance) const throw(NullptrException);
-		Standard_EXPORT bool isSkew(ARGCOPY(Axis) theAxis) throw(NullptrException);
-		Standard_EXPORT bool isSkew(ARGCOPY(Line) theLine) throw(NullptrException);
+			const double& theTolerance) const;
+		Standard_EXPORT bool isSkew(ARGCOPY(Axis) theAxis);
+		Standard_EXPORT bool isSkew(ARGCOPY(Line) theLine);
 
-		Standard_EXPORT bool includes(ARGCOPY(PointBase) thePoint) const throw(NullptrException);
-		Standard_EXPORT bool intersects(ARGCOPY(Axis) theAxis) throw(NullptrException);
-		Standard_EXPORT bool intersects(ARGCOPY(Line) theLine) throw(NullptrException);
-		Standard_EXPORT bool coincides(ARGCOPY(Axis) theAxis) throw(NullptrException);
-		Standard_EXPORT bool coincides(ARGCOPY(Line) theLine) throw(NullptrException);
-		Standard_EXPORT std::pair<INTERSECTION1, Handle(PointBase)> intersect(ARGCOPY(Axis) theAxis)
-			throw(NullptrException);
-		Standard_EXPORT std::pair<INTERSECTION1, Handle(PointBase)> intersect(ARGCOPY(Line) theLine)
-			throw(NullptrException);
-		Standard_EXPORT OUTVAL(PointBase) project(ARGCOPY(PointBase) thePoint) const throw(NullptrException);
-		Standard_EXPORT double calculateDistance(ARGCOPY(PointBase) thePoint) const throw(NullptrException);
-		Standard_EXPORT double calculateDistance(ARGCOPY(Axis) theAxis) throw(NullptrException);
-		Standard_EXPORT double calculateDistance(ARGCOPY(Line) theLine) throw(NullptrException);
-		Standard_EXPORT std::vector<Handle(PointBase)> findClosestPoints(ARGCOPY(Axis) theAxis) throw(NullptrException);
+		Standard_EXPORT bool includes(ARGCOPY(PointBase) thePoint) const;
+		Standard_EXPORT bool intersects(ARGCOPY(Axis) theAxis);
+		Standard_EXPORT bool intersects(ARGCOPY(Line) theLine);
+		Standard_EXPORT bool coincides(ARGCOPY(Axis) theAxis);
+		Standard_EXPORT bool coincides(ARGCOPY(Line) theLine);
+		Standard_EXPORT std::pair<INTERSECTION1, Handle(PointBase)> intersect(ARGCOPY(Axis) theAxis);
+		Standard_EXPORT std::pair<INTERSECTION1, Handle(PointBase)> intersect(ARGCOPY(Line) theLine);
+		Standard_EXPORT OUTVAL(PointBase) project(ARGCOPY(PointBase) thePoint) const;
+		Standard_EXPORT double calculateDistance(ARGCOPY(PointBase) thePoint) const;
+		Standard_EXPORT double calculateDistance(ARGCOPY(Axis) theAxis);
+		Standard_EXPORT double calculateDistance(ARGCOPY(Line) theLine);
+		Standard_EXPORT std::vector<Handle(PointBase)> findClosestPoints(ARGCOPY(Axis) theAxis);
 
-		Standard_EXPORT double calculateCoordX_fromCoordY(const double& theCoordY) const throw(AssymptoticLineException);
-		Standard_EXPORT double calculateCoordX_fromCoordZ(const double& theCoordZ) const throw(
-			DimensionalityException,
-			AssymptoticLineException);
-		Standard_EXPORT double calculateCoordY_fromCoordX(const double& theCoordX) const throw(AssymptoticLineException);
-		Standard_EXPORT double calculateCoordY_fromCoordZ(const double& theCoordZ) const throw(
-			DimensionalityException,
-			AssymptoticLineException);
-		Standard_EXPORT double calculateCoordZ_fromCoordX(const double& theCoordX) const throw(
-			DimensionalityException,
-			AssymptoticLineException);
-		Standard_EXPORT double calculateCoordZ_fromCoordY(const double& theCoordY) const throw(
-			DimensionalityException,
-			AssymptoticLineException);
+		Standard_EXPORT double calculateCoordX_fromCoordY(const double& theCoordY) const;
+		Standard_EXPORT double calculateCoordX_fromCoordZ(const double& theCoordZ) const;
+		Standard_EXPORT double calculateCoordY_fromCoordX(const double& theCoordX) const;
+		Standard_EXPORT double calculateCoordY_fromCoordZ(const double& theCoordZ) const;
+		Standard_EXPORT double calculateCoordZ_fromCoordX(const double& theCoordX) const;
+		Standard_EXPORT double calculateCoordZ_fromCoordY(const double& theCoordY) const;
 
 	private:
-		Standard_EXPORT void setMembers(const arrayS32& theEC) throw(ZeroVectorException);
-		Standard_EXPORT void setMembers(const vectorInput2D& theEC) throw(ZeroVectorException);
+		Standard_EXPORT void setMembers(const arrayS32& theEC);
+		Standard_EXPORT void setMembers(const vectorInput2D& theEC);
 		Standard_EXPORT void setMembers(
 			ARGCOPY(PointBase) thePassingPoint,
-			ARGCOPY(VectorBase) theDirectionVector) throw(NullptrException);
-		Standard_EXPORT void inspectEC(const arrayS32& theEC) throw(ZeroVectorException);
-		Standard_EXPORT void inspectEC(const vectorInput2D& theEC) throw(ZeroVectorException);
+			ARGCOPY(VectorBase) theDirectionVector);
+		Standard_EXPORT void inspectEC(const arrayS32& theEC);
+		Standard_EXPORT void inspectEC(const vectorInput2D& theEC);
 		Standard_EXPORT int determineDimensionCountUsingEC(const arrayS32& theEC) const;
 		Standard_EXPORT int determineDimensionCountUsingEC(const vectorInput2D& theEC) const;
-		Standard_EXPORT void updateEC() throw(NullptrException);
+		Standard_EXPORT void updateEC();
 		Standard_EXPORT void applyEC();
 
 		Standard_EXPORT double calculateCoord(
 			int theIndexCoordO,
 			int theIndexCoordl,
-			const double& theCoord) const throw(AssymptoticLineException);
+			const double& theCoord) const;
 		Standard_EXPORT std::pair<INTERSECTION1, Handle(PointBase)> intersectBase(
 			ARGCOPY(Axis) theAxis,
-			const arrayS3& theCrossProductComponents) const throw(NullptrException);
+			const arrayS3& theCrossProductComponents) const;
 		Standard_EXPORT bool equalsBase(ARGCOPY(Axis) theAxis) const;
 	};
 }

@@ -26,7 +26,7 @@ namespace GeometryNamespace {
 	/// <exception> ZeroDimensionException: Coincident points </exception>
 	Line::Line(
 		ARGCOPY(PointBase) theEndPoint0,
-		ARGCOPY(PointBase) theEndPoint1) throw(NullptrException, ZeroDimensionException)
+		ARGCOPY(PointBase) theEndPoint1)
 		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
 	{
 		if (theEndPoint0.IsNull())
@@ -346,7 +346,7 @@ namespace GeometryNamespace {
 	/// Setter - Direction vector
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	void Line::setAxis(ARGCOPY(Axis) theAxis) throw(NullptrException)
+	void Line::setAxis(ARGCOPY(Axis) theAxis)
 	{
 		if (theAxis.IsNull())
 		{
@@ -361,10 +361,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	/// <exception> CoordSystemMismatchException </exception>
 	/// <exception> ZeroDimensionException </exception>
-	void Line::setEndPoint0(ARGCOPY(PointBase) theEndPoint0) throw(
-		NullptrException,
-		CoordSystemMismatchException,
-		ZeroDimensionException)
+	void Line::setEndPoint0(ARGCOPY(PointBase) theEndPoint0)
 	{
 		if (theEndPoint0.IsNull())
 		{
@@ -390,10 +387,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	/// <exception> CoordSystemMismatchException </exception>
 	/// <exception> ZeroDimensionException </exception>
-	void Line::setEndPoint1(ARGCOPY(PointBase) theEndPoint1) throw(
-		NullptrException,
-		CoordSystemMismatchException,
-		ZeroDimensionException)
+	void Line::setEndPoint1(ARGCOPY(PointBase) theEndPoint1)
 	{
 		if (theEndPoint1.IsNull())
 		{
@@ -417,7 +411,7 @@ namespace GeometryNamespace {
 	/// Returns if the point is on the line
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Line::includes(ARGCOPY(PointBase) thePoint) throw(NullptrException)
+	bool Line::includes(ARGCOPY(PointBase) thePoint)
 	{
 		if (thePoint.IsNull())
 		{
@@ -441,7 +435,7 @@ namespace GeometryNamespace {
 	///		Call the intersects method of the input axis for this line
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Line::intersects(ARGCOPY(Axis) theAxis) throw(NullptrException)
+	bool Line::intersects(ARGCOPY(Axis) theAxis)
 	{
 		if (theAxis.IsNull())
 		{
@@ -455,7 +449,7 @@ namespace GeometryNamespace {
 	///		Call the intersect method which returns the intersection status together with the intersection if exists
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Line::intersects(ARGCOPY(Line) theLine) throw(NullptrException)
+	bool Line::intersects(ARGCOPY(Line) theLine)
 	{
 		if (theLine.IsNull())
 		{
@@ -470,7 +464,7 @@ namespace GeometryNamespace {
 	///		Call the isSkew method of the input axis for this line
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Line::isSkew(ARGCOPY(Axis) theAxis) throw(NullptrException)
+	bool Line::isSkew(ARGCOPY(Axis) theAxis)
 	{
 		if (theAxis.IsNull())
 		{
@@ -484,7 +478,7 @@ namespace GeometryNamespace {
 	///		Call the intersect method which returns the intersection status together with the intersection if exists
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Line::isSkew(ARGCOPY(Line) theLine) throw(NullptrException)
+	bool Line::isSkew(ARGCOPY(Line) theLine)
 	{
 		if (theLine.IsNull())
 		{
@@ -499,7 +493,7 @@ namespace GeometryNamespace {
 	///		Call the coincides method of the input axis for this line
 	/// </sumrnary>
 	/// <exception> NullptrException </exception>
-	bool Line::coincides(ARGCOPY(Axis) theAxis) throw(NullptrException)
+	bool Line::coincides(ARGCOPY(Axis) theAxis)
 	{
 		if (theAxis.IsNull())
 		{
@@ -513,7 +507,7 @@ namespace GeometryNamespace {
 	///		Call the intersect method which returns the intersection status together with the intersection if exists
 	/// </sumrnary>
 	/// <exception> NullptrException </exception>
-	bool Line::coincides(ARGCOPY(Line) theLine) throw(NullptrException)
+	bool Line::coincides(ARGCOPY(Line) theLine)
 	{
 		if (theLine.IsNull())
 		{
@@ -532,7 +526,6 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	std::pair<INTERSECTION1, Handle(PointBase)> Line::intersect(ARGCOPY(Axis) theAxis)
-		throw(NullptrException)
 	{
 		if (theAxis.IsNull())
 		{
@@ -550,7 +543,6 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	std::pair<INTERSECTION1, Handle(PointBase)> Line::intersect(ARGCOPY(Line) theLine)
-		throw(NullptrException)
 	{
 		if (theLine.IsNull())
 		{
@@ -617,7 +609,7 @@ namespace GeometryNamespace {
 	/// Returns null handle if the projection (onto the axis) is not included by the line
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	OUTVAL(PointBase) Line::project(ARGCOPY(PointBase) thePoint) throw(NullptrException)
+	OUTVAL(PointBase) Line::project(ARGCOPY(PointBase) thePoint)
 	{
 		if (thePoint.IsNull())
 		{
@@ -636,7 +628,7 @@ namespace GeometryNamespace {
 	/// Calculate distance to a axis
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	double Line::calculateDistance(ARGCOPY(Axis) theAxis) throw(NullptrException)
+	double Line::calculateDistance(ARGCOPY(Axis) theAxis)
 	{
 		if (theAxis.IsNull())
 		{
@@ -649,7 +641,7 @@ namespace GeometryNamespace {
 	/// Calculate distance to a point
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	double Line::calculateDistance(ARGCOPY(PointBase) thePoint) throw(NullptrException)
+	double Line::calculateDistance(ARGCOPY(PointBase) thePoint)
 	{
 		if (thePoint.IsNull())
 		{
@@ -673,7 +665,7 @@ namespace GeometryNamespace {
 	/// Calculate distance to a line
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	double Line::calculateDistance(ARGCOPY(Line) theLine) throw(NullptrException)
+	double Line::calculateDistance(ARGCOPY(Line) theLine)
 	{
 		if (theLine.IsNull())
 		{

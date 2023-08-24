@@ -24,7 +24,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	Vector2D::Vector2D(const arrayS2& theLocalComponents) throw (ZeroVectorException)
+	Vector2D::Vector2D(const arrayS2& theLocalComponents)
 		: VectorBase(DIMENSIONS::D2)
 	{
 		arrayS3 localComponents{ GeometryMath::convertArrayS2ToS3(theLocalComponents) };
@@ -38,7 +38,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	Vector2D::Vector2D(const arrayS3& theLocalComponents) throw (ZeroVectorException)
+	Vector2D::Vector2D(const arrayS3& theLocalComponents)
 		: VectorBase(DIMENSIONS::D2, GlobalCoordSystem::getGlobalCoordSystem(), theLocalComponents) { }
 
 	/// <summary>
@@ -47,7 +47,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	Vector2D::Vector2D(const vectorInput1D& theLocalComponents) throw (ZeroVectorException)
+	Vector2D::Vector2D(const vectorInput1D& theLocalComponents)
 		: VectorBase(DIMENSIONS::D2, GlobalCoordSystem::getGlobalCoordSystem(), theLocalComponents) { }
 
 	/// <summary>
@@ -67,7 +67,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	/// <exception> ZeroVectorException </exception>
-	Vector2D::Vector2D(ARGCOPY(Point2D) thePoint) throw (NullptrException, ZeroVectorException)
+	Vector2D::Vector2D(ARGCOPY(Point2D) thePoint)
 		: VectorBase(DIMENSIONS::D2, thePoint->getReferenceCoordSystem(), thePoint->getLocalCoords()) { }
 
 	/// <summary>
@@ -81,7 +81,7 @@ namespace GeometryNamespace {
 	/// <exception> ZeroVectorException </exception>
 	Vector2D::Vector2D(
 		ARGCOPY(Point2D) thePoint0,
-		ARGCOPY(Point2D) thePoint1) throw (NullptrException, CoordSystemMismatchException, ZeroVectorException)
+		ARGCOPY(Point2D) thePoint1)
 		: VectorBase(DIMENSIONS::D2, thePoint0, thePoint1) { }
 
 	/// <summary>
@@ -93,7 +93,7 @@ namespace GeometryNamespace {
 	/// <exception> ZeroVectorException </exception>
 	Vector2D::Vector2D(
 		ARGCOPY(CoordSystem) theReferenceCoordSystem,
-		const arrayS2& theLocalComponents) throw (NullptrException, ZeroVectorException)
+		const arrayS2& theLocalComponents)
 		: VectorBase(DIMENSIONS::D2, theReferenceCoordSystem)
 	{
 		arrayS3 localComponents{ GeometryMath::convertArrayS2ToS3(theLocalComponents) };
@@ -110,7 +110,7 @@ namespace GeometryNamespace {
 	/// <exception> ZeroVectorException </exception>
 	Vector2D::Vector2D(
 		ARGCOPY(CoordSystem) theReferenceCoordSystem,
-		const arrayS3& theLocalComponents) throw (NullptrException, ZeroVectorException)
+		const arrayS3& theLocalComponents)
 		: VectorBase(DIMENSIONS::D2, theReferenceCoordSystem, theLocalComponents) { }
 
 	/// <summary>
@@ -122,7 +122,7 @@ namespace GeometryNamespace {
 	/// <exception> ZeroVectorException </exception>
 	Vector2D::Vector2D(
 		ARGCOPY(CoordSystem) theReferenceCoordSystem,
-		const vectorInput1D& theLocalComponents) throw (NullptrException, ZeroVectorException)
+		const vectorInput1D& theLocalComponents)
 		: VectorBase(DIMENSIONS::D2, theReferenceCoordSystem, theLocalComponents) { }
 
 	/// <summary>
@@ -133,7 +133,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	Vector2D::Vector2D(
 		ARGCOPY(CoordSystem) theReferenceCoordSystem,
-		const double& theAngle) throw (NullptrException)
+		const double& theAngle)
 		: VectorBase(DIMENSIONS::D2, theReferenceCoordSystem, arrayS3{ 1., theAngle, 0. }) { }
 
 	/// <summary>

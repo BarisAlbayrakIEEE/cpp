@@ -108,14 +108,14 @@ namespace GeometryNamespace {
 		Standard_EXPORT Point3D();
 		Standard_EXPORT Point3D(const arrayS3& theLocalCoords);
 		Standard_EXPORT Point3D(const vectorInput1D& theLocalCoords);
-		Standard_EXPORT Point3D(ARGCOPY(CoordSystem) theReferenceCoordSystem) throw (NullptrException);
+		Standard_EXPORT Point3D(ARGCOPY(CoordSystem) theReferenceCoordSystem);
 		Standard_EXPORT Point3D(
 			ARGCOPY(CoordSystem) theReferenceCoordSystem,
-			const arrayS3& theLocalCoords) throw (NullptrException);
+			const arrayS3& theLocalCoords);
 		Standard_EXPORT Point3D(
 			ARGCOPY(CoordSystem) theReferenceCoordSystem,
-			const vectorInput1D& theLocalCoords) throw (NullptrException);
-		Standard_EXPORT Point3D(ARGCOPY(Point2D) thePoint) throw (NullptrException);
+			const vectorInput1D& theLocalCoords);
+		Standard_EXPORT Point3D(ARGCOPY(Point2D) thePoint);
 
 	public:
 		DEFINE_STANDARD_RTTIEXT(Point3D, PointBase)

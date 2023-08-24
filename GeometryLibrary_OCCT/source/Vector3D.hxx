@@ -107,35 +107,35 @@ namespace GeometryNamespace {
 		Standard_EXPORT Vector3D& operator=(Vector3D&& rhs) noexcept;
 		Standard_EXPORT ~Vector3D();
 
-		Standard_EXPORT Vector3D(const arrayS3& theLocalComponents) throw (ZeroVectorException);
-		Standard_EXPORT Vector3D(const vectorInput1D& theLocalComponents) throw (ZeroVectorException);
+		Standard_EXPORT Vector3D(const arrayS3& theLocalComponents);
+		Standard_EXPORT Vector3D(const vectorInput1D& theLocalComponents);
 		Standard_EXPORT Vector3D(const arrayS3& theAngles, int* theNone);
 		Standard_EXPORT Vector3D(const vectorInput1D& theAngles, int* theNone);
-		Standard_EXPORT Vector3D(ARGCOPY(PointBase) thePoint) throw (NullptrException, ZeroVectorException);
+		Standard_EXPORT Vector3D(ARGCOPY(PointBase) thePoint);
 		Standard_EXPORT Vector3D(
 			ARGCOPY(PointBase) thePoint0,
-			ARGCOPY(PointBase) thePoint1) throw (NullptrException, CoordSystemMismatchException, ZeroVectorException);
+			ARGCOPY(PointBase) thePoint1);
 		Standard_EXPORT Vector3D(
 			ARGCOPY(CoordSystem) theReferenceCoordSystem,
-			const arrayS3& theLocalComponents) throw (NullptrException, ZeroVectorException);
+			const arrayS3& theLocalComponents);
 		Standard_EXPORT Vector3D(
 			ARGCOPY(CoordSystem) theReferenceCoordSystem,
-			const vectorInput1D& theLocalComponents) throw (NullptrException, ZeroVectorException);
+			const vectorInput1D& theLocalComponents);
 		Standard_EXPORT Vector3D(
 			ARGCOPY(CoordSystem) theReferenceCoordSystem,
 			const arrayS3& theAngles,
-			int* theNone) throw (NullptrException);
+			int* theNone);
 		Standard_EXPORT Vector3D(
 			ARGCOPY(CoordSystem) theReferenceCoordSystem,
 			const vectorInput1D& theAngles,
-			int* theNone) throw (NullptrException);
-		Standard_EXPORT Vector3D(ARGCOPY(Vector2D) theVector) throw (NullptrException);
+			int* theNone);
+		Standard_EXPORT Vector3D(ARGCOPY(Vector2D) theVector);
 
 		// Methods
 	public:
 		Standard_EXPORT OUTVAL(Vector3D) getUnitVector() const;
 		Standard_EXPORT void setLocalComponentsUsingAngles(const arrayS3& theAngles);
-		Standard_EXPORT void setLocalComponentsUsingAngles(const vectorInput1D& theAngles) throw (ArraySizeException);
+		Standard_EXPORT void setLocalComponentsUsingAngles(const vectorInput1D& theAngles);
 
 	public:
 		DEFINE_STANDARD_RTTIEXT(Vector3D, VectorBase)

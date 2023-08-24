@@ -23,7 +23,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	Plane::Plane(const arrayS4& theEC) throw (ZeroVectorException)
+	Plane::Plane(const arrayS4& theEC)
 		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
 	{
 		setMembers(theEC);
@@ -34,7 +34,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	Plane::Plane(const vectorInput1D& theEC) throw (ZeroVectorException)
+	Plane::Plane(const vectorInput1D& theEC)
 		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
 	{
 		setMembers(theEC);
@@ -47,7 +47,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	Plane::Plane(
 		ARGCOPY(PointBase) thePoint,
-		ARGCOPY(VectorBase) theNormalVector) throw (NullptrException)
+		ARGCOPY(VectorBase) theNormalVector)
 		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
 	{
 		setMembers(thePoint, theNormalVector);
@@ -61,7 +61,7 @@ namespace GeometryNamespace {
 	Plane::Plane(
 		ARGCOPY(PointBase) thePoint,
 		ARGCOPY(VectorBase) theInPlaneVector0,
-		ARGCOPY(VectorBase) theInPlaneVector1) throw (NullptrException)
+		ARGCOPY(VectorBase) theInPlaneVector1)
 		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
 	{
 		setMembers(thePoint, theInPlaneVector0->crossProduct(theInPlaneVector1));
@@ -77,10 +77,7 @@ namespace GeometryNamespace {
 	Plane::Plane(
 		ARGCOPY(PointBase) thePoint0,
 		ARGCOPY(PointBase) thePoint1,
-		ARGCOPY(PointBase) thePoint2) throw (
-			NullptrException,
-			CoincidenceException,
-			ColinearPointsException)
+		ARGCOPY(PointBase) thePoint2)
 		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
 	{
 		// Inspect inputs
@@ -293,7 +290,7 @@ namespace GeometryNamespace {
 	/// At least one of the 1st three coefficients shall be non-zero.
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	void Plane::inspectEC(const arrayS4& theEC) throw (ZeroVectorException)
+	void Plane::inspectEC(const arrayS4& theEC)
 	{
 		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
 			if (!GeometryMath::equals(theEC[iCoord], 0., c_toleranceGeneral)) {
@@ -307,7 +304,7 @@ namespace GeometryNamespace {
 	/// Inspect Equation Coefficients (EC)
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	void Plane::inspectEC(const vectorInput1D& theEC) throw (ZeroVectorException)
+	void Plane::inspectEC(const vectorInput1D& theEC)
 	{
 		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
 			if (!GeometryMath::equals(theEC[iCoord], 0., c_toleranceGeneral)) {
@@ -367,7 +364,7 @@ namespace GeometryNamespace {
 	/// Protected method used in this class and child classes only.
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	void Plane::setMembers(const arrayS4& theEC) throw (ZeroVectorException)
+	void Plane::setMembers(const arrayS4& theEC)
 	{
 		setEC(theEC);
 	}
@@ -377,7 +374,7 @@ namespace GeometryNamespace {
 	/// Protected method used in this class and child classes only.
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	void Plane::setMembers(const vectorInput1D& theEC) throw (ZeroVectorException)
+	void Plane::setMembers(const vectorInput1D& theEC)
 	{
 		setEC(theEC);
 	}
@@ -389,7 +386,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	void Plane::setMembers(
 		ARGCOPY(PointBase) thePassingPoint,
-		ARGCOPY(VectorBase) theNormalVector) throw (NullptrException)
+		ARGCOPY(VectorBase) theNormalVector)
 	{
 		if (thePassingPoint.IsNull())
 		{
@@ -410,7 +407,7 @@ namespace GeometryNamespace {
 	/// Creates a point at the globalorigin if the input point is null.
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	void Plane::setPassingPoint(ARGCOPY(PointBase) thePassingPoint) throw (NullptrException)
+	void Plane::setPassingPoint(ARGCOPY(PointBase) thePassingPoint)
 	{
 		if (thePassingPoint.IsNull())
 		{
@@ -426,7 +423,7 @@ namespace GeometryNamespace {
 	/// Creates a unit vector (z = 1} at the globalorigin if the input vector is null.
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	void Plane::setNormalVector(ARGCOPY(VectorBase) theNormalVector) throw (NullptrException)
+	void Plane::setNormalVector(ARGCOPY(VectorBase) theNormalVector)
 	{
 		if (theNormalVector.IsNull())
 		{
@@ -441,7 +438,7 @@ namespace GeometryNamespace {
 	/// Setter - Equation Coefficients (EC)
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	void Plane::setEC(const arrayS4& theEC) throw (ZeroVectorException)
+	void Plane::setEC(const arrayS4& theEC)
 	{
 		inspectEC(theEC);
 		c_EC = theEC;
@@ -452,7 +449,7 @@ namespace GeometryNamespace {
 	/// Setter - Equation Coefficients (EC)
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	void Plane::setEC(const vectorInput1D& theEC) throw (ZeroVectorException)
+	void Plane::setEC(const vectorInput1D& theEC)
 	{
 		inspectEC(theEC);
 		c_EC = GeometryMath::convertVectorToArray1DS4(theEC);
@@ -463,7 +460,7 @@ namespace GeometryNamespace {
 	/// Returns if the input intersets
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Plane::intersects(ARGCOPY(Axis) theAxis) const throw (NullptrException)
+	bool Plane::intersects(ARGCOPY(Axis) theAxis) const
 	{
 		if (theAxis.IsNull())
 		{
@@ -478,7 +475,7 @@ namespace GeometryNamespace {
 	/// Returns if the input intersets
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Plane::intersects(ARGCOPY(Line) theLine) const throw (NullptrException)
+	bool Plane::intersects(ARGCOPY(Line) theLine) const
 	{
 		if (theLine.IsNull())
 		{
@@ -494,7 +491,7 @@ namespace GeometryNamespace {
 	/// Returns if the input is included
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Plane::includes(ARGCOPY(PointBase) thePoint) const throw (NullptrException)
+	bool Plane::includes(ARGCOPY(PointBase) thePoint) const
 	{
 		if (thePoint.IsNull())
 		{
@@ -523,7 +520,7 @@ namespace GeometryNamespace {
 	/// Returns if the input is included
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Plane::includes(ARGCOPY(Axis) theAxis) const throw (NullptrException)
+	bool Plane::includes(ARGCOPY(Axis) theAxis) const
 	{
 		if (theAxis.IsNull())
 		{
@@ -542,7 +539,7 @@ namespace GeometryNamespace {
 	/// Returns if the input is included
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Plane::includes(ARGCOPY(Line) theLine) const throw (NullptrException)
+	bool Plane::includes(ARGCOPY(Line) theLine) const
 	{
 		if (theLine.IsNull())
 		{
@@ -807,7 +804,7 @@ namespace GeometryNamespace {
 	/// Calculates distance to the input plane
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	double Plane::calculateDistance(ARGCOPY(Plane) thePlane) const throw (NullptrException)
+	double Plane::calculateDistance(ARGCOPY(Plane) thePlane) const
 	{
 		if (thePlane.IsNull()) throw NullptrException();
 
@@ -819,7 +816,7 @@ namespace GeometryNamespace {
 	/// Calculates distance to the input point
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	double Plane::calculateDistance(ARGCOPY(PointBase) thePoint) const throw (NullptrException)
+	double Plane::calculateDistance(ARGCOPY(PointBase) thePoint) const
 	{
 		if (thePoint.IsNull())
 		{
@@ -847,7 +844,7 @@ namespace GeometryNamespace {
 	/// Calculates distance to the input axis
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	double Plane::calculateDistance(ARGCOPY(Axis) theAxis) const throw (NullptrException)
+	double Plane::calculateDistance(ARGCOPY(Axis) theAxis) const
 	{
 		if (theAxis.IsNull())
 		{
@@ -865,7 +862,7 @@ namespace GeometryNamespace {
 	/// Calculates distance to the input line
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	double Plane::calculateDistance(ARGCOPY(Line) theLine) const throw (NullptrException)
+	double Plane::calculateDistance(ARGCOPY(Line) theLine) const
 	{
 		if (theLine.IsNull())
 		{
@@ -898,7 +895,6 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	std::pair<INTERSECTION2, Handle(Axis)> Plane::intersect(ARGCOPY(Plane) thePlane) const
-		throw (NullptrException)
 	{
 		if (thePlane.IsNull()) throw NullptrException();
 
@@ -991,7 +987,6 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	std::pair<INTERSECTION2, Handle(Point3D)> Plane::intersect(ARGCOPY(Axis) theAxis) const
-		throw (NullptrException)
 	{
 		if (theAxis.IsNull())
 		{
@@ -1050,7 +1045,6 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	std::pair<INTERSECTION2, Handle(Point3D)> Plane::intersect(ARGCOPY(Line) theLine) const
-		throw (NullptrException)
 	{
 		if (theLine.IsNull())
 		{
@@ -1076,7 +1070,7 @@ namespace GeometryNamespace {
 	/// Projects the input point onto the plane
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	OUTVAL(Point3D) Plane::project(ARGCOPY(PointBase) thePoint) const throw (NullptrException)
+	OUTVAL(Point3D) Plane::project(ARGCOPY(PointBase) thePoint) const
 	{
 		if (thePoint.IsNull())
 		{
@@ -1105,7 +1099,7 @@ namespace GeometryNamespace {
 	/// Projects the input vector onto the plane
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	OUTVAL(Vector3D) Plane::project(ARGCOPY(VectorBase) theVector) const throw (NullptrException)
+	OUTVAL(Vector3D) Plane::project(ARGCOPY(VectorBase) theVector) const
 	{
 		if (theVector.IsNull()) throw NullptrException();
 
@@ -1126,7 +1120,7 @@ namespace GeometryNamespace {
 	/// Projects the input axis onto the plane
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	OUTVAL(Axis) Plane::project(ARGCOPY(Axis) theAxis) const throw (NullptrException)
+	OUTVAL(Axis) Plane::project(ARGCOPY(Axis) theAxis) const
 	{
 		if (theAxis.IsNull())
 		{
@@ -1148,7 +1142,7 @@ namespace GeometryNamespace {
 	/// Projects the input line onto the plane
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	OUTVAL(Line) Plane::project(ARGCOPY(Line) theLine) const throw (NullptrException)
+	OUTVAL(Line) Plane::project(ARGCOPY(Line) theLine) const
 	{
 		if (theLine.IsNull())
 		{
@@ -1171,7 +1165,7 @@ namespace GeometryNamespace {
 	/// Creates a point using Equation Coefficients (EC)
 	/// </summary>
 	/// <exception> UncaughtException </exception>
-	Handle(Point3D) Plane::createPoint(const double& theFactor) const throw(UncaughtException)
+	Handle(Point3D) Plane::createPoint(const double& theFactor) const
 	{
 		// Set a value to one of the thre coordinates and determine the other two coordinates
 		double coordX{};

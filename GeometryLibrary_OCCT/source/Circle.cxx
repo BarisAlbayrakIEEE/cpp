@@ -28,10 +28,7 @@ namespace GeometryNamespace {
 	Circle::Circle(
 		ARGCOPY(Plane) theReferencePlane,
 		ARGCOPY(PointBase) theCenterPoint,
-		const double& theRadius) throw (
-			NullptrException,
-			ZeroDimensionException,
-			GeometricalMismatchException)
+		const double& theRadius)
 		:
 		GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
 	{
@@ -92,11 +89,7 @@ namespace GeometryNamespace {
 	Circle::Circle(
 		ARGCOPY(PointBase) thePoint0,
 		ARGCOPY(PointBase) thePoint1,
-		ARGCOPY(PointBase) thePoint2) throw (
-			NullptrException,
-			CoincidenceException,
-			ColinearPointsException,
-			UncaughtException)
+		ARGCOPY(PointBase) thePoint2)
 		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
 	{
 		// Inspect inputs
@@ -393,9 +386,7 @@ namespace GeometryNamespace {
 	void Circle::setMembers(
 		ARGCOPY(Plane) theReferencePlane,
 		ARGCOPY(PointBase) theCenterPoint,
-		const double& theRadius) throw (
-			NullptrException,
-			ZeroDimensionException)
+		const double& theRadius)
 	{
 		if (theReferencePlane.IsNull()) throw NullptrException();
 		if (theCenterPoint.IsNull()) throw NullptrException();
@@ -408,9 +399,7 @@ namespace GeometryNamespace {
 	/// <summary>
 	/// Setter - reference plane
 	/// </summary>
-	void Circle::setReferencePlane(ARGCOPY(Plane) theReferencePlane) throw (
-		NullptrException,
-		GeometricalMismatchException)
+	void Circle::setReferencePlane(ARGCOPY(Plane) theReferencePlane)
 	{
 		if (theReferencePlane.IsNull()) throw NullptrException();
 		if (!c_centerPoint.IsNull()) {
@@ -425,9 +414,7 @@ namespace GeometryNamespace {
 	/// <summary>
 	/// Setter - center point
 	/// </summary>
-	void Circle::setCenterPoint(ARGCOPY(PointBase) theCenterPoint) throw (
-		NullptrException,
-		GeometricalMismatchException)
+	void Circle::setCenterPoint(ARGCOPY(PointBase) theCenterPoint)
 	{
 		if (theCenterPoint.IsNull()) throw NullptrException();
 		if (!c_referencePlane.IsNull()) {
@@ -442,7 +429,7 @@ namespace GeometryNamespace {
 	/// <summary>
 	/// Setter - radius
 	/// </summary>
-	void Circle::setRadius(const double& theRadius) throw (ZeroDimensionException)
+	void Circle::setRadius(const double& theRadius)
 	{
 		if (theRadius < c_toleranceGeneral) throw ZeroDimensionException();
 		c_radius = theRadius;
@@ -473,7 +460,7 @@ namespace GeometryNamespace {
 	///	1: Point is on the plane of the circle and involved by the circle
 	///	2: Point is on the plane olthe circle but aut olthe circle area
 	/// </summary>
-	int Circle::analyzePoint(ARGCOPY(PointBase) thePoint) const throw (NullptrException)
+	int Circle::analyzePoint(ARGCOPY(PointBase) thePoint) const
 	{
 		if (thePoint.IsNull()) throw NullptrException();
 

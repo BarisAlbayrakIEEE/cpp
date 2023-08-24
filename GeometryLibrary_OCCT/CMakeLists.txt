@@ -1,21 +1,22 @@
-﻿# Set the minimum cmake version
-cmake_minimum_required (VERSION 3.0)
-
-# Set the project name
+﻿cmake_minimum_required (VERSION 3.0)
 project (GeometryLibrary_OCCT)
-
-# Set the version number
 set (GeometryLibrary_OCCT_VERSION_MAJOR 1)
 set (GeometryLibrary_OCCT_VERSION_MINOR 0)
 
-# Create a variable for the include directories
+# Include directories
 set (
 	_INCLUDE_DIRECTORIES
 	"${PROJECT_SOURCE_DIR}/source"
-	"C:\\OpenCASCADE-7.6.0-vc14-64\\opencascade-7.6.0\\inc"
+	"/usr/include/opencascade"
 )
 
-# Create a variable for the header files
+# Library directories
+set (
+	_LIBRARY_DIRECTORIES 
+	"${PROJECT_SOURCE_DIR}/SharedLibraries"
+)
+
+# Header files
 set (
 	_HEADER_FILES
 	"${PROJECT_BINARY_DIR}/GeometryLibrary_OCCT_Config.h"
@@ -41,7 +42,7 @@ set (
 	"${PROJECT_SOURCE_DIR}/source/VectorBase.hxx"
 )	
 
-# Create a variable for the source files
+# Source files
 set (
 	_SOURCE_FILES
 	"${PROJECT_SOURCE_DIR}/source/Axis.cxx" 
@@ -61,20 +62,13 @@ set (
 	"${PROJECT_SOURCE_DIR}/source/VectorBase.cxx"
 )
 
-# Create a variable for the library directories
-set (
-	_LIBRARY_DIRECTORIES 
-	"C:/OpenCASCADE-7.6.0-vc14-64/opencascade-7.6.0/win64/vc14/lib"
-	"${PROJECT_SOURCE_DIR}/SharedLibraries"
-)
-
-# Create a variable for the static dependencies
-set (
-	_STATIC_DEPENDENCIES 
-	"TKTopAlgo.lib"
-	"TKernel.lib"
-	"TKPrim.lib"
-)
+# Static dependencies
+#set (
+#	_STATIC_DEPENDENCIES 
+#	"TKTopAlgo.lib"
+#	"TKernel.lib"
+#	"TKPrim.lib"
+#)
 
 # Create the config header file in the binary tree
 configure_file (
@@ -107,10 +101,10 @@ add_library (
 #)
 
 # Link the libraries
-target_link_libraries(
-	GeometryLibrary_OCCT
-	${_STATIC_DEPENDENCIES}
-)
+#target_link_libraries(
+#	GeometryLibrary_OCCT
+#	${_STATIC_DEPENDENCIES}
+#)
 
 # Set the output directories (DEBUG and RELEASE)
 set_target_properties(

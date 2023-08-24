@@ -110,16 +110,16 @@ namespace GeometryNamespace {
 		Standard_EXPORT Point2D(const arrayS2& theLocalCoords);
 		Standard_EXPORT Point2D(const arrayS3& theLocalCoords);
 		Standard_EXPORT Point2D(const vectorInput1D& theLocalCoords);
-		Standard_EXPORT Point2D(ARGCOPY(CoordSystem) theReferenceCoordSystem) throw (NullptrException);
+		Standard_EXPORT Point2D(ARGCOPY(CoordSystem) theReferenceCoordSystem);
 		Standard_EXPORT Point2D(
 			ARGCOPY(CoordSystem) theReferenceCoordSystem,
-			const arrayS2& theLocalCoords) throw (NullptrException);
+			const arrayS2& theLocalCoords);
 		Standard_EXPORT Point2D(
 			ARGCOPY(CoordSystem) theReferenceCoordSystem,
-			const arrayS3& theLocalCoords) throw (NullptrException);
+			const arrayS3& theLocalCoords);
 		Standard_EXPORT Point2D(
 			ARGCOPY(CoordSystem) theReferenceCoordSystem,
-			const vectorInput1D& theLocalCoords) throw (NullptrException);
+			const vectorInput1D& theLocalCoords);
 
 	public:
 		DEFINE_STANDARD_RTTIEXT(Point2D, PointBase)

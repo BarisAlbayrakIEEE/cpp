@@ -25,7 +25,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	Axis::Axis(
 		ARGCOPY(PointBase) thePassingPoint,
-		ARGCOPY(VectorBase) theDirectionVector) throw(NullptrException)
+		ARGCOPY(VectorBase) theDirectionVector)
 		:
 		GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
 	{
@@ -50,7 +50,7 @@ namespace GeometryNamespace {
 	/// <exception> CoordSystemMismatchException </exception>
 	Axis::Axis(
 		ARGCOPY(PointBase) thePoint0,
-		ARGCOPY(PointBase) thePoint1) throw(NullptrException)
+		ARGCOPY(PointBase) thePoint1)
 		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
 	{
 		if (thePoint0.IsNull())
@@ -86,7 +86,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	Axis::Axis(
 		ARGCOPY(Point2D) thePassingPoint,
-		const double& theAngle) throw(NullptrException)
+		const double& theAngle)
 		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
 	{
 		if (thePassingPoint.IsNull())
@@ -111,7 +111,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	Axis::Axis(
 		ARGCOPY(PointBase) thePassingPoint,
-		const arrayS3& theAngles) throw(NullptrException)
+		const arrayS3& theAngles)
 		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
 	{
 		if (thePassingPoint.IsNull())
@@ -134,7 +134,7 @@ namespace GeometryNamespace {
 	/// Ctor using the Equation Coefficients
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	Axis::Axis(const arrayS32& theEC) throw(ZeroVectorException)
+	Axis::Axis(const arrayS32& theEC)
 		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
 	{
 		try
@@ -151,7 +151,7 @@ namespace GeometryNamespace {
 	/// Ctor using the Equation Coefficients
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	Axis::Axis(vectorInput2D theEC) throw(ZeroVectorException)
+	Axis::Axis(vectorInput2D theEC)
 		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
 	{
 		try
@@ -371,7 +371,7 @@ namespace GeometryNamespace {
 	/// Inspect - Equation Coefficients (EC)
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	void Axis::inspectEC(const arrayS32& theEC) throw(ZeroVectorException)
+	void Axis::inspectEC(const arrayS32& theEC)
 	{
 		if (
 			GeometryMath::equals(theEC[0][1], 0., c_toleranceGeneral) &&
@@ -386,7 +386,7 @@ namespace GeometryNamespace {
 	/// Inspect - Equation Coefficients (EC)
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	void Axis::inspectEC(const vectorInput2D& theEC) throw(ZeroVectorException)
+	void Axis::inspectEC(const vectorInput2D& theEC)
 	{
 		inspectVectorInputS32(theEC);
 		if (
@@ -431,7 +431,7 @@ namespace GeometryNamespace {
 	/// Requires non-null value for the passing point and the direction vector members
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	void Axis::updateEC() throw(NullptrException)
+	void Axis::updateEC()
 	{
 		if (c_passingPoint.IsNull() || c_directionVector.IsNull())
 		{
@@ -513,7 +513,7 @@ namespace GeometryNamespace {
 	/// Location vector is the vector from the global CS origin to the point
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	OUTVAL(Vector3D) Axis::getPassingPointAsVector() const throw(ZeroVectorException)
+	OUTVAL(Vector3D) Axis::getPassingPointAsVector() const
 	{
 		try
 		{
@@ -533,7 +533,7 @@ namespace GeometryNamespace {
 	///		Location vector is the vector from the global CS origin to the point
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	OUTVAL(Vector3D) Axis::getPointAsVector(const double& theFactor) const throw(ZeroVectorException)
+	OUTVAL(Vector3D) Axis::getPointAsVector(const double& theFactor) const
 	{
 		Handle(PointBase) point = createPoint(theFactor);
 		try
@@ -568,7 +568,7 @@ namespace GeometryNamespace {
 	/// Protected method used in this class and child classes only.
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	void Axis::setMembers(const arrayS32& theEC) throw(ZeroVectorException)
+	void Axis::setMembers(const arrayS32& theEC)
 	{
 		setEC(theEC);
 	}
@@ -578,7 +578,7 @@ namespace GeometryNamespace {
 	/// Protected method used in this class and child classes only.
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	void Axis::setMembers(const vectorInput2D& theEC) throw(ZeroVectorException)
+	void Axis::setMembers(const vectorInput2D& theEC)
 	{
 		setEC(theEC);
 	}
@@ -590,7 +590,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	void Axis::setMembers(
 		ARGCOPY(PointBase) thePassingPoint,
-		ARGCOPY(VectorBase) theDirectionVector) throw(NullptrException)
+		ARGCOPY(VectorBase) theDirectionVector)
 	{
 		if (thePassingPoint.IsNull())
 		{
@@ -610,7 +610,7 @@ namespace GeometryNamespace {
 	/// Setter - Passing point
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	void Axis::setPassingPoint(ARGCOPY(PointBase) thePassingPoint) throw(NullptrException)
+	void Axis::setPassingPoint(ARGCOPY(PointBase) thePassingPoint)
 	{
 		if (thePassingPoint.IsNull())
 		{
@@ -625,7 +625,7 @@ namespace GeometryNamespace {
 	/// Setter - Direction vector
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	void Axis::setDirectionVector(ARGCOPY(VectorBase) theDirectionVector) throw(NullptrException)
+	void Axis::setDirectionVector(ARGCOPY(VectorBase) theDirectionVector)
 	{
 		if (theDirectionVector.IsNull())
 		{
@@ -640,7 +640,7 @@ namespace GeometryNamespace {
 	/// Setter - Equation Coefficients (EC)
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	void Axis::setEC(const arrayS32& theEC) throw(ZeroVectorException)
+	void Axis::setEC(const arrayS32& theEC)
 	{
 		try
 		{
@@ -658,7 +658,7 @@ namespace GeometryNamespace {
 	/// Setter - Equation Coefficients (EC)
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	void Axis::setEC(const vectorInput2D& theEC) throw(ZeroVectorException)
+	void Axis::setEC(const vectorInput2D& theEC)
 	{
 		try
 		{
@@ -675,7 +675,7 @@ namespace GeometryNamespace {
 	/// Shortcut to the corresponding method of VectorBase
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Axis::isParallel(ARGCOPY(Axis) theAxis) const throw(NullptrException)
+	bool Axis::isParallel(ARGCOPY(Axis) theAxis) const
 	{
 		if (theAxis.IsNull())
 		{
@@ -690,7 +690,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	bool Axis::isParallel(
 		ARGCOPY(Axis) theAxis,
-		const double& theTolerance) const throw(NullptrException)
+		const double& theTolerance) const
 	{
 		if (theAxis.IsNull())
 		{
@@ -703,7 +703,7 @@ namespace GeometryNamespace {
 	/// Shortcut to the corresponding melhod of VectorBase
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Axis::isInTheSameDirection(ARGCOPY(Axis) theAxis) const throw(NullptrException)
+	bool Axis::isInTheSameDirection(ARGCOPY(Axis) theAxis) const
 	{
 		if (theAxis.IsNull())
 		{
@@ -718,7 +718,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	bool Axis::isInTheSameDirection(
 		ARGCOPY(Axis) theAxis,
-		const double& theTolerance) const throw(NullptrException)
+		const double& theTolerance) const
 	{
 		if (theAxis.IsNull())
 		{
@@ -731,7 +731,7 @@ namespace GeometryNamespace {
 	/// Shortcut to the corresponding method of VectorBase
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Axis::isNormal(ARGCOPY(Axis) theAxis) const throw(NullptrException)
+	bool Axis::isNormal(ARGCOPY(Axis) theAxis) const
 	{
 		if (theAxis.IsNull())
 		{
@@ -746,7 +746,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	bool Axis::isNormal(
 		ARGCOPY(Axis) theAxis,
-		const double& theTolerance) const throw(NullptrException)
+		const double& theTolerance) const
 	{
 		if (theAxis.IsNull())
 		{
@@ -759,7 +759,7 @@ namespace GeometryNamespace {
 	/// Returns if the lines are skew
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Axis::isSkew(ARGCOPY(Axis) theAxis) throw(NullptrException)
+	bool Axis::isSkew(ARGCOPY(Axis) theAxis)
 	{
 		if (theAxis.IsNull())
 		{
@@ -774,7 +774,7 @@ namespace GeometryNamespace {
 	/// Returns if the lines are skew
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Axis::isSkew(ARGCOPY(Line) theLine) throw(NullptrException)
+	bool Axis::isSkew(ARGCOPY(Line) theLine)
 	{
 		if (theLine.IsNull())
 		{
@@ -794,7 +794,7 @@ namespace GeometryNamespace {
 	/// Returns if the input is included
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Axis::includes(ARGCOPY(PointBase) thePoint) const throw(NullptrException)
+	bool Axis::includes(ARGCOPY(PointBase) thePoint) const
 	{
 		if (thePoint.IsNull())
 		{
@@ -823,7 +823,7 @@ namespace GeometryNamespace {
 	/// Returns if the axis intersects with the input axis
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Axis::intersects(ARGCOPY(Axis) theAxis) throw(NullptrException)
+	bool Axis::intersects(ARGCOPY(Axis) theAxis)
 	{
 		if (theAxis.IsNull())
 		{
@@ -838,7 +838,7 @@ namespace GeometryNamespace {
 	/// Returns if the line intersects with the input line
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Axis::intersects(ARGCOPY(Line) theLine) throw(NullptrException)
+	bool Axis::intersects(ARGCOPY(Line) theLine)
 	{
 		if (theLine.IsNull())
 		{
@@ -855,7 +855,7 @@ namespace GeometryNamespace {
 	/// Returns if the line coincides with the input line
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Axis::coincides(ARGCOPY(Axis) theAxis) throw(NullptrException)
+	bool Axis::coincides(ARGCOPY(Axis) theAxis)
 	{
 		if (theAxis.IsNull())
 		{
@@ -870,7 +870,7 @@ namespace GeometryNamespace {
 	/// Returns if the line coincides with the input line
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool Axis::coincides(ARGCOPY(Line) theLine) throw(NullptrException)
+	bool Axis::coincides(ARGCOPY(Line) theLine)
 	{
 		if (theLine.IsNull())
 		{
@@ -890,7 +890,6 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	std::pair<INTERSECTION1, Handle(PointBase)> Axis::intersect(ARGCOPY(Axis) theAxis)
-		throw(NullptrException)
 	{
 		if (theAxis.IsNull())
 		{
@@ -926,7 +925,6 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	std::pair<INTERSECTION1, Handle(PointBase)> Axis::intersect(ARGCOPY(Line) theLine)
-		throw(NullptrException)
 	{
 		if (theLine.IsNull())
 		{
@@ -950,7 +948,7 @@ namespace GeometryNamespace {
 	/// Projects the input point onto the line
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	OUTVAL(PointBase) Axis::project(ARGCOPY(PointBase) thePoint) const throw(NullptrException)
+	OUTVAL(PointBase) Axis::project(ARGCOPY(PointBase) thePoint) const
 	{
 		if (thePoint.IsNull())
 		{
@@ -974,7 +972,7 @@ namespace GeometryNamespace {
 	/// Calculates distance to an axis
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	double Axis::calculateDistance(ARGCOPY(Axis) theAxis) throw(NullptrException)
+	double Axis::calculateDistance(ARGCOPY(Axis) theAxis)
 	{
 		if (theAxis.IsNull())
 		{
@@ -1012,7 +1010,7 @@ namespace GeometryNamespace {
 	/// Calculates distance to a point.
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	double Axis::calculateDistance(ARGCOPY(PointBase) thePoint) const throw(NullptrException)
+	double Axis::calculateDistance(ARGCOPY(PointBase) thePoint) const
 	{
 		if (thePoint.IsNull())
 		{
@@ -1042,7 +1040,7 @@ namespace GeometryNamespace {
 	///				to the line end points.
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	double Axis::calculateDistance(ARGCOPY(Line) theLine) throw(NullptrException)
+	double Axis::calculateDistance(ARGCOPY(Line) theLine)
 	{
 		if (theLine.IsNull())
 		{
@@ -1092,7 +1090,7 @@ namespace GeometryNamespace {
 	/// Returns one of the infiniteLy many point couples in case of parallel lines
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	std::vector<Handle(PointBase)> Axis::findClosestPoints(ARGCOPY(Axis) theAxis) throw(NullptrException)
+	std::vector<Handle(PointBase)> Axis::findClosestPoints(ARGCOPY(Axis) theAxis)
 	{
 		if (theAxis.IsNull())
 		{
@@ -1162,7 +1160,7 @@ namespace GeometryNamespace {
 	double Axis::calculateCoord(
 		int theIndexCoord0,
 		int theIndexCoord1,
-		const double& theCoord) const throw(AssymptoticLineException)
+		const double& theCoord) const
 	{
 		double p0{ c_EC[theIndexCoord0][0] };
 		double p1{ c_EC[theIndexCoord1][0] };
@@ -1177,7 +1175,7 @@ namespace GeometryNamespace {
 	/// Throws exception if the line is parallel to the requested axis or constant in the input axis
 	/// </summary>
 	/// <exception> AssymptoticLineException </exception>
-	double Axis::calculateCoordX_fromCoordY(const double& theCoordY) const throw(AssymptoticLineException)
+	double Axis::calculateCoordX_fromCoordY(const double& theCoordY) const
 	{
 		Handle(VectorBase) unitVector{ VectorBase::createUnitVectorX(DIMENSIONS::D3) };
 		if (c_directionVector->isParallel(unitVector))
@@ -1193,9 +1191,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> DimensionalityException </exception>
 	/// <exception> AssymptoticLineException </exception>
-	double Axis::calculateCoordX_fromCoordZ(const double& theCoordZ) const throw(
-		DimensionalityException,
-		AssymptoticLineException)
+	double Axis::calculateCoordX_fromCoordZ(const double& theCoordZ) const
 	{
 		if (c_directionVector->is2D())
 		{
@@ -1215,7 +1211,7 @@ namespace GeometryNamespace {
 	/// Throws exception if the line is parallel to the requested axis or constant in the input axis
 	/// </summary>
 	/// <exception> AssymptoticLineException </exception>
-	double Axis::calculateCoordY_fromCoordX(const double& theCoordX) const throw(AssymptoticLineException)
+	double Axis::calculateCoordY_fromCoordX(const double& theCoordX) const
 	{
 		Handle(VectorBase) unitVector{ VectorBase::createUnitVectorY(DIMENSIONS::D3) };
 		if (c_directionVector->isParallel(unitVector))
@@ -1231,9 +1227,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> DimensionalityException </exception>
 	/// <exception> AssymptoticLineException </exception>
-	double Axis::calculateCoordY_fromCoordZ(const double& theCoordZ) const throw(
-		DimensionalityException,
-		AssymptoticLineException)
+	double Axis::calculateCoordY_fromCoordZ(const double& theCoordZ) const
 	{
 		if (c_directionVector->is2D())
 		{
@@ -1254,9 +1248,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> DimensionalityException </exception>
 	/// <exception> AssymptoticLineException </exception>
-	double Axis::calculateCoordZ_fromCoordX(const double& theCoordX) const throw(
-		DimensionalityException,
-		AssymptoticLineException)
+	double Axis::calculateCoordZ_fromCoordX(const double& theCoordX) const
 	{
 		if (c_directionVector->is2D()) throw DimensionalityException();
 
@@ -1274,9 +1266,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> DimensionalityException </exception>
 	/// <exception> AssymptoticLineException </exception>
-	double Axis::calculateCoordZ_fromCoordY(const double& theCoordY) const throw(
-		DimensionalityException,
-		AssymptoticLineException)
+	double Axis::calculateCoordZ_fromCoordY(const double& theCoordY) const
 	{
 		if (c_directionVector->is2D()) throw DimensionalityException();
 
@@ -1306,7 +1296,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	std::pair<INTERSECTION1, Handle(PointBase)> Axis::intersectBase(
 		ARGCOPY(Axis) theAxis,
-		const arrayS3& theCrossProductComponents) const throw(NullptrException)
+		const arrayS3& theCrossProductComponents) const
 	{
 		if (theAxis.IsNull())
 		{

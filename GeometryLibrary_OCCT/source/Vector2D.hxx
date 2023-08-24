@@ -109,26 +109,26 @@ namespace GeometryNamespace {
 		Standard_EXPORT Vector2D& operator=(Vector2D&& rhs) noexcept;
 		Standard_EXPORT ~Vector2D();
 
-		Standard_EXPORT Vector2D(const arrayS2& theLocalComponents) throw (ZeroVectorException);
-		Standard_EXPORT Vector2D(const arrayS3& theLocalComponents) throw (ZeroVectorException);
-		Standard_EXPORT Vector2D(const vectorInput1D& theLocalComponents) throw (ZeroVectorException);
+		Standard_EXPORT Vector2D(const arrayS2& theLocalComponents);
+		Standard_EXPORT Vector2D(const arrayS3& theLocalComponents);
+		Standard_EXPORT Vector2D(const vectorInput1D& theLocalComponents);
 		Standard_EXPORT Vector2D(const double& theAngle);
-		Standard_EXPORT Vector2D(ARGCOPY(Point2D) thePoint) throw (NullptrException, ZeroVectorException);
+		Standard_EXPORT Vector2D(ARGCOPY(Point2D) thePoint);
 		Standard_EXPORT Vector2D(
 			ARGCOPY(Point2D) thePoint0,
-			ARGCOPY(Point2D) thePoint1) throw (NullptrException, CoordSystemMismatchException, ZeroVectorException);
+			ARGCOPY(Point2D) thePoint1);
 		Standard_EXPORT Vector2D(
 			ARGCOPY(CoordSystem) theReferenceCoordSystem,
-			const arrayS2& theLocalComponents) throw (NullptrException, ZeroVectorException);
+			const arrayS2& theLocalComponents);
 		Standard_EXPORT Vector2D(
 			ARGCOPY(CoordSystem) theReferenceCoordSystem,
-			const arrayS3& theLocalComponents) throw (NullptrException, ZeroVectorException);
+			const arrayS3& theLocalComponents);
 		Standard_EXPORT Vector2D(
 			ARGCOPY(CoordSystem) theReferenceCoordSystem,
-			const vectorInput1D& theLocalComponents) throw (NullptrException, ZeroVectorException);
+			const vectorInput1D& theLocalComponents);
 		Standard_EXPORT Vector2D(
 			ARGCOPY(CoordSystem) theReferenceCoordSystem,
-			const double& theAngle) throw (NullptrException);
+			const double& theAngle);
 
 	public:
 		DEFINE_STANDARD_RTTIEXT(Vector2D, VectorBase)

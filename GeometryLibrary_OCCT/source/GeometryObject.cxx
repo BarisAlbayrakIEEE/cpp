@@ -104,7 +104,7 @@ namespace GeometryNamespace {
 	/// <sumrnary>
 	/// Inspects the tolerance input
 	/// </summary>
-	void GeometryObject::inspectTolerance(const double& theTolerance) const throw (ZeroToleranceException)
+	void GeometryObject::inspectTolerance(const double& theTolerance) const
 	{
 		if (theTolerance <= 0.) throw ZeroToleranceException();
 	}
@@ -114,7 +114,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	bool GeometryObject::inspectReferenceCoordSystems(
 		ARGCOPY(ReferenceObject) theReference0,
-		ARGCOPY(ReferenceObject) theReference1) throw (NullptrException)
+		ARGCOPY(ReferenceObject) theReference1)
 	{
 		if (theReference0.IsNull() || theReference1.IsNull()) throw NullptrException();
 		return theReference0->getReferenceCoordSystem() == theReference1->getReferenceCoordSystem();
@@ -141,7 +141,7 @@ namespace GeometryNamespace {
 	///		2 (e.g. local coords of a Point2D object)
 	///		3 (e.g. local coords of a Point2D or Point3D objects)
 	/// </summary>
-	void GeometryObject::inspectVectorInput(const vectorInput1D& theVector) const throw (ArraySizeException)
+	void GeometryObject::inspectVectorInput(const vectorInput1D& theVector) const
 	{
 		if (theVector.size() != DIMENSIONS::D2 && theVector.size() != DIMENSIONS::D3)
 		{
@@ -153,7 +153,7 @@ namespace GeometryNamespace {
 	/// Inspects the two dimensional (i.e. nested) input std::vector
 	/// (e.g. equation coefficients (EC) of a line)
 	/// </summary>
-	void GeometryObject::inspectVectorInputS32(const vectorInput2D& theVector) const throw (ArraySizeException)
+	void GeometryObject::inspectVectorInputS32(const vectorInput2D& theVector) const
 	{
 		if (theVector.size() != DIMENSIONS::D2 && theVector.size() != DIMENSIONS::D3)
 		{

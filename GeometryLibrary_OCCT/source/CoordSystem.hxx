@@ -138,18 +138,11 @@ namespace GeometryNamespace {
 		Standard_EXPORT CoordSystem(
 			ARGCOPY(Point3D) theOriginPoint,
 			ARGCOPY(Point3D) thePointOnAxisX,
-			ARGCOPY(Point3D) thePointOnAxisY) throw (
-				NullptrException,
-				GeometryException,
-				ColinearPointsException,
-				UncaughtException);
+			ARGCOPY(Point3D) thePointOnAxisY);
 		Standard_EXPORT CoordSystem(
 			ARGCOPY(Point3D) theOriginPoint,
 			ARGCOPY(Vector3D) theAxisVectorX,
-			ARGCOPY(Vector3D) theAxisVectorY) throw (
-				NullptrException,
-				ColinearPointsException,
-				UncaughtException);
+			ARGCOPY(Vector3D) theAxisVectorY);
 
 	protected:
 		Standard_EXPORT CoordSystem(
@@ -189,12 +182,12 @@ namespace GeometryNamespace {
 		Standard_EXPORT void setOriginCoords(const arrayS3& theOriginCoords);
 
 		Standard_EXPORT bool isGlobal() const;
-		Standard_EXPORT bool isParallel(ARGCOPY(CoordSystem) theCoordSystem) const throw (NullptrException);
-		Standard_EXPORT bool isIdentical(ARGCOPY(CoordSystem) theCoordSystem) const throw (NullptrException);
+		Standard_EXPORT bool isParallel(ARGCOPY(CoordSystem) theCoordSystem) const;
+		Standard_EXPORT bool isIdentical(ARGCOPY(CoordSystem) theCoordSystem) const;
 
 		Standard_EXPORT OUTVAL(PointBase) createPoint(int theDimenslonCount, const arrayS3& theCoords);
-		Standard_EXPORT arrayS3 measurePointCoords(ARGCOPY(PointBase) thePoint) const throw (NullptrException);
-		Standard_EXPORT arrayS3 measureVectorComponents(ARGCOPY(VectorBase) theVector) const throw (NullptrException);
+		Standard_EXPORT arrayS3 measurePointCoords(ARGCOPY(PointBase) thePoint) const;
+		Standard_EXPORT arrayS3 measureVectorComponents(ARGCOPY(VectorBase) theVector) const;
 		Standard_EXPORT OUTVAL(Point3D) rotatePointAboutAxisX(ARGCOPY(PointBase) thePoint, double theAngle);
 		Standard_EXPORT OUTVAL(Point3D) rotatePointAboutAxisY(ARGCOPY(PointBase) thePoint, double theAngle);
 		Standard_EXPORT OUTVAL(Point3D) rotatePointAboutAxisZ(ARGCOPY(PointBase) thePoint, double theAngle);
@@ -203,18 +196,11 @@ namespace GeometryNamespace {
 		Standard_EXPORT void setMembers(
 			ARGCOPY(Point3D) theOriginPoint,
 			ARGCOPY(Point3D) thePointX,
-			ARGCOPY(Point3D) thePointY) throw (
-				NullptrException,
-				GeometryException,
-				ColinearPointsException,
-				UncaughtException);
+			ARGCOPY(Point3D) thePointY);
 		Standard_EXPORT void setMembers(
 			ARGCOPY(Point3D) theOriginPoint,
 			ARGCOPY(Vector3D) theAxisVectorX,
-			ARGCOPY(Vector3D) theAxisVectorY) throw (
-				NullptrException,
-				ColinearPointsException,
-				UncaughtException);
+			ARGCOPY(Vector3D) theAxisVectorY);
 		Standard_EXPORT void setMembers(
 			const arrayS3& theOriginCoords,
 			const arrayS3& theAxisVectorX,
@@ -225,7 +211,7 @@ namespace GeometryNamespace {
 			const double& theAngle,
 			int theAxisO,
 			int theAxis1,
-			int theAxis2) throw (NullptrException);
+			int theAxis2);
 	};
 }
 

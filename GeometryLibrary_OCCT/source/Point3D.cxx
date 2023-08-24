@@ -47,7 +47,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	Point3D::Point3D(ARGCOPY(CoordSystem) theReferenceCoordSystem) throw (NullptrException)
+	Point3D::Point3D(ARGCOPY(CoordSystem) theReferenceCoordSystem)
 		: PointBase(DIMENSIONS::D3, theReferenceCoordSystem, arrayS3{}) { }
 
 	/// <summary>
@@ -57,7 +57,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	Point3D::Point3D(
 		ARGCOPY(CoordSystem) theReferenceCoordSystem,
-		const arrayS3& theLocalCoords) throw (NullptrException)
+		const arrayS3& theLocalCoords)
 		: PointBase(DIMENSIONS::D3, theReferenceCoordSystem, theLocalCoords) { }
 
 	/// <summary>
@@ -67,7 +67,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	Point3D::Point3D(
 		ARGCOPY(CoordSystem) theReferenceCoordSystem,
-		const vectorInput1D& theLocalCoords) throw (NullptrException)
+		const vectorInput1D& theLocalCoords)
 		: PointBase(DIMENSIONS::D3, theReferenceCoordSystem, theLocalCoords) { }
 
 	/// <summary>
@@ -76,7 +76,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	Point3D::Point3D(ARGCOPY(Point2D) thePoint) throw (NullptrException)
+	Point3D::Point3D(ARGCOPY(Point2D) thePoint)
 		: PointBase(DIMENSIONS::D3)
 	{
 		if (thePoint.IsNull())

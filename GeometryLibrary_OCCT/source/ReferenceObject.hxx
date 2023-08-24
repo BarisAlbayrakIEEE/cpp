@@ -189,11 +189,11 @@ namespace GeometryNamespace {
 		// Methods
 	public:
 		Standard_EXPORT OUTVAL(CoordSystem) getReferenceCoordSystem() const;
-		Standard_EXPORT OUTVAL(Point3D) getPointWithMyCoordSystem(ARGCOPY(PointBase) thePoint) const throw (NullptrException);
-		Standard_EXPORT OUTVAL(Vector3D) getVectorWithMyCoordSystem(ARGCOPY(VectorBase) theVector) const throw (NullptrException);
+		Standard_EXPORT OUTVAL(Point3D) getPointWithMyCoordSystem(ARGCOPY(PointBase) thePoint) const;
+		Standard_EXPORT OUTVAL(Vector3D) getVectorWithMyCoordSystem(ARGCOPY(VectorBase) theVector) const;
 
 	protected:
-		Standard_EXPORT void inspectDimensionCount(const int theDimensionCount) const throw (DimensionalityException);
+		Standard_EXPORT void inspectDimensionCount(const int theDimensionCount) const;
 		Standard_EXPORT int getDimensionCount() const;
 		Standard_EXPORT void setDimensionCount(const int theDimensionCount);
 		Standard_EXPORT void setMembers(const int theDimensionCount, ARGCOPY(CoordSystem) theReferenceCoordSystem);

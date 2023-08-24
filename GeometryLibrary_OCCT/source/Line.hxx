@@ -124,7 +124,7 @@ namespace GeometryNamespace {
 		// ctor / dtor / operators
 		Standard_EXPORT Line(
 			ARGCOPY(PointBase) theEndPoint0,
-			ARGCOPY(PointBase) theEndPoint1) throw(NullptrException, ZeroDimensionException);
+			ARGCOPY(PointBase) theEndPoint1);
 
 		Standard_EXPORT Line(const Line& rhs);
 		Standard_EXPORT Line& operator=(const Line& rhs);
@@ -144,21 +144,19 @@ namespace GeometryNamespace {
 
 		// Methods:
 	public:
-		Standard_EXPORT bool includes(ARGCOPY(PointBase) thePoint) throw(NullptrException);
-		Standard_EXPORT bool intersects(ARGCOPY(Axis) theAxis) throw(NullptrException);
-		Standard_EXPORT bool intersects(ARGCOPY(Line) theLine) throw(NullptrException);
-		Standard_EXPORT bool coincides(ARGCOPY(Axis) theAxis) throw(NullptrException);
-		Standard_EXPORT bool coincides(ARGCOPY(Line) theLine) throw(NullptrException);
-		Standard_EXPORT bool isSkew(ARGCOPY(Axis) theAxis) throw(NullptrException);
-		Standard_EXPORT bool isSkew(ARGCOPY(Line) theLine) throw(NullptrException);
-		Standard_EXPORT std::pair<INTERSECTION1, Handle(PointBase)> intersect(ARGCOPY(Axis) theAxis)
-			throw(NullptrException);
-		Standard_EXPORT std::pair<INTERSECTION1, Handle(PointBase)> intersect(ARGCOPY(Line) theLine)
-			throw(NullptrException);
-		Standard_EXPORT OUTVAL(PointBase) project(ARGCOPY(PointBase) thePoint) throw(NullptrException);
-		Standard_EXPORT double calculateDistance(ARGCOPY(PointBase) thePoint) throw(NullptrException);
-		Standard_EXPORT double calculateDistance(ARGCOPY(Axis) theAxis) throw(NullptrException);
-		Standard_EXPORT double calculateDistance(ARGCOPY(Line) theLine) throw(NullptrException);
+		Standard_EXPORT bool includes(ARGCOPY(PointBase) thePoint);
+		Standard_EXPORT bool intersects(ARGCOPY(Axis) theAxis);
+		Standard_EXPORT bool intersects(ARGCOPY(Line) theLine);
+		Standard_EXPORT bool coincides(ARGCOPY(Axis) theAxis);
+		Standard_EXPORT bool coincides(ARGCOPY(Line) theLine);
+		Standard_EXPORT bool isSkew(ARGCOPY(Axis) theAxis);
+		Standard_EXPORT bool isSkew(ARGCOPY(Line) theLine);
+		Standard_EXPORT std::pair<INTERSECTION1, Handle(PointBase)> intersect(ARGCOPY(Axis) theAxis);
+		Standard_EXPORT std::pair<INTERSECTION1, Handle(PointBase)> intersect(ARGCOPY(Line) theLine);
+		Standard_EXPORT OUTVAL(PointBase) project(ARGCOPY(PointBase) thePoint);
+		Standard_EXPORT double calculateDistance(ARGCOPY(PointBase) thePoint);
+		Standard_EXPORT double calculateDistance(ARGCOPY(Axis) theAxis);
+		Standard_EXPORT double calculateDistance(ARGCOPY(Line) theLine);
 
 		Standard_EXPORT OUTVAL(Axis) getAxis() const;
 		Standard_EXPORT OUTVAL(VectorBase) getDirectionVector() const;
@@ -167,15 +165,9 @@ namespace GeometryNamespace {
 		Standard_EXPORT OUTVAL(PointBase) getEndPoint1() const;
 		Standard_EXPORT double getLength() const;
 		Standard_EXPORT OUTVAL(CoordSystem) getCommonReferenceCoordSystem() const;
-		Standard_EXPORT void setAxis(ARGCOPY(Axis) theAxis) throw(NullptrException);
-		Standard_EXPORT void setEndPoint0(ARGCOPY(PointBase) theEndPoint0) throw(
-			NullptrException,
-			CoordSystemMismatchException,
-			ZeroDimensionException);
-		Standard_EXPORT void setEndPoint1(ARGCOPY(PointBase) theEndPoint1) throw(
-			NullptrException,
-			CoordSystemMismatchException,
-			ZeroDimensionException);
+		Standard_EXPORT void setAxis(ARGCOPY(Axis) theAxis);
+		Standard_EXPORT void setEndPoint0(ARGCOPY(PointBase) theEndPoint0);
+		Standard_EXPORT void setEndPoint1(ARGCOPY(PointBase) theEndPoint1);
 		Standard_EXPORT OUTVAL(PointBase) createMidpoint() const;
 
 	private:

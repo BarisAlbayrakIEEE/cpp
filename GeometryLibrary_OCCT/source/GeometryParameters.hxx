@@ -21,7 +21,7 @@
 
 // Constants
 namespace GeometryNamespace {
-	const enum OBJECT_TYPES
+	enum OBJECT_TYPES
 	{
 		CoordSystem_,
 		Point2D_,
@@ -33,26 +33,26 @@ namespace GeometryNamespace {
 		Circle_,
 		Plane_
 	};
-	const enum DIMENSIONS
+	enum DIMENSIONS
 	{
 		D2 = 2,
 		D3 = 3
 	};
-	const enum INTERSECTION1
+	enum INTERSECTION1
 	{
 		Skew1 = -1,
 		Intersects1 = 0,
 		Coincides1 = 1
 	};
-	const enum INTERSECTION2
+	enum INTERSECTION2
 	{
 		Skew2 = -1,
 		Intersects2 = 0,
 		Includes2 = 1
 	};
-	const double TOLERANCE_GENERAL = 0.001;
-	const double TOLERANCE_SENSITIVE = 0.000001;
-	const double INFINITE_VALUE = 1.E20;
+	double TOLERANCE_GENERAL = 0.001;
+	double TOLERANCE_SENSITIVE = 0.000001;
+	double INFINITE_VALUE = 1.E20;
 }
 
 #endif

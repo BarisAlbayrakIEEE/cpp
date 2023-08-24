@@ -120,21 +120,21 @@ namespace GeometryNamespace{
 		Standard_EXPORT VectorBase(const int theDimensionCount);
 		Standard_EXPORT VectorBase(
 			const int theDimensionCount,
-			ARGCOPY(CoordSystem) theReferenceCoordSystem) throw (NullptrException);
+			ARGCOPY(CoordSystem) theReferenceCoordSystem);
 
 	public:
 		Standard_EXPORT VectorBase(
 			const int theDimensionCount,
 			ARGCOPY(CoordSystem) theReferenceCoordSystem,
-			const arrayS3& theLocalComponents) throw (NullptrException);
+			const arrayS3& theLocalComponents);
 		Standard_EXPORT VectorBase(
 			const int theDimensionCount,
 			ARGCOPY(CoordSystem) theReferenceCoordSystem,
-			const vectorInput1D& theLocalComponents) throw (NullptrException);
+			const vectorInput1D& theLocalComponents);
 		Standard_EXPORT VectorBase(
 			const int theDimensionCount,
 			ARGCOPY(PointBase) thePoint0,
-			ARGCOPY(PointBase) thePoint1) throw (NullptrException, CoordSystemMismatchException);
+			ARGCOPY(PointBase) thePoint1) ;
 
 		Standard_EXPORT VectorBase(const VectorBase& rhs) = delete;
 		Standard_EXPORT VectorBase& operator=(const VectorBase& rhs) = delete;
@@ -164,7 +164,7 @@ namespace GeometryNamespace{
 		Standard_EXPORT double getGlobalComponentY() const;
 		Standard_EXPORT double getGlobalComponentZ() const;
 		Standard_EXPORT arrayS3 getGlobalComponents() const;
-		Standard_EXPORT arrayS3 getSlopes() const throw (ZeroVectorException);
+		Standard_EXPORT arrayS3 getSlopes() const;
 		Standard_EXPORT arrayS3 getAngles() const;
 		Standard_EXPORT double getMagnitude() const;
 		Standard_EXPORT arrayS3 getUnitVectorComponents() const;
@@ -174,19 +174,19 @@ namespace GeometryNamespace{
 		Standard_EXPORT void setLocalComponentZ(const double& theLocalComponentZ);
 		Standard_EXPORT void setLocalComponents(const arrayS3& theLocalComponents);
 		Standard_EXPORT void setLocalComponents(const vectorInput1D& theComponents);
-		Standard_EXPORT bool isParallel(ARGCOPY(VectorBase) theVector) const throw (NullptrException);
-		Standard_EXPORT bool isParallel(ARGCOPY(VectorBase) theVector, const double& theTolerance) const throw (NullptrException);
-		Standard_EXPORT bool isInTheSameDirection(ARGCOPY(VectorBase) theVector) const throw (NullptrException);
-		Standard_EXPORT bool isInTheSameDirection(ARGCOPY(VectorBase) theVector, const double& theTolerance) const throw (NullptrException);
-		Standard_EXPORT bool isNormal(ARGCOPY(VectorBase) theVector) const throw (NullptrException);
-		Standard_EXPORT bool isNormal(ARGCOPY(VectorBase) theVector, const double& theTolerance) const throw (NullptrException);
-		Standard_EXPORT double calculateAngle(ARGCOPY(VectorBase) theVector) const throw (NullptrException);
-		Standard_EXPORT double dotProduct(ARGCOPY(VectorBase) theVector) const throw (NullptrException);
-		Standard_EXPORT OUTVAL(Vector3D) crossProduct(ARGCOPY(VectorBase) theVector) throw (NullptrException, ZeroVectorException);
-		Standard_EXPORT OUTVAL(Point3D) transformPoint(ARGCOPY(PointBase) thePoint, const double& theFactor) const throw (NullptrException);
-		Standard_EXPORT OUTVAL(VectorBase) add(ARGCOPY(VectorBase) theVector) const throw (NullptrException, ZeroVectorException);
-		Standard_EXPORT OUTVAL(VectorBase) subtruct(ARGCOPY(VectorBase) theVector) const throw (NullptrException, ZeroVectorException);
-		Standard_EXPORT OUTVAL(VectorBase) multiply(const double& theFactor) const throw (ZeroVectorException);
+		Standard_EXPORT bool isParallel(ARGCOPY(VectorBase) theVector) const;
+		Standard_EXPORT bool isParallel(ARGCOPY(VectorBase) theVector, const double& theTolerance) const;
+		Standard_EXPORT bool isInTheSameDirection(ARGCOPY(VectorBase) theVector) const;
+		Standard_EXPORT bool isInTheSameDirection(ARGCOPY(VectorBase) theVector, const double& theTolerance) const;
+		Standard_EXPORT bool isNormal(ARGCOPY(VectorBase) theVector) const;
+		Standard_EXPORT bool isNormal(ARGCOPY(VectorBase) theVector, const double& theTolerance) const;
+		Standard_EXPORT double calculateAngle(ARGCOPY(VectorBase) theVector) const;
+		Standard_EXPORT double dotProduct(ARGCOPY(VectorBase) theVector) const;
+		Standard_EXPORT OUTVAL(Vector3D) crossProduct(ARGCOPY(VectorBase) theVector);
+		Standard_EXPORT OUTVAL(Point3D) transformPoint(ARGCOPY(PointBase) thePoint, const double& theFactor) const;
+		Standard_EXPORT OUTVAL(VectorBase) add(ARGCOPY(VectorBase) theVector) const;
+		Standard_EXPORT OUTVAL(VectorBase) subtruct(ARGCOPY(VectorBase) theVector) const;
+		Standard_EXPORT OUTVAL(VectorBase) multiply(const double& theFactor) const;
 
 	public:
 		Standard_EXPORT static OUTVAL(VectorBase) createUnitVectorX(const int theDimensionCount);
@@ -205,7 +205,7 @@ namespace GeometryNamespace{
 			const int theDimensionCount,
 			ARGCOPY(CoordSystem) theCoordSystem,
 			const vectorInput1D& theLocalComponents);
-		Standard_EXPORT void inspectLocalComponents(const arrayS3& theLocalComponents) const throw (ZeroVectorException);
+		Standard_EXPORT void inspectLocalComponents(const arrayS3& theLocalComponents) const;
 		Standard_EXPORT double calculateMagnitude(const arrayS3& theLocalComponents);
 		Standard_EXPORT double calculateSlope(const double& theCoord0, const double& theCoord1) const;
 		Standard_EXPORT double calculateAngle(const double& theCoord0, const double& theCoord1) const;

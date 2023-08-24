@@ -35,7 +35,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	VectorBase::VectorBase(
 		const int theDimensionCount,
-		ARGCOPY(CoordSystem) theReferenceCoordSystem) throw (NullptrException)
+		ARGCOPY(CoordSystem) theReferenceCoordSystem)
 		: ReferenceObject(theDimensionCount, theReferenceCoordSystem)
 	{
 		c_localComponents = arrayS3{};
@@ -49,7 +49,7 @@ namespace GeometryNamespace {
 	VectorBase::VectorBase(
 		const int theDimensionCount,
 		ARGCOPY(CoordSystem) theReferenceCoordSystem,
-		const arrayS3& theLocalComponents) throw (NullptrException)
+		const arrayS3& theLocalComponents)
 		: ReferenceObject(theDimensionCount, theReferenceCoordSystem)
 	{
 		inspectLocalComponents(theLocalComponents);
@@ -64,7 +64,7 @@ namespace GeometryNamespace {
 	VectorBase::VectorBase(
 		const int theDimensionCount,
 		ARGCOPY(CoordSystem) theReferenceCoordSystem,
-		const vectorInput1D& theLocalComponents) throw (NullptrException)
+		const vectorInput1D& theLocalComponents)
 		: ReferenceObject(theDimensionCount, theReferenceCoordSystem)
 	{
 		setLocalComponents(theLocalComponents);
@@ -81,7 +81,7 @@ namespace GeometryNamespace {
 	VectorBase::VectorBase(
 		const int theDimensionCount,
 		ARGCOPY(PointBase) thePoint0,
-		ARGCOPY(PointBase) thePoint1) throw (NullptrException, CoordSystemMismatchException)
+		ARGCOPY(PointBase) thePoint1)
 		: ReferenceObject(theDimensionCount, thePoint0->getReferenceCoordSystem())
 	{
 		if (!inspectReferenceCoordSystems(thePoint0, thePoint1))
@@ -216,7 +216,7 @@ namespace GeometryNamespace {
 	/// Inspect local components
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	void VectorBase::inspectLocalComponents(const arrayS3& theLocalComponents) const throw (ZeroVectorException)
+	void VectorBase::inspectLocalComponents(const arrayS3& theLocalComponents) const
 	{
 		if (GeometryMath::equalsZero(theLocalComponents, TOLERANCE_GENERAL))
 		{
@@ -311,7 +311,7 @@ namespace GeometryNamespace {
 	/// Slope array: Ratio of the components: [y/x, z/y, x/z]
 	/// in 2D: [y/x, 0., INF]
 	/// </summary>
-	arrayS3 VectorBase::getSlopes() const throw (ZeroVectorException)
+	arrayS3 VectorBase::getSlopes() const
 	{
 		// Inspect the local components
 		if (
@@ -491,7 +491,7 @@ namespace GeometryNamespace {
 	/// Use isInTheSameDirection if the same direction is required
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool VectorBase::isParallel(ARGCOPY(VectorBase) theVector) const throw (NullptrException)
+	bool VectorBase::isParallel(ARGCOPY(VectorBase) theVector) const
 	{
 		if (theVector.IsNull())
 		{
@@ -508,7 +508,7 @@ namespace GeometryNamespace {
 	/// Use isInTheSameDirection if the same direction is required
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool VectorBase::isParallel(ARGCOPY(VectorBase) theVector, const double& theTolerance) const throw (NullptrException)
+	bool VectorBase::isParallel(ARGCOPY(VectorBase) theVector, const double& theTolerance) const
 	{
 		if (theVector.IsNull())
 		{
@@ -539,7 +539,7 @@ namespace GeometryNamespace {
 	/// Use isParallel, if the reversed direction is also acceptable
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool VectorBase::isInTheSameDirection(ARGCOPY(VectorBase) theVector) const throw (NullptrException)
+	bool VectorBase::isInTheSameDirection(ARGCOPY(VectorBase) theVector) const
 	{
 		if (theVector.IsNull())
 		{
@@ -558,7 +558,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	bool VectorBase::isInTheSameDirection(
 		ARGCOPY(VectorBase) theVector,
-		const double& theTolerance) const throw (NullptrException)
+		const double& theTolerance) const
 	{
 		if (theVector.IsNull())
 		{
@@ -585,7 +585,7 @@ namespace GeometryNamespace {
 	/// Use isParallel, if reversed direction is alsa acceptable
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool VectorBase::isNormal(ARGCOPY(VectorBase) theVector) const throw (NullptrException)
+	bool VectorBase::isNormal(ARGCOPY(VectorBase) theVector) const
 	{
 		if (theVector.IsNull())
 		{
@@ -600,7 +600,7 @@ namespace GeometryNamespace {
 	/// Hence, a sensitive tolerance shall be preferred
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	bool VectorBase::isNormal(ARGCOPY(VectorBase) theVector, const double& theTolerance) const throw (NullptrException)
+	bool VectorBase::isNormal(ARGCOPY(VectorBase) theVector, const double& theTolerance) const
 	{
 		if (theVector.IsNull())
 		{
@@ -618,7 +618,7 @@ namespace GeometryNamespace {
 	/// which by definition inverse of the cosine of the dot product of the vectors
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	double VectorBase::calculateAngle(ARGCOPY(VectorBase) theVector) const throw (NullptrException)
+	double VectorBase::calculateAngle(ARGCOPY(VectorBase) theVector) const
 	{
 		if (theVector.IsNull())
 		{
@@ -632,7 +632,7 @@ namespace GeometryNamespace {
 	/// Calculates the dot product of the vectors
 	/// </summary>
 	/// <exception> NullptrException </exception>
-	double VectorBase::dotProduct(ARGCOPY(VectorBase) theVector) const throw (NullptrException)
+	double VectorBase::dotProduct(ARGCOPY(VectorBase) theVector) const
 	{
 		if (theVector.IsNull())
 		{
@@ -657,7 +657,6 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	/// <exception> ZeroVectorException </exception>
 	OUTVAL(Vector3D) VectorBase::crossProduct(ARGCOPY(VectorBase) theVector)
-		throw (NullptrException, ZeroVectorException)
 	{
 		if (theVector.IsNull())
 		{
@@ -687,7 +686,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	OUTVAL(Point3D) VectorBase::transformPoint(
 		ARGCOPY(PointBase) thePoint,
-		const double& theFactor) const throw (NullptrException)
+		const double& theFactor) const
 	{
 		if (thePoint.IsNull())
 		{
@@ -707,7 +706,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	/// <exception> ZeroVectorException </exception>
-	OUTVAL(VectorBase) VectorBase::add(ARGCOPY(VectorBase) theVector) const throw (NullptrException, ZeroVectorException)
+	OUTVAL(VectorBase) VectorBase::add(ARGCOPY(VectorBase) theVector) const
 	{
 		if (theVector.IsNull())
 		{
@@ -739,7 +738,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	/// <exception> ZeroVectorException </exception>
-	OUTVAL(VectorBase) VectorBase::subtruct(ARGCOPY(VectorBase) theVector) const throw (NullptrException, ZeroVectorException)
+	OUTVAL(VectorBase) VectorBase::subtruct(ARGCOPY(VectorBase) theVector) const
 	{
 		if (theVector.IsNull())
 		{
@@ -769,7 +768,8 @@ namespace GeometryNamespace {
 	/// Returns a 2D or 3D vector resulted by a scalar multiplication
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	OUTVAL(VectorBase) VectorBase::multiply(const double& theFactor) const throw (ZeroVectorException) {
+	OUTVAL(VectorBase) VectorBase::multiply(const double& theFactor) const
+	{
 		if (GeometryMath::equals(theFactor, 0., c_toleranceGeneral)) throw ZeroVectorException();
 
 		arrayS3 finalCoords = GeometryMath::factorizeArray(c_localComponents, theFactor);
