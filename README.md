@@ -262,3 +262,4 @@
 /// The slicing problem that comes with the inheritance is
 /// solved by using pointers and references.
 /// THE CLIENTS OF THE LIBRARY SHOULD PAY ATTENTION ON THIS BASIC RULE.
+/// </summary>
