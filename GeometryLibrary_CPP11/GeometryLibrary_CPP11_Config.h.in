@@ -1,0 +1,2 @@
+#define GeometryLibrary_CPP11_VERSION_MAJOR @GeometryLibrary_CPP11_VERSION_MAJOR@ 
+#define GeometryLibrary_CPP11_VERSION_MINOR @GeometryLibrary_CPP11_VERSION_MAJOR@
