@@ -46,6 +46,7 @@ set (
 	"${PROJECT_SOURCE_DIR}/source/Circle.cxx" 
 	"${PROJECT_SOURCE_DIR}/source/CoordSystem.cxx" 
 	"${PROJECT_SOURCE_DIR}/source/GeometryMath.cxx" 
+	"${PROJECT_SOURCE_DIR}/source/GeometryParameters.cxx" 
 	"${PROJECT_SOURCE_DIR}/source/GeometryObject.cxx" 
 	"${PROJECT_SOURCE_DIR}/source/GlobalCoordSystem.cxx" 
 	"${PROJECT_SOURCE_DIR}/source/Line.cxx" 
