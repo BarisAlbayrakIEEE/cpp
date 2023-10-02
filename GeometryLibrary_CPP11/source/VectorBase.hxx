@@ -57,7 +57,6 @@ namespace GeometryNamespace{
 		// Members
 		// The reference CS of the point member is assumed to be the reference CS.
 		std::array<double, 3> c_localComponents = { {} };
-		double c_magnitude = 0.;
 
 	protected:
 		// Private default ctor used for cloning the object
@@ -101,7 +100,6 @@ namespace GeometryNamespace{
 		bool operator-=(const VectorBase& rhs) const;
 
 		// Methods
-		bool equals(ARGCOPY(VectorBase) theVector) const;
 		bool equalsGeometrically(ARGCOPY(VectorBase) theVector) const;
 
 		double getLocalComponentX() const;
@@ -123,11 +121,8 @@ namespace GeometryNamespace{
 		void setLocalComponents(const std::array<double, 3>& theLocalComponents);
 		void setLocalComponents(const std::vector<double, std::allocator<double>>& theComponents);
 		bool isParallel(ARGCOPY(VectorBase) theVector) const;
-		bool isParallel(ARGCOPY(VectorBase) theVector, const double& theTolerance) const;
 		bool isInTheSameDirection(ARGCOPY(VectorBase) theVector) const;
-		bool isInTheSameDirection(ARGCOPY(VectorBase) theVector, const double& theTolerance) const;
 		bool isNormal(ARGCOPY(VectorBase) theVector) const;
-		bool isNormal(ARGCOPY(VectorBase) theVector, const double& theTolerance) const;
 		double calculateAngle(ARGCOPY(VectorBase) theVector) const;
 		double dotProduct(ARGCOPY(VectorBase) theVector) const;
 		auto crossProduct(ARGCOPY(VectorBase) theVector) const -> std::shared_ptr<Vector3D>;
@@ -148,10 +143,11 @@ namespace GeometryNamespace{
 			const int theDimensionCount,
 			const std::shared_ptr<CoordSystem>& theCoordSystem,
 			const std::vector<double, std::allocator<double>>& theLocalComponents);
-		void inspectLocalComponents(const std::array<double, 3>& theLocalComponents) const;
-		double calculateMagnitude(const std::array<double, 3>& theLocalComponents) const;
+		template <typename It>
+		void inspectLocalComponents(const It theBegin, const It theEnd) const;
 		double calculateSlope(const double& theCoord0, const double& theCoord1) const;
 		double calculateAngle(const double& theCoord0, const double& theCoord1) const;
+		static double normalizeAngle(const double& theAngle);
 		auto calculateComponentsFromAngles(const std::array<double, 3>& theAngles) const -> std::array<double, 3>;
 		template<typename T>
 		static T Clone(const T& arg);

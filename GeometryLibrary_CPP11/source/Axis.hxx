@@ -93,7 +93,6 @@ namespace GeometryNamespace {
 
 		bool is2D() const;
 		bool is3D() const;
-		bool equals(ARGCOPY(Axis) theAxis) const;
 		bool equalsGeometrically(ARGCOPY(Axis) theAxis) const;
 
 		auto getPassingPoint() const -> std::shared_ptr<Point3D>;
@@ -105,17 +104,8 @@ namespace GeometryNamespace {
 		void setPassingPoint(const std::shared_ptr<Point3D>& thePassingPoint);
 		void setDirectionVector(const std::shared_ptr<Vector3D>& theDirectionVector);
 		bool isParallel(ARGCOPY(Axis) theAxis) const;
-		bool isParallel(
-			ARGCOPY(Axis) theAxis,
-			const double& theTolerance) const;
 		bool isInTheSameDirection(ARGCOPY(Axis) theAxis) const;
-		bool isInTheSameDirection(
-			ARGCOPY(Axis) theAxis,
-			const double& theTolerance) const;
 		bool isNormal(ARGCOPY(Axis) theAxis) const;
-		bool isNormal(
-			ARGCOPY(Axis) theAxis,
-			const double& theTolerance) const;
 		bool isSkew(ARGCOPY(Axis) theAxis) const;
 		bool isSkew(ARGCOPY(Line) theLine) const;
 
@@ -124,8 +114,8 @@ namespace GeometryNamespace {
 		bool intersects(ARGCOPY(Line) theLine) const;
 		bool coincides(ARGCOPY(Axis) theAxis) const;
 		bool coincides(ARGCOPY(Line) theLine) const;
-		auto intersect(ARGCOPY(Axis) theAxis) const-> std::pair<INTERSECTION1, std::shared_ptr<Point3D>>;
-		auto intersect(ARGCOPY(Line) theLine) const-> std::pair<INTERSECTION1, std::shared_ptr<Point3D>>;
+		auto intersect(ARGCOPY(Axis) theAxis) const-> std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>;
+		auto intersect(ARGCOPY(Line) theLine) const-> std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>;
 		auto project(ARGCOPY(Point3D) thePoint) const -> std::shared_ptr<Point3D>;
 		double calculateDistance(ARGCOPY(Point3D) thePoint) const;
 		double calculateDistance(ARGCOPY(Axis) theAxis) const;
@@ -157,7 +147,7 @@ namespace GeometryNamespace {
 		auto intersectBase(
 			ARGCOPY(Axis) theAxis,
 			const std::array<double, 3>& theCrossProductComponents) const
-			-> std::pair<INTERSECTION1, std::shared_ptr<Point3D>>;
+			-> std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>;
 	};
 }
 

@@ -88,7 +88,6 @@ namespace GeometryNamespace {
 		// Methods
 		bool is2D() const;
 		bool is3D() const;
-		bool equals(ARGCOPY(Circle) theCircle) const;
 		bool equalsGeometrically(ARGCOPY(Circle) theCircle) const;
 
 		auto getReferencePlane() const -> std::shared_ptr<Plane>;

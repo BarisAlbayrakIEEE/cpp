@@ -2,8 +2,8 @@
 
 #include "Macros.h"
 #include "GeometryObject.hxx"
-#include "GeometryParameters.hxx"
 #include "GeometryMath.hxx"
+#include "GeometryParameters.hxx"
 #include "GeometryException.hxx"
 #include "ReferenceObject.hxx"
 #include "CoordSystem.hxx"
@@ -24,56 +24,51 @@ namespace GeometryNamespace {
 	/// <summary>
 	/// Ctor
 	/// Vector by components
-	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
 	Vector2D::Vector2D(const std::array<double, 2>& theLocalComponents)
-		: VectorBase(DIMENSIONS::D2)
+		: VectorBase(GeometryParameters::DIMENSIONS::D2)
 	{
 		std::array<double, 3> localComponents = { {} };
-		std::copy(theLocalComponents.begin(), theLocalComponents.end(), localComponents.begin());
-		inspectLocalComponents(localComponents);
-		c_localComponents = localComponents;
+		std::copy(theLocalComponents.cbegin(), theLocalComponents.cend(), localComponents.begin());
+		inspectLocalComponents(localComponents.cbegin(), localComponents.cend());
+		setLocalComponents(localComponents);
 	}
 
 	/// <summary>
 	/// Ctor
 	/// Reference CS is the global CS
-	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
 	Vector2D::Vector2D(const std::array<double, 3>& theLocalComponents)
-		: VectorBase(DIMENSIONS::D2, theLocalComponents) { }
+		: VectorBase(GeometryParameters::DIMENSIONS::D2, theLocalComponents) { }
 
 	/// <summary>
 	/// Ctor
 	/// Reference CS is the global CS
-	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
 	Vector2D::Vector2D(const std::vector<double, std::allocator<double>>& theLocalComponents)
-		: VectorBase(DIMENSIONS::D2, theLocalComponents) { }
+		: VectorBase(GeometryParameters::DIMENSIONS::D2, theLocalComponents) { }
 
 	/// <summary>
 	/// Ctor
 	/// Reference CS is the global CS
 	/// Components are defined by an angle
-	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	Vector2D::Vector2D(const double& theAngle)
-		: VectorBase(DIMENSIONS::D2, std::array<double, 3>{ 1., theAngle, 0. }) { }
+		: VectorBase(GeometryParameters::DIMENSIONS::D2, std::array<double, 3>{ 1., theAngle, 0. }) { }
 
 	/// <summary>
 	/// Ctor
 	/// Reference CS is the reference CS of the point
 	/// Components are defined by a point
-	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	/// <exception> ZeroVectorException </exception>
 	Vector2D::Vector2D(ARGCOPY(Point2D) thePoint)
 		: VectorBase(
-			DIMENSIONS::D2,
+			GeometryParameters::DIMENSIONS::D2,
 			thePoint.getReferenceCoordSystem(),
 			thePoint.getLocalCoords()) { }
 
@@ -81,7 +76,6 @@ namespace GeometryNamespace {
 	/// Ctor
 	/// Vector by two points
 	/// Reference CS is the reference CS of the points
-	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	/// <exception> CoordSystemMismatchException </exception>
@@ -89,60 +83,56 @@ namespace GeometryNamespace {
 	Vector2D::Vector2D(
 		ARGCOPY(Point2D) thePoint0,
 		ARGCOPY(Point2D) thePoint1)
-		: VectorBase(DIMENSIONS::D2, thePoint0, thePoint1) { }
+		: VectorBase(GeometryParameters::DIMENSIONS::D2, thePoint0, thePoint1) { }
 
 	/// <summary>
 	/// Ctor
 	/// Vector by components
-	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	/// <exception> ZeroVectorException </exception>
 	Vector2D::Vector2D(
 		const std::shared_ptr<CoordSystem>& theReferenceCoordSystem,
 		const std::array<double, 2>& theLocalComponents)
-		: VectorBase(DIMENSIONS::D2, theReferenceCoordSystem)
+		: VectorBase(GeometryParameters::DIMENSIONS::D2, theReferenceCoordSystem)
 	{
 		std::array<double, 3> localComponents = { {} };
 		std::copy(theLocalComponents.begin(), theLocalComponents.end(), localComponents.begin());
-		inspectLocalComponents(localComponents);
-		c_localComponents = localComponents;
+		inspectLocalComponents(localComponents.cbegin(), localComponents.cend());
+		setLocalComponents(localComponents);
 	}
 
 	/// <summary>
 	/// Ctor
 	/// Vector by components
-	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	/// <exception> ZeroVectorException </exception>
 	Vector2D::Vector2D(
 		const std::shared_ptr<CoordSystem>& theReferenceCoordSystem,
 		const std::array<double, 3>& theLocalComponents)
-		: VectorBase(DIMENSIONS::D2, theReferenceCoordSystem, theLocalComponents) { }
+		: VectorBase(GeometryParameters::DIMENSIONS::D2, theReferenceCoordSystem, theLocalComponents) { }
 
 	/// <summary>
 	/// Ctor
 	/// Vector by components
-	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	/// <exception> ZeroVectorException </exception>
 	Vector2D::Vector2D(
 		const std::shared_ptr<CoordSystem>& theReferenceCoordSystem,
 		const std::vector<double, std::allocator<double>>& theLocalComponents)
-		: VectorBase(DIMENSIONS::D2, theReferenceCoordSystem, theLocalComponents) { }
+		: VectorBase(GeometryParameters::DIMENSIONS::D2, theReferenceCoordSystem, theLocalComponents) { }
 
 	/// <summary>
 	/// Ctor
 	/// Components are defined by an angle
-	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	Vector2D::Vector2D(
 		const std::shared_ptr<CoordSystem>& theReferenceCoordSystem,
 		const double& theAngle)
-		: VectorBase(DIMENSIONS::D2, theReferenceCoordSystem, std::array<double, 3>{ 1., theAngle, 0. }) { }
+		: VectorBase(GeometryParameters::DIMENSIONS::D2, theReferenceCoordSystem, std::array<double, 3>{ 1., theAngle, 0. }) { }
 
 	/// <summary>
 	/// Vector summation - Member function
@@ -226,16 +216,21 @@ namespace GeometryNamespace {
 		static_assert(std::is_base_of<VectorBase, _typeName>::value, "T must inherit from VectorBase");
 
 		// Get the item in my reference CS
-		std::array<double, 3> localCoords{
-			GeometryMath::sumArrays(
-				c_localComponents,
-				getVectorWithMyCoordSystem(std::forward<T>(theVector))->getLocalComponents()
-			)
-		};
-		if (GeometryMath::equalsZero(localCoords, getToleranceGeneral())) {
+		std::array<double, 3> localCoords{ {} };
+		std::transform(
+			c_localComponents.cbegin(),
+			c_localComponents.cend(),
+			getVectorWithMyCoordSystem(std::forward<T>(theVector))->getLocalComponents().cbegin(),
+			localCoords.begin(),
+			std::plus<double>());
+		if (
+			std::all_of(
+				localCoords.cbegin(),
+				localCoords.cend(),
+				[](double i) { return GeometryMath::zero_g(i); })) {
 			throw ZeroVectorException();
 		}
-		if (theVector.is2D() && !GeometryMath::equals(localCoords[2], 0., getToleranceGeneral())) {
+		if (theVector.is2D() && !localCoords[2].zero()) {
 			throw CoordSystemMismatchException();
 		}
 		return std::make_shared<_typeName>(
@@ -261,16 +256,21 @@ namespace GeometryNamespace {
 		static_assert(std::is_base_of<VectorBase, _typeName>::value, "T must inherit from VectorBase");
 
 		// Get the item in my reference CS
-		std::array<double, 3> localCoords{
-			GeometryMath::subtructArrays(
-				c_localComponents,
-				getVectorWithMyCoordSystem(std::forward<T>(theVector))->getLocalComponents()
-			)
-		};
-		if (GeometryMath::equalsZero(localCoords, getToleranceGeneral())) {
+		std::array<double, 3> localCoords{ {} };
+		std::transform(
+			c_localComponents.cbegin(),
+			c_localComponents.cend(),
+			getVectorWithMyCoordSystem(std::forward<T>(theVector))->getLocalComponents().cbegin(),
+			localCoords.begin(),
+			std::minus<double>());
+		if (
+			std::all_of(
+				localCoords.cbegin(),
+				localCoords.cend(),
+				[](double i) { return GeometryMath::zero_g(i); })) {
 			throw ZeroVectorException();
 		}
-		if (theVector.is2D() && !GeometryMath::equals(localCoords[2], 0., getToleranceGeneral())) {
+		if (theVector.is2D() && !localCoords[2].zero()) {
 			throw CoordSystemMismatchException();
 		}
 		return std::make_shared<_typeName>(
@@ -284,13 +284,20 @@ namespace GeometryNamespace {
 	/// <exception> ZeroVectorException </exception>
 	auto Vector2D::multiply(const double& theFactor) const -> std::shared_ptr<Vector2D>
 	{
-		if (GeometryMath::equals(theFactor, 0., getToleranceGeneral())) throw ZeroVectorException();
+		if (GeometryMath::zero_g(theFactor)) throw ZeroVectorException();
 
-		auto finalCoords = GeometryMath::factorizeArray(c_localComponents, theFactor);
+		std::array<double, 3> finalCoords = { {} };
+		std::transform(
+			c_localComponents.begin(),
+			c_localComponents.end(),
+			finalCoords.begin(),
+			[theFactor](double i) { return i * theFactor; });
+
 		return std::make_shared<Vector2D>(
 			c_referenceCoordSystem,
 			finalCoords);
 	}
+
 	/// <summary>
 	/// Vector summation - Global function
 	/// </summary>

@@ -2,8 +2,8 @@
 
 #include "Macros.h"
 #include "GeometryObject.hxx"
-#include "GeometryParameters.hxx"
 #include "GeometryMath.hxx"
+#include "GeometryParameters.hxx"
 #include "GeometryException.hxx"
 #include "ReferenceObject.hxx"
 #include "CoordSystem.hxx"
@@ -23,23 +23,17 @@ namespace GeometryNamespace {
 
 	/// <summary>
 	/// The main constructor
+	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> ZeroDimensionException: Coincident points </exception>
 	Line::Line(
 		const std::shared_ptr<Point3D>& theEndPoint0,
 		const std::shared_ptr<Point3D>& theEndPoint1)
-		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
+		: GeometryObject()
 	{
-		if (theEndPoint0->equals(*theEndPoint1))
-		{
-			throw ZeroDimensionException();
-		}
+		inspectEndPoints(theEndPoint0, theEndPoint1);
 		c_endPoint0 = theEndPoint0;
 		c_endPoint1 = theEndPoint1;
-		c_length = theEndPoint0->calculateDistance(*theEndPoint1);
-		c_axis = std::make_shared<Axis>(
-			theEndPoint0,
-			std::make_shared<Vector3D>(*theEndPoint0, *theEndPoint1));
 	}
 
 	/// <summary>
@@ -49,9 +43,7 @@ namespace GeometryNamespace {
 	bool Line::operator==(const Line& rhs) const
 	{
 		if (&rhs == this) return true;
-		if (*c_endPoint0 != *rhs.getEndPoint0()) return false;
-		if (*c_endPoint1 != *rhs.getEndPoint1()) return false;
-		return bool(*c_axis == *rhs.getAxis());
+		return *c_endPoint1 == *rhs.getEndPoint1() && *c_endPoint0 == *rhs.getEndPoint0();
 	}
 
 	/// <summary>
@@ -71,8 +63,11 @@ namespace GeometryNamespace {
 	bool Line::operator+=(const Line& rhs) const
 	{
 		if (&rhs == this) return true;
-		if (!c_endPoint0->equalsGeometrically(*rhs.getEndPoint0())) return false;
-		return c_endPoint1->equalsGeometrically(*rhs.getEndPoint1());
+		if (*c_endPoint0 -= *rhs.getEndPoint0())
+		{
+			return false;
+		}
+		return (*c_endPoint0 += *rhs.getEndPoint0()) && (*c_endPoint1 += *rhs.getEndPoint1());
 	}
 
 	/// <summary>
@@ -107,59 +102,11 @@ namespace GeometryNamespace {
 	}
 
 	/// <summary>
-	/// See == operator docstring
-	/// </summary>
-	bool Line::equals(ARGCOPY(Line) theLine) const
-	{
-		if (!c_axis->equals(*theLine.getAxis()))
-		{
-			return false;
-		}
-		if (!c_endPoint0->equals(*theLine.getEndPoint0()))
-		{
-			return false;
-		}
-		if (!c_endPoint1->equals(*theLine.getEndPoint1()))
-		{
-			return false;
-		}
-		return true;
-	}
-
-	/// <summary>
 	/// See += operator docstring
 	/// </summary>
 	bool Line::equalsGeometrically(ARGCOPY(Line) theLine) const
 	{
-		if (!c_axis->equalsGeometrically(*theLine.getAxis()))
-		{
-			return false;
-		}
-		if (!c_endPoint0->equalsGeometrically(*theLine.getEndPoint0()))
-		{
-			return false;
-		}
-		if (!c_endPoint1->equalsGeometrically(*theLine.getEndPoint1()))
-		{
-			return false;
-		}
-		return true;
-	}
-
-	/// <summary>
-	/// Getter - Axis
-	/// </summary>
-	auto Line::getAxis() const -> std::shared_ptr<Axis>
-	{
-		return c_axis;
-	}
-
-	/// <summary>
-	/// Getter - Direction vector of the axis
-	/// </summary>
-	auto Line::getDirectionVector() const -> std::shared_ptr<Vector3D>
-	{
-		return c_axis->getDirectionVector();
+		return operator+=(theLine);
 	}
 
 	/// <summary>
@@ -179,11 +126,27 @@ namespace GeometryNamespace {
 	}
 
 	/// <summary>
-	/// Getter - Length
+	/// Create an axis along the line and return
+	/// </summary>
+	auto Line::getAxis() const -> std::shared_ptr<Axis>
+	{
+		return std::make_shared<Axis>(c_endPoint0, *c_endPoint1);
+	}
+
+	/// <summary>
+	/// Determine the direction vector and return
+	/// </summary>
+	auto Line::getDirectionVector() const -> std::shared_ptr<Vector3D>
+	{
+		return std::make_shared<Vector3D>(*c_endPoint0, *c_endPoint1);
+	}
+
+	/// <summary>
+	/// Calculate length and return
 	/// </summary>
 	double Line::getLength() const
 	{
-		return c_length;
+		return c_endPoint0->calculateDistance(*c_endPoint1);
 	}
 
 	/// <summary>
@@ -201,25 +164,13 @@ namespace GeometryNamespace {
 	}
 
 	/// <summary>
-	/// Setter - Direction vector
-	/// </summary>
-	void Line::setAxis(const std::shared_ptr<Axis>& theAxis)
-	{
-		c_axis = theAxis;
-	}
-
-	/// <summary>
 	/// Setter - End point 0
 	/// </summary>
 	/// <exception> ZeroDimensionException </exception>
 	void Line::setEndPoint0(const std::shared_ptr<Point3D>& theEndPoint0)
 	{
-		if (c_endPoint0->equals(*c_endPoint1))
-		{
-			throw ZeroDimensionException();
-		}
+		inspectEndPoints(theEndPoint0, c_endPoint1);
 		c_endPoint0 = theEndPoint0;
-		if (c_endPoint1) c_length = c_endPoint0->calculateDistance(*c_endPoint1);
 	}
 
 	/// <summary>
@@ -229,12 +180,8 @@ namespace GeometryNamespace {
 	/// <exception> ZeroDimensionException </exception>
 	void Line::setEndPoint1(const std::shared_ptr<Point3D>& theEndPoint1)
 	{
-		if (c_endPoint1->equals(*c_endPoint0))
-		{
-			throw ZeroDimensionException();
-		}
+		inspectEndPoints(c_endPoint0, theEndPoint1);
 		c_endPoint1 = theEndPoint1;
-		if (!c_endPoint0) c_length = c_endPoint0->calculateDistance(*c_endPoint1);
 	}
 
 	/// <summary>
@@ -242,14 +189,17 @@ namespace GeometryNamespace {
 	/// </summary>
 	bool Line::includes(ARGCOPY(Point3D) thePoint) const
 	{
+		auto axis = getAxis();
+		auto length = getLength();
+
 		// Distance to axis
-		if (!c_axis->includes(thePoint)) return false;
+		if (!axis->includes(thePoint)) return false;
 
 		// The two distances from the point to the end points shall be less than the length of the line
 		double distance{ thePoint.calculateDistance(*c_endPoint0) };
-		if (distance > c_length + getToleranceGeneral()) return false;
+		if (distance > length + GeometryParameters::getToleranceGeneral()) return false;
 		distance = thePoint.calculateDistance(*c_endPoint1);
-		if (distance > c_length + getToleranceGeneral()) return false;
+		if (distance > length + GeometryParameters::getToleranceGeneral()) return false;
 		return true;
 	}
 
@@ -326,15 +276,17 @@ namespace GeometryNamespace {
 	///		Intersect
 	///		Coincide
 	/// </summary>
-	auto Line::intersect(ARGCOPY(Line) theLine) const -> std::pair<INTERSECTION1, std::shared_ptr<Point3D>>
+	auto Line::intersect(ARGCOPY(Line) theLine) const -> std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>
 	{
-		// The axis of the input line
-		auto axis1 { theLine.getAxis() };
-		auto directionVector0 { c_axis->getDirectionVector() };
-		auto directionVector1 { axis1->getDirectionVector() };
+		auto axis1 = getAxis();
+		auto axis2 = theLine.getAxis();
 
-		auto intersectionResults{ axis1->intersect(*this) };
-		if (intersectionResults.first == INTERSECTION1::Skew1) return intersectionResults;
+		// The axis of the input line
+		auto directionVector0 { axis1->getDirectionVector() };
+		auto directionVector1 { axis2->getDirectionVector() };
+
+		auto intersectionResults{ axis2->intersect(*this) };
+		if (intersectionResults.first == GeometryParameters::INTERSECTION1::Skew1) return intersectionResults;
 
 		// The cross product
 		try {
@@ -342,30 +294,30 @@ namespace GeometryNamespace {
 		} catch(ZeroVectorException&) {
 			if (includes(*theLine.getEndPoint0()))
 			{
-				intersectionResults.first = INTERSECTION1::Coincides1;
+				intersectionResults.first = GeometryParameters::INTERSECTION1::Coincides1;
 			}
 			else if (includes(*theLine.getEndPoint1()))
 			{
-				intersectionResults.first = INTERSECTION1::Coincides1;
+				intersectionResults.first = GeometryParameters::INTERSECTION1::Coincides1;
 			}
 			else if (theLine.includes(*getEndPoint0()))
 			{
-				intersectionResults.first = INTERSECTION1::Coincides1;
+				intersectionResults.first = GeometryParameters::INTERSECTION1::Coincides1;
 			}
 			else if (theLine.includes(*getEndPoint1()))
 			{
-				intersectionResults.first = INTERSECTION1::Coincides1;
+				intersectionResults.first = GeometryParameters::INTERSECTION1::Coincides1;
 			}
 			else
 			{
-				intersectionResults.first = INTERSECTION1::Skew1;
+				intersectionResults.first = GeometryParameters::INTERSECTION1::Skew1;
 			}
 			intersectionResults.second = nullptr;
 			return intersectionResults;
 		}
 
 		auto crossProduct = directionVector0->crossProduct(*directionVector1);
-		intersectionResults = c_axis->intersectBase(*axis1, crossProduct->getGlobalComponents());
+		intersectionResults = axis1->intersectBase(*axis2, crossProduct->getGlobalComponents());
 		if (intersectionResults.first != 0)
 		{
 			return intersectionResults;
@@ -373,11 +325,14 @@ namespace GeometryNamespace {
 
 		bool isIncluded{ includes(*intersectionResults.second) };
 		if (!isIncluded) {
-			intersectionResults.first = INTERSECTION1::Skew1;
+			intersectionResults.first = GeometryParameters::INTERSECTION1::Skew1;
 			return intersectionResults;
 		}
 		isIncluded = theLine.includes(*intersectionResults.second);
-		intersectionResults.first = !isIncluded ? INTERSECTION1::Skew1 : INTERSECTION1::Intersects1;
+		intersectionResults.first = 
+			!isIncluded ?
+			GeometryParameters::INTERSECTION1::Skew1 :
+			GeometryParameters::INTERSECTION1::Intersects1;
 
 		return intersectionResults;
 	}
@@ -388,11 +343,13 @@ namespace GeometryNamespace {
 	/// </summary>
 	auto Line::project(ARGCOPY(Point3D) thePoint) const -> std::shared_ptr<Point3D>
 	{
+		auto axis = getAxis();
+
 		if (includes(thePoint))
 		{
 			return std::make_shared<Point3D>(thePoint);
 		}
-		auto project = c_axis->project(thePoint);
+		auto project = axis->project(thePoint);
 		if (!includes(*project.get()))
 		{
 			return nullptr;
@@ -418,9 +375,14 @@ namespace GeometryNamespace {
 
 		auto projection{ project(thePoint) };
 		double distancePerpandicular{ thePoint.calculateDistance(*projection) };
-		double distanceProjectionToEndPoint0{ projection->calculateDistance(*c_endPoint0) };
-		double distanceProjectionToEndPoint1{ projection->calculateDistance(*c_endPoint1) };
-		double distanceProjectionToEndPoint{ std::fmin(distanceProjectionToEndPoint0, distanceProjectionToEndPoint1) };
+		std::vector<double> dummy = {
+			projection->calculateDistance(*c_endPoint0),
+			projection->calculateDistance(*c_endPoint1)
+		};
+		double distanceProjectionToEndPoint{
+			std::fmin(
+				projection->calculateDistance(*c_endPoint0),
+				projection->calculateDistance(*c_endPoint1)) };
 
 		return std::pow(std::pow(distancePerpandicular, 2.) + std::pow(distanceProjectionToEndPoint, 2.), 0.5);
 	}
@@ -430,6 +392,9 @@ namespace GeometryNamespace {
 	/// </summary>
 	double Line::calculateDistance(ARGCOPY(Line) theLine) const
 	{
+		auto axis1 = getAxis();
+		auto axis2 = theLine.getAxis();
+
 		// Inspect if any of the 4 end points is included by the other line
 		if (includes(*theLine.getEndPoint0())) return 0.;
 		if (includes(*theLine.getEndPoint1())) return 0.;
@@ -437,19 +402,18 @@ namespace GeometryNamespace {
 		if (theLine.includes(*c_endPoint1)) return 0.;
 
 		// Distance to axis
-		auto axis0{ theLine.getAxis() };
-		auto directionVector0{ c_axis->getDirectionVector() };
-		auto directionVector1{ axis0->getDirectionVector() };
+		auto directionVector0{ axis1->getDirectionVector() };
+		auto directionVector1{ axis2->getDirectionVector() };
 
 		// Distance to axis
-		double distanceInfinite{ calculateDistance(*axis0) };
+		double distanceInfinite{ calculateDistance(*axis2) };
 
 		// The axes are parallel
 		// Create lines perpandicular to both lines at the end points of the edges (i.e. 4 lines)
 		// The distance is same as the axis distance
 		// if any of the 4 lines intersects with the other line.
 		// Otherwise, the distance is the min of the distances between the endpoints
-		if (c_axis->isParallel(*axis0)) {
+		if (axis1->isParallel(*axis2)) {
 			Vector3D vectorEndToEnd { *c_endPoint0, *theLine.getEndPoint0() };
 			auto vectorNormal { directionVector0->crossProduct(vectorEndToEnd) };
 			auto vectorLineToLine { vectorNormal->crossProduct(*directionVector0) };
@@ -482,12 +446,14 @@ namespace GeometryNamespace {
 			double distance01 = c_endPoint0->calculateDistance(*theLine.getEndPoint1());
 			double distance10 = c_endPoint1->calculateDistance(*theLine.getEndPoint0());
 			double distance11 = c_endPoint1->calculateDistance(*theLine.getEndPoint1());
-			return std::fmin(std::fmin(distance00, distance01), std::fmin(distance10, distance11));
+			return std::fmin(
+				std::fmin(distance00, distance01),
+				std::fmin(distance10, distance11));
 		}
 
 		// The axiss intersect
-		if (GeometryMath::equals(distanceInfinite, 0., getToleranceGeneral())) {
-			auto intersectionResults{ intersect(*axis0) };
+		if (GeometryMath::zero_g(distanceInfinite)) {
+			auto intersectionResults{ intersect(*axis2) };
 			if (theLine.includes(*intersectionResults.second)) return 0.;
 
 			return std::fmin(
@@ -496,7 +462,7 @@ namespace GeometryNamespace {
 		}
 
 		// The axiss are skew
-		auto closestPoints{ c_axis->findClosestPoints(*axis0) };
+		auto closestPoints{ axis1->findClosestPoints(*axis2) };
 		if (theLine.includes(*closestPoints[1]))
 		{
 			return closestPoints[0]->calculateDistance(*closestPoints[1]);
@@ -512,12 +478,22 @@ namespace GeometryNamespace {
 	/// </summary>
 	auto Line::createMidpoint() const -> std::shared_ptr<Point3D>
 	{
-		if (c_endPoint0->getReferenceCoordSystem()->equals(*c_endPoint1->getReferenceCoordSystem())) {
+		if (*c_endPoint0->getReferenceCoordSystem() == *c_endPoint1->getReferenceCoordSystem()) {
 			auto localCoords = c_endPoint0->createMidPoint(*c_endPoint1)->getLocalCoords();
 			return std::make_shared<Point3D>(
 					c_endPoint0->getReferenceCoordSystem(),
 					localCoords);
 		}
 		return std::make_shared<Point3D>(c_endPoint0->createMidPoint(*c_endPoint1)->getGlobalCoords());
+	}
+
+	void Line::inspectEndPoints(
+		const std::shared_ptr<Point3D>& theEndPoint0,
+		const std::shared_ptr<Point3D>& theEndPoint1)
+	{
+		if (*theEndPoint0 += *theEndPoint1) // Geometric equality (i.e. coincidence)
+		{
+			throw ZeroDimensionException();
+		}
 	}
 }

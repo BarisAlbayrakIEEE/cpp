@@ -90,7 +90,6 @@ namespace GeometryNamespace {
 		// Methods
 		bool is2D() const;
 		bool is3D() const;
-		bool equals(ARGCOPY(Plane) thePlane) const;
 		bool equalsGeometrically(ARGCOPY(Plane) thePlane) const;
 
 		auto getPassingPoint() const -> std::shared_ptr<Point3D>;
@@ -120,9 +119,9 @@ namespace GeometryNamespace {
 		double calculateDistance(ARGCOPY(Point3D) thePoint) const;
 		double calculateDistance(ARGCOPY(Axis) theAxis) const;
 		double calculateDistance(ARGCOPY(Line) theLine) const;
-		auto intersect(ARGCOPY(Plane) thePlane) const -> std::pair<INTERSECTION2, std::shared_ptr<Axis>>;
-		auto intersect(ARGCOPY(Axis) theAxis) const -> std::pair<INTERSECTION2, std::shared_ptr<Point3D>>;
-		auto intersect(ARGCOPY(Line) theLine) const -> std::pair<INTERSECTION2, std::shared_ptr<Point3D>>;
+		auto intersect(ARGCOPY(Plane) thePlane) const -> std::pair<GeometryParameters::INTERSECTION2, std::shared_ptr<Axis>>;
+		auto intersect(ARGCOPY(Axis) theAxis) const -> std::pair<GeometryParameters::INTERSECTION2, std::shared_ptr<Point3D>>;
+		auto intersect(ARGCOPY(Line) theLine) const -> std::pair<GeometryParameters::INTERSECTION2, std::shared_ptr<Point3D>>;
 		auto project(ARGCOPY(Point3D) thePoint) const -> std::shared_ptr<Point3D>;
 		auto project(ARGCOPY(Vector3D) theVector) const -> std::shared_ptr<Vector3D>;
 		auto project(ARGCOPY(Axis) theAxis) const -> std::shared_ptr<Axis>;

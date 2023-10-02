@@ -2,8 +2,8 @@
 
 #include "Macros.h"
 #include "GeometryObject.hxx"
-#include "GeometryParameters.hxx"
 #include "GeometryMath.hxx"
+#include "GeometryParameters.hxx"
 #include "GeometryException.hxx"
 #include "ReferenceObject.hxx"
 #include "CoordSystem.hxx"
@@ -27,7 +27,7 @@ namespace GeometryNamespace {
 		std::shared_ptr<Point3D> thePassingPoint,
 		std::shared_ptr<Vector3D> theDirectionVector)
 		:
-		GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE),
+		GeometryObject(),
 		c_passingPoint{ thePassingPoint },
 		c_directionVector{ theDirectionVector } { }
 
@@ -37,7 +37,7 @@ namespace GeometryNamespace {
 	Axis::Axis(
 		std::shared_ptr<Point3D> thePoint0,
 		ARGCOPY(Point3D) thePoint1)
-		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE),
+		: GeometryObject(),
 		c_passingPoint{ thePoint0 }
 	{
 		c_directionVector = std::make_shared<Vector3D>(*thePoint0 , thePoint1);
@@ -49,7 +49,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
 	Axis::Axis(const std::array<std::array<double, 3>, 2>& theEC)
-		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
+		: GeometryObject()
 	{
 		applyEC(theEC);
 	}
@@ -60,7 +60,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
 	Axis::Axis(const std::vector<std::vector<double, std::allocator<double>>>& theEC)
-		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
+		: GeometryObject()
 	{
 		applyEC(theEC);
 	}
@@ -71,7 +71,21 @@ namespace GeometryNamespace {
 	/// </summary>
 	bool Axis::operator==(const Axis& rhs) const
 	{
-		return equals(rhs);
+		if (&rhs == this) return true;
+
+		auto EC1 = getEC();
+		auto EC2 = rhs.getEC();
+		if (
+			!std::equal(
+				EC1[0].cbegin(),
+				EC1[0].cend(),
+				EC2[0].cbegin(),
+				[](double i, double j) {return GeometryMath::equal_g(i, j); })) return false;
+		return std::equal(
+			EC1[1].cbegin(),
+			EC1[1].cend(),
+			EC2[1].cbegin(),
+			[](double i, double j) {return GeometryMath::equal_g(i, j); });
 	}
 
 	/// <summary>
@@ -90,7 +104,33 @@ namespace GeometryNamespace {
 	/// </summary>
 	bool Axis::operator+=(const Axis& rhs) const
 	{
-		return equalsGeometrically(rhs);
+		if (&rhs == this) return true;
+
+		auto EC1 = getEC();
+		auto EC2 = rhs.getEC();
+		if (
+			!std::equal(
+				EC1[0].cbegin(),
+				EC1[0].cend(),
+				EC2[0].cbegin(),
+				[](double i, double j) {return GeometryMath::equal_g(i, j); })) return false;
+		if (
+			std::equal(
+				EC1[1].cbegin(),
+				EC1[1].cend(),
+				EC2[1].cbegin(),
+				[](double i, double j) {return GeometryMath::equal_g(i, j); })) return true;
+		std::array<double, 3> directionVector2{ {} };
+		std::transform(
+			EC2[1].cbegin(),
+			EC2[1].cend(),
+			directionVector2.begin(),
+			[](double i) { return -i; });
+		return std::equal(
+			EC1[1].cbegin(),
+			EC1[1].cend(),
+			directionVector2.cbegin(),
+			[](double i, double j) {return GeometryMath::equal_g(i, j); });
 	}
 
 	/// <summary>
@@ -113,9 +153,7 @@ namespace GeometryNamespace {
 	bool Axis::is2D() const
 	{
 		auto EC = getEC();
-		if (
-			GeometryMath::equals(EC[0][2], 0., getToleranceGeneral()) &&
-			GeometryMath::equals(EC[1][2], 0., getToleranceGeneral())) {
+		if (GeometryMath::zero_g(EC[0][2]) && GeometryMath::zero_g(EC[1][2])) {
 			return true;
 		}
 		return false;
@@ -131,31 +169,11 @@ namespace GeometryNamespace {
 	}
 
 	/// <summary>
-	/// See == operator docstring
-	/// </summary>
-	bool Axis::equals(ARGCOPY(Axis) theAxis) const
-	{
-		if (&theAxis == this) return true;
-
-		auto EC1 = getEC();
-		auto EC2 = theAxis.getEC();
-		if (!GeometryMath::equals(EC1[0], EC2[0], getToleranceGeneral())) return false;
-		return GeometryMath::equals(EC1[1], EC2[1], getToleranceGeneral());
-	}
-
-	/// <summary>
 	/// See += operator docstring
 	/// </summary>
 	bool Axis::equalsGeometrically(ARGCOPY(Axis) theAxis) const
 	{
-		if (&theAxis == this) return true;
-
-		auto EC1 = getEC();
-		auto EC2 = theAxis.getEC();
-		if (!GeometryMath::equals(EC1[0], EC2[0], getToleranceGeneral())) return false;
-		if (GeometryMath::equals(EC1[1], EC2[1], getToleranceGeneral())) return true;
-		auto directionVector2 = GeometryMath::factorizeArray(EC2[1], -1);
-		return GeometryMath::equals(EC1[1], directionVector2, getToleranceGeneral());
+		return operator+=(theAxis);
 	}
 
 	/// <summary>
@@ -165,9 +183,10 @@ namespace GeometryNamespace {
 	void Axis::inspectEC(const std::array<std::array<double, 3>, 2>& theEC) const
 	{
 		if (
-			GeometryMath::equals(theEC[1][0], 0., getToleranceGeneral()) &&
-			GeometryMath::equals(theEC[1][1], 0., getToleranceGeneral()) &&
-			GeometryMath::equals(theEC[1][2], 0., getToleranceGeneral()))
+			std::all_of(
+				theEC[1].cbegin(),
+				theEC[1].cend(),
+				[](double i) { return GeometryMath::zero_g(i); }))
 		{
 			throw ZeroVectorException();
 		}
@@ -180,9 +199,10 @@ namespace GeometryNamespace {
 	void Axis::inspectEC(const std::vector<std::vector<double, std::allocator<double>>>& theEC) const
 	{
 		if (
-			GeometryMath::equals(theEC[1][0], 0., getToleranceGeneral()) &&
-			GeometryMath::equals(theEC[1][1], 0., getToleranceGeneral()) &&
-			GeometryMath::equals(theEC[1][2], 0., getToleranceGeneral()))
+			std::all_of(
+				theEC[1].cbegin(),
+				theEC[1].cend(),
+				[](double i) { return GeometryMath::zero_g(i); }))
 		{
 			throw ZeroVectorException();
 		}
@@ -226,7 +246,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	auto Axis::createPoint(const double& theFactor) const -> std::shared_ptr<Point3D>
 	{
-		if (GeometryMath::equals(theFactor, 0., getToleranceGeneral()))
+		if (GeometryMath::zero_g(theFactor))
 		{
 			return c_passingPoint;
 		}
@@ -314,16 +334,6 @@ namespace GeometryNamespace {
 	}
 
 	/// <summary>
-	/// Shortcut to the corresponding method of Vector3D
-	/// </summary>
-	bool Axis::isParallel(
-		ARGCOPY(Axis) theAxis,
-		const double& theTolerance) const
-	{
-		return getDirectionVector()->isParallel(*theAxis.getDirectionVector(), theTolerance);
-	}
-
-	/// <summary>
 	/// Shortcut to the corresponding melhod of Vector3D
 	/// </summary>
 	bool Axis::isInTheSameDirection(ARGCOPY(Axis) theAxis) const
@@ -334,29 +344,9 @@ namespace GeometryNamespace {
 	/// <summary>
 	/// Shortcut to the corresponding method of Vector3D
 	/// </summary>
-	bool Axis::isInTheSameDirection(
-		ARGCOPY(Axis) theAxis,
-		const double& theTolerance) const
-	{
-		return getDirectionVector()->isInTheSameDirection(*theAxis.getDirectionVector(), theTolerance);
-	}
-
-	/// <summary>
-	/// Shortcut to the corresponding method of Vector3D
-	/// </summary>
 	bool Axis::isNormal(ARGCOPY(Axis) theAxis) const
 	{
 		return getDirectionVector()->isNormal(*theAxis.getDirectionVector());
-	}
-
-	/// <summary>
-	/// Shortcut o the corresponding method of Vector3D
-	/// </summary>
-	bool Axis::isNormal(
-		ARGCOPY(Axis) theAxis,
-		const double& theTolerance) const
-	{
-		return getDirectionVector()->isNormal(*theAxis.getDirectionVector(), theTolerance);
 	}
 
 	/// <summary>
@@ -394,17 +384,17 @@ namespace GeometryNamespace {
 		// Calculate the axis parameter at the point 1ocation
 		auto globalCoords{ thePoint.getGlobalCoords() };
 		double axisParameter{};
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
-			if (!GeometryMath::equals(EC[1][iCoord], 0., getToleranceGeneral())) {
+		for (int iCoord = 0; iCoord < GeometryParameters::DIMENSIONS::D3; iCoord++) {
+			if (!GeometryMath::zero_g(EC[1][iCoord])) {
 				axisParameter = (globalCoords[iCoord] - EC[0][iCoord]) / EC[1][iCoord];
 				break;
 			}
 		}
 
 		// Calculate coordinate and check if they are equal to the point coordinates
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
+		for (int iCoord = 0; iCoord < GeometryParameters::DIMENSIONS::D3; iCoord++) {
 			double globalCoord{ axisParameter * EC[1][iCoord] + EC[0][iCoord] };
-			if (!GeometryMath::equals(globalCoord, globalCoords[iCoord], getToleranceGeneral())) return false;
+			if (!GeometryMath::equal_g(globalCoord, globalCoords[iCoord])) return false;
 		}
 		return true;
 	}
@@ -451,7 +441,7 @@ namespace GeometryNamespace {
 	///		Intersect
 	///		Coincide
 	/// </summary>
-	auto Axis::intersect(ARGCOPY(Axis) theAxis) const -> std::pair<INTERSECTION1, std::shared_ptr<Point3D>>
+	auto Axis::intersect(ARGCOPY(Axis) theAxis) const -> std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>
 	{
 		try {
 			return intersectBase(
@@ -460,9 +450,9 @@ namespace GeometryNamespace {
 		} catch (ZeroVectorException&) {
 			if (includes(*theAxis.getPassingPoint()))
 			{
-				return std::pair<INTERSECTION1, std::shared_ptr<Point3D>>{ INTERSECTION1::Coincides1, nullptr };
+				return std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>{ GeometryParameters::INTERSECTION1::Coincides1, nullptr };
 			}
-			return std::pair<INTERSECTION1, std::shared_ptr<Point3D>>{ INTERSECTION1::Skew1, nullptr };
+			return std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>{ GeometryParameters::INTERSECTION1::Skew1, nullptr };
 		}
 	}
 
@@ -473,18 +463,18 @@ namespace GeometryNamespace {
 	///		Intersect
 	///		Coincide
 	/// </summary>
-	auto Axis::intersect(ARGCOPY(Line) theLine) const -> std::pair<INTERSECTION1, std::shared_ptr<Point3D>>
+	auto Axis::intersect(ARGCOPY(Line) theLine) const -> std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>
 	{
 		// The axis
 		auto intersectionResults{ intersect(*theLine.getAxis()) };
 		if (intersectionResults.first != 0)
-			return std::pair<INTERSECTION1, std::shared_ptr<Point3D>>{ intersectionResults.first, nullptr };
+			return std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>{ intersectionResults.first, nullptr };
 
 		// The line
 		intersectionResults.first = (
 			theLine.includes(*intersectionResults.second)
-			? INTERSECTION1::Intersects1
-			: INTERSECTION1::Skew1);
+			? GeometryParameters::INTERSECTION1::Intersects1
+			: GeometryParameters::INTERSECTION1::Skew1);
 		return intersectionResults;
 	}
 
@@ -563,7 +553,7 @@ namespace GeometryNamespace {
 		if (isParallel(*axis1)) return distanceInfinite;
 
 		// The axes intersect
-		if (GeometryMath::equals(distanceInfinite, 0., getToleranceGeneral())) {
+		if (GeometryMath::zero_g(distanceInfinite)) {
 			auto intersectionResults{ intersect(*axis1) };
 			if (theLine.includes(*intersectionResults.second)) return 0.;
 
@@ -634,16 +624,13 @@ namespace GeometryNamespace {
 			std::array<double, 3>{{}},
 			std::array<double, 3>{{}} };
 		std::array<double, 3> resultants = { {} };
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
-			coefficients[iCoord] = { V0[iCoord], -V1[iCoord], V2[iCoord] };
+		for (int iCoord = 0; iCoord < GeometryParameters::DIMENSIONS::D3; iCoord++) {
+			coefficients[iCoord] = { V0[iCoord], V1[iCoord] * (-1), V2[iCoord] };
 			resultants[iCoord] = P1[iCoord] - P0[iCoord];
 		}
 
 		// Solve the equations
-		auto inverseCoefficients{
-			GeometryMath::calculateMatrixInverseS33(
-				coefficients,
-				getToleranceSensitive()) };
+		auto inverseCoefficients{ GeometryMath::calculateMatrixInverseS33(coefficients) };
 		auto roots{
 			GeometryMath::multiplyMatrixToVector<double, 3>(
 				inverseCoefficients,
@@ -667,7 +654,7 @@ namespace GeometryNamespace {
 		const double& theCoord) const
 	{
 		auto EC = getEC();
-		if (GeometryMath::equals(EC[1][theIndexCoord1], 0., getToleranceGeneral())) throw AssymptoticLineException();
+		if (GeometryMath::zero_g(EC[1][theIndexCoord1])) throw AssymptoticLineException();
 		return (theCoord - EC[0][theIndexCoord1]) * EC[1][theIndexCoord0] / EC[1][theIndexCoord1] + EC[0][theIndexCoord0];
 	}
 
@@ -792,7 +779,7 @@ namespace GeometryNamespace {
 	auto Axis::intersectBase(
 		ARGCOPY(Axis) theAxis,
 		const std::array<double, 3>& theCrossProductComponents) const
-		-> std::pair<INTERSECTION1, std::shared_ptr<Point3D>>
+		-> std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>
 	{
 		auto EC1 = getEC();
 
@@ -813,11 +800,11 @@ namespace GeometryNamespace {
 		double V1_z{ EC2[1][2] };
 		double axisParameter0;
 		double axisParameter1;
-		if (!GeometryMath::equals(theCrossProductComponents[0], 0., getToleranceGeneral())) {
+		if (!GeometryMath::zero_g(theCrossProductComponents[0])) {
 			axisParameter0 = (V1_z * (p1_y - p0_y) - V1_y * (p1_z - p0_z)) / (V0_y * V1_z - V0_z * V1_y);
 			axisParameter1 = (V0_z * (p1_y - p0_y) - V0_y * (p1_z - p0_z)) / (V0_y * V1_z - V0_z * V1_y);
 		}
-		else if (!GeometryMath::equals(theCrossProductComponents[1], 0., getToleranceGeneral())) {
+		else if (!GeometryMath::zero_g(theCrossProductComponents[1])) {
 			axisParameter0 = (V1_x * (p1_z - p0_z) - V1_x * (p1_x - p0_x)) / (V0_z * V1_x - V0_x * V1_z);
 			axisParameter1 = (V0_x * (p1_z - p0_z) - V0_x * (p1_x - p0_x)) / (V0_z * V1_x - V0_x * V1_z);
 		}
@@ -834,11 +821,11 @@ namespace GeometryNamespace {
 		double globalCoord1_y{ V1_y * axisParameter1 + p1_y };
 		double globalCoord1_z{ V1_z * axisParameter1 + p1_z };
 		if (
-			!GeometryMath::equals(globalCoord0_x, globalCoord1_x, getToleranceGeneral()) ||
-			!GeometryMath::equals(globalCoord0_y, globalCoord1_y, getToleranceGeneral()) ||
-			!GeometryMath::equals(globalCoord0_z, globalCoord1_z, getToleranceGeneral()))
+			!GeometryMath::equal_g(globalCoord0_x, globalCoord1_x) ||
+			!GeometryMath::equal_g(globalCoord0_y, globalCoord1_y) ||
+			!GeometryMath::equal_g(globalCoord0_z, globalCoord1_z))
 		{
-			return std::pair<INTERSECTION1, std::shared_ptr<Point3D>>{ INTERSECTION1::Skew1, nullptr };
+			return std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>{ GeometryParameters::INTERSECTION1::Skew1, nullptr };
 		}
 
 		std::array<double, 3> intersectionCoords {{ globalCoord0_x, globalCoord0_y, globalCoord0_z}};
@@ -847,8 +834,8 @@ namespace GeometryNamespace {
 		// Outputs
 		auto referenceCoordSystem0 = getDirectionVector()->getReferenceCoordSystem();
 		auto referenceCoordSystem1 = theAxis.getDirectionVector()->getReferenceCoordSystem();
-		std::pair<INTERSECTION1, std::shared_ptr<Point3D>> outIntersectionResults;
-		outIntersectionResults.first = INTERSECTION1::Intersects1;
+		std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>> outIntersectionResults;
+		outIntersectionResults.first = GeometryParameters::INTERSECTION1::Intersects1;
 		if (is2D() != theAxis.is2D() || referenceCoordSystem0 != referenceCoordSystem1)
 		{
 			outIntersectionResults.second = intersection;

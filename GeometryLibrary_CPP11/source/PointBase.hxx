@@ -91,7 +91,6 @@ namespace GeometryNamespace {
 		bool operator-=(const PointBase& rhs) const;
 
 		// Methods
-		bool equals(ARGCOPY(PointBase) thePoint) const;
 		bool equalsGeometrically(ARGCOPY(PointBase) thePoint) const;
 
 		double getLocalCoordX() const;

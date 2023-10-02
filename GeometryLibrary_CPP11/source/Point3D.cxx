@@ -2,8 +2,8 @@
 
 #include "Macros.h"
 #include "GeometryObject.hxx"
-#include "GeometryParameters.hxx"
 #include "GeometryMath.hxx"
+#include "GeometryParameters.hxx"
 #include "GeometryException.hxx"
 #include "ReferenceObject.hxx"
 #include "CoordSystem.hxx"
@@ -26,7 +26,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	Point3D::Point3D()
-		: PointBase(DIMENSIONS::D3, std::array<double, 3>{{}}) { }
+		: PointBase(GeometryParameters::DIMENSIONS::D3, std::array<double, 3>{{}}) { }
 
 	/// <summary>
 	/// Ctor
@@ -34,7 +34,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	Point3D::Point3D(const std::array<double, 3>& theLocalCoords)
-		: PointBase(DIMENSIONS::D3, theLocalCoords) { }
+		: PointBase(GeometryParameters::DIMENSIONS::D3, theLocalCoords) { }
 
 	/// <summary>
 	/// Ctor
@@ -42,7 +42,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	Point3D::Point3D(const std::vector<double, std::allocator<double>>& theLocalCoords)
-		: PointBase(DIMENSIONS::D3, theLocalCoords) { }
+		: PointBase(GeometryParameters::DIMENSIONS::D3, theLocalCoords) { }
 
 	/// <summary>
 	/// Ctor
@@ -51,7 +51,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	Point3D::Point3D(const std::shared_ptr<CoordSystem>& theReferenceCoordSystem)
-		: PointBase(DIMENSIONS::D3, theReferenceCoordSystem, std::array<double, 3>{{}}) { }
+		: PointBase(GeometryParameters::DIMENSIONS::D3, theReferenceCoordSystem, std::array<double, 3>{{}}) { }
 
 	/// <summary>
 	/// The main constructor
@@ -61,7 +61,7 @@ namespace GeometryNamespace {
 	Point3D::Point3D(
 		const std::shared_ptr<CoordSystem>& theReferenceCoordSystem,
 		const std::array<double, 3>& theLocalCoords)
-		: PointBase(DIMENSIONS::D3, theReferenceCoordSystem, theLocalCoords) { }
+		: PointBase(GeometryParameters::DIMENSIONS::D3, theReferenceCoordSystem, theLocalCoords) { }
 
 	/// <summary>
 	/// The main constructor
@@ -71,7 +71,7 @@ namespace GeometryNamespace {
 	Point3D::Point3D(
 		const std::shared_ptr<CoordSystem>& theReferenceCoordSystem,
 		const std::vector<double, std::allocator<double>>& theLocalCoords)
-		: PointBase(DIMENSIONS::D3, theReferenceCoordSystem, theLocalCoords) { }
+		: PointBase(GeometryParameters::DIMENSIONS::D3, theReferenceCoordSystem, theLocalCoords) { }
 
 	/// <summary>
 	/// Ctor
@@ -80,9 +80,9 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	Point3D::Point3D(ARGCOPY(Point2D) thePoint)
-		: PointBase(DIMENSIONS::D3)
+		: PointBase(GeometryParameters::DIMENSIONS::D3)
 	{
-		c_dimensionCount = DIMENSIONS::D3;
+		c_dimensionCount = GeometryParameters::DIMENSIONS::D3;
 		c_referenceCoordSystem = thePoint.getReferenceCoordSystem();
 		std::copy(std::begin(thePoint.getLocalCoords()), std::end(thePoint.getLocalCoords()), std::begin(c_localCoords));
 	}

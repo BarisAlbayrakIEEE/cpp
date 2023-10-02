@@ -1,6 +1,8 @@
 // baris.albayrak.ieee@gmail.com
 
 #include "GeometryObject.hxx"
+#include "GeometryMath.hxx"
+#include "GeometryParameters.hxx"
 #include "ReferenceObject.hxx"
 #include "CoordSystem.hxx"
 #include "GlobalCoordSystem.hxx"

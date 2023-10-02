@@ -2,8 +2,8 @@
 
 #include "Macros.h"
 #include "GeometryObject.hxx"
-#include "GeometryParameters.hxx"
 #include "GeometryMath.hxx"
+#include "GeometryParameters.hxx"
 #include "GeometryException.hxx"
 #include "ReferenceObject.hxx"
 #include "CoordSystem.hxx"
@@ -100,7 +100,10 @@ namespace GeometryNamespace {
 	{
 		if (&rhs == this) return true;
 		if (ReferenceObject::operator!=(rhs)) return false;
-		return GeometryMath::equals(c_localCoords, rhs.getLocalCoords(), getToleranceGeneral());
+		return std::equal(
+			c_localCoords.cbegin(),
+			c_localCoords.cend(),
+			rhs.getLocalCoords().cbegin());
 	}
 
 	/// <summary>
@@ -120,7 +123,13 @@ namespace GeometryNamespace {
 	bool PointBase::operator+=(const PointBase& rhs) const
 	{
 		if (&rhs == this) return true;
-		return GeometryMath::equals(getGlobalCoords(), rhs.getGlobalCoords(), getToleranceGeneral());
+
+		auto globalCoords0 = getGlobalCoords();
+		auto globalCoords1 = rhs.getGlobalCoords();
+		return std::equal(
+			globalCoords0.cbegin(),
+			globalCoords0.cend(),
+			globalCoords1.cbegin());
 	}
 
 	/// <summary>
@@ -133,23 +142,10 @@ namespace GeometryNamespace {
 	}
 
 	/// <summary>
-	/// See == operator docstring
-	/// </summary>
-	bool PointBase::equals(ARGCOPY(PointBase) thePoint) const {
-		if (this == &thePoint) return true;
-		if (!ReferenceObject::equalsRef(thePoint)) return false;
-		return GeometryMath::equals(c_localCoords, thePoint.getLocalCoords(), getToleranceGeneral());
-	}
-
-	/// <summary>
 	/// See += operator docstring
 	/// </summary>
 	bool PointBase::equalsGeometrically(ARGCOPY(PointBase) thePoint) const {
-		if (this == &thePoint) return true;
-		return GeometryMath::equals(
-			c_localCoords,
-			getPointWithMyCoordSystem(thePoint)->getLocalCoords(),
-			getToleranceGeneral());
+		return PointBase::operator+=(thePoint);
 	}
 
 	/// <summary>
@@ -220,9 +216,9 @@ namespace GeometryNamespace {
 
 		auto axesVectors{ c_referenceCoordSystem->getAxesAsVector() }; // By definition, the reference CS is the global CS
 		auto outGlobalCoords{ c_referenceCoordSystem->getOriginCoords() };
-		for (int iAxis = 0; iAxis < DIMENSIONS::D3; iAxis++) {
+		for (int iAxis = 0; iAxis < GeometryParameters::DIMENSIONS::D3; iAxis++) {
 			auto vectorComponents{ axesVectors[iAxis]->getLocalComponents() };
-			for (int iComponent = 0; iComponent < DIMENSIONS::D3; iComponent++)
+			for (int iComponent = 0; iComponent < GeometryParameters::DIMENSIONS::D3; iComponent++)
 			{
 				outGlobalCoords[iComponent] += vectorComponents[iComponent] * c_localCoords[iComponent];
 			}
@@ -278,7 +274,7 @@ namespace GeometryNamespace {
 				checkCoordSystem = true;
 			}
 		}
-		else if (theReferenceCoordSystem->equals(*c_referenceCoordSystem))
+		else if (*theReferenceCoordSystem == *c_referenceCoordSystem)
 		{
 			checkCoordSystem = true;
 		}
@@ -348,8 +344,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	bool PointBase::coincides(ARGCOPY(PointBase) thePoint) const
 	{
-		// Get the item in my reference CS
-		return GeometryMath::equals(getGlobalCoords(), thePoint.getGlobalCoords(), getToleranceGeneral());
+		return PointBase::operator+=(thePoint);
 	}
 
 	/// <summary>
@@ -360,8 +355,8 @@ namespace GeometryNamespace {
 	{
 		auto globalCoords0{ getGlobalCoords() };
 		auto globalCoords1{ thePoint.getGlobalCoords() };
-		double outDistance{};
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++)
+		auto outDistance = 0.;
+		for (int iCoord = 0; iCoord < GeometryParameters::DIMENSIONS::D3; iCoord++)
 		{
 			outDistance += std::pow(globalCoords0[iCoord] - globalCoords1[iCoord], 2.);
 		}
@@ -413,9 +408,12 @@ namespace GeometryNamespace {
 		const double& theFactor)
 	{
 		std::array<double, 3> outCoords = { {} };
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
-			outCoords[iCoord] = GeometryMath::interpolate(theCoords0[iCoord], theCoords1[iCoord], theFactor);
-		}
+		std::transform(
+			theCoords0.cbegin(),
+			theCoords0.cend(),
+			theCoords1.cbegin(),
+			outCoords.begin(),
+			[theFactor](double i, double j) { return GeometryMath::interpolate(i, j, theFactor); });
 		return outCoords;
 	}
 
@@ -424,7 +422,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	auto PointBase::createPointAtOrigin(int theDimensionCount) -> std::shared_ptr<PointBase>
 	{
-		if (theDimensionCount == DIMENSIONS::D2)
+		if (theDimensionCount == GeometryParameters::DIMENSIONS::D2)
 		{
 			return std::make_shared<Point2D>(std::array<double, 3>{{}});
 		}
@@ -439,7 +437,7 @@ namespace GeometryNamespace {
 		const std::shared_ptr<CoordSystem>& theReferenceCoordSystem)
 		-> std::shared_ptr<PointBase>
 	{
-		if (theDimensionCount == DIMENSIONS::D2)
+		if (theDimensionCount == GeometryParameters::DIMENSIONS::D2)
 		{
 			return std::make_shared<Point2D>(
 				theReferenceCoordSystem,

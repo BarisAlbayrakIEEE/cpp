@@ -2,8 +2,8 @@
 
 #include "Macros.h"
 #include "GeometryObject.hxx"
-#include "GeometryParameters.hxx"
 #include "GeometryMath.hxx"
+#include "GeometryParameters.hxx"
 #include "GeometryException.hxx"
 #include "ReferenceObject.hxx"
 #include "CoordSystem.hxx"
@@ -28,7 +28,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	Point2D::Point2D()
-		: PointBase(DIMENSIONS::D2, std::array<double, 3>{{}}) { }
+		: PointBase(GeometryParameters::DIMENSIONS::D2, std::array<double, 3>{{}}) { }
 
 	/// <summary>
 	/// Ctor
@@ -36,7 +36,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	Point2D::Point2D(const std::array<double, 2>& theLocalComponents)
-		: PointBase(DIMENSIONS::D2)
+		: PointBase(GeometryParameters::DIMENSIONS::D2)
 	{
 		std::copy(theLocalComponents.begin(), theLocalComponents.end(), c_localCoords.begin());
 	}
@@ -47,7 +47,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	Point2D::Point2D(const std::array<double, 3>& theLocalCoords)
-		: PointBase(DIMENSIONS::D2, theLocalCoords) { }
+		: PointBase(GeometryParameters::DIMENSIONS::D2, theLocalCoords) { }
 
 	/// <summary>
 	/// Ctor
@@ -55,7 +55,7 @@ namespace GeometryNamespace {
 	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	Point2D::Point2D(const std::vector<double, std::allocator<double>>& theLocalCoords)
-		: PointBase(DIMENSIONS::D2, theLocalCoords) { }
+		: PointBase(GeometryParameters::DIMENSIONS::D2, theLocalCoords) { }
 
 	/// <summary>
 	/// Ctor
@@ -64,7 +64,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	Point2D::Point2D(const std::shared_ptr<CoordSystem>& theReferenceCoordSystem)
-		: PointBase(DIMENSIONS::D2, theReferenceCoordSystem, std::array<double, 3>{{}}) { }
+		: PointBase(GeometryParameters::DIMENSIONS::D2, theReferenceCoordSystem, std::array<double, 3>{{}}) { }
 
 	/// <summary>
 	/// Ctor
@@ -75,7 +75,7 @@ namespace GeometryNamespace {
 	Point2D::Point2D(
 		const std::shared_ptr<CoordSystem>& theReferenceCoordSystem,
 		const std::array<double, 2>& theLocalComponents)
-		: PointBase(DIMENSIONS::D2, theReferenceCoordSystem)
+		: PointBase(GeometryParameters::DIMENSIONS::D2, theReferenceCoordSystem)
 	{
 		std::copy(theLocalComponents.begin(), theLocalComponents.end(), c_localCoords.begin());
 	}
@@ -88,7 +88,7 @@ namespace GeometryNamespace {
 	Point2D::Point2D(
 		const std::shared_ptr<CoordSystem>& theReferenceCoordSystem,
 		const std::array<double, 3>& theLocalCoords)
-		: PointBase(DIMENSIONS::D2, theReferenceCoordSystem, theLocalCoords) { }
+		: PointBase(GeometryParameters::DIMENSIONS::D2, theReferenceCoordSystem, theLocalCoords) { }
 
 	/// <summary>
 	/// The main constructor
@@ -98,5 +98,5 @@ namespace GeometryNamespace {
 	Point2D::Point2D(
 		const std::shared_ptr<CoordSystem>& theReferenceCoordSystem,
 		const std::vector<double, std::allocator<double>>& theLocalCoords)
-		: PointBase(DIMENSIONS::D2, theReferenceCoordSystem, theLocalCoords) { }
+		: PointBase(GeometryParameters::DIMENSIONS::D2, theReferenceCoordSystem, theLocalCoords) { }
 }

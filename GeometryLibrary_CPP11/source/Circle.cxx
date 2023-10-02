@@ -2,8 +2,8 @@
 
 #include "Macros.h"
 #include "GeometryObject.hxx"
-#include "GeometryParameters.hxx"
 #include "GeometryMath.hxx"
+#include "GeometryParameters.hxx"
 #include "GeometryException.hxx"
 #include "ReferenceObject.hxx"
 #include "CoordSystem.hxx"
@@ -32,9 +32,9 @@ namespace GeometryNamespace {
 		const std::shared_ptr<Point3D>& theCenterPoint,
 		const double& theRadius)
 		:
-		GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
+		GeometryObject()
 	{
-		if (theRadius < getToleranceGeneral())
+		if (theRadius < GeometryParameters::getToleranceGeneral())
 		{
 			throw ZeroDimensionException();
 		}
@@ -84,7 +84,7 @@ namespace GeometryNamespace {
 		Point3D thePoint0, // Function needs a copy of the argument
 		Point3D thePoint1, // Function needs a copy of the argument
 		Point3D thePoint2) // Function needs a copy of the argument
-		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
+		: GeometryObject()
 	{
 		// Inspect inputs
 		if (thePoint0.coincides(thePoint1))
@@ -157,7 +157,10 @@ namespace GeometryNamespace {
 	bool Circle::operator==(const Circle& rhs) const
 	{
 		if (&rhs == this) return true;
-		if (!GeometryMath::equals(c_radius, rhs.getRadius(), getToleranceGeneral())) return false;
+
+		double radius1 = c_radius;
+		double radius2 = rhs.getRadius();
+		if (!GeometryMath::equal_g(radius1, radius2)) return false;
 		if (*c_centerPoint != *rhs.getCenterPoint()) return false;
 		return bool(*c_referencePlane == *rhs.getReferencePlane());
 	}
@@ -179,9 +182,12 @@ namespace GeometryNamespace {
 	bool Circle::operator+=(const Circle& rhs) const
 	{
 		if (&rhs == this) return true;
-		if (!GeometryMath::equals(c_radius, rhs.getRadius(), getToleranceGeneral())) return false;
-		if (!c_centerPoint->equalsGeometrically(*rhs.getCenterPoint())) return false;
-		return c_referencePlane->equalsGeometrically(*rhs.getReferencePlane());
+
+		double radius1 = c_radius;
+		double radius2 = rhs.getRadius();
+		if (!GeometryMath::equal_g(radius1, radius2)) return false;
+		if (*c_centerPoint -= *rhs.getCenterPoint()) return false;
+		return *c_referencePlane += *rhs.getReferencePlane();
 	}
 
 	/// <summary>
@@ -204,7 +210,7 @@ namespace GeometryNamespace {
 	bool Circle::is2D() const {
 		if (
 			!c_centerPoint->is2D() &&
-			!GeometryMath::equals(c_centerPoint->getLocalCoordZ(), 0., getToleranceGeneral()))
+			!GeometryMath::zero_g(c_centerPoint->getLocalCoordZ()))
 		{
 			return false;
 		}
@@ -225,23 +231,10 @@ namespace GeometryNamespace {
 	}
 
 	/// <summary>
-	/// See == operator docstring
-	/// </summary>
-	bool Circle::equals(ARGCOPY(Circle) theCircle) const {
-		if (this == &theCircle) return true;
-		if (!c_referencePlane->equals(*theCircle.getReferencePlane())) return false;
-		if (!c_centerPoint->equals(*theCircle.getCenterPoint())) return false;
-		return GeometryMath::equals(c_radius, theCircle.getRadius(), getToleranceGeneral());
-	}
-
-	/// <summary>
 	/// See += operator docstring
 	/// </summary>
 	bool Circle::equalsGeometrically(ARGCOPY(Circle) theCircle) const {
-		if (this == &theCircle) return true;
-		if (!c_referencePlane->equals(*theCircle.getReferencePlane())) return false;
-		if (!c_centerPoint->equalsGeometrically(*theCircle.getCenterPoint())) return false;
-		return GeometryMath::equals(c_radius, theCircle.getRadius(), getToleranceGeneral());
+		return operator+=(theCircle);
 	}
 
 	/// <summary>
@@ -278,7 +271,7 @@ namespace GeometryNamespace {
 		auto coordSystem1 = c_centerPoint->getReferenceCoordSystem();
 		auto coordSystem2 = c_referencePlane->getCommonReferenceCoordSystem();
 		if (!coordSystem2) { return nullptr; }
-		if (!coordSystem2->equals(*coordSystem1))
+		if (*coordSystem2 != *coordSystem1)
 		{
 			return nullptr;
 		}
@@ -294,7 +287,7 @@ namespace GeometryNamespace {
 		const std::shared_ptr<Point3D>& theCenterPoint,
 		const double& theRadius)
 	{
-		if (theRadius < getToleranceGeneral()) throw ZeroDimensionException();
+		if (GeometryMath::zero_g(theRadius)) throw ZeroDimensionException();
 		c_referencePlane = theReferencePlane;
 		c_centerPoint = theCenterPoint;
 		c_radius = theRadius;
@@ -329,7 +322,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	void Circle::setRadius(const double& theRadius)
 	{
-		if (theRadius < getToleranceGeneral()) throw ZeroDimensionException();
+		if (theRadius < GeometryParameters::getToleranceGeneral()) throw ZeroDimensionException();
 		c_radius = theRadius;
 	}
 
@@ -364,8 +357,9 @@ namespace GeometryNamespace {
 		if (!c_referencePlane->includes(thePoint)) return -1;
 
 		double distanceToCenter = c_centerPoint->calculateDistance(thePoint);
-		if (GeometryMath::equals(distanceToCenter, c_radius, getToleranceGeneral())) return 0;
+		double radius = c_radius;
+		if (GeometryMath::equal_g(distanceToCenter, radius)) return 0;
 		else if (distanceToCenter < c_radius) return 1;
-		else return 2;
+		return 2;
 	}
 }

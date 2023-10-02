@@ -12,25 +12,46 @@
 
 // Constants
 namespace GeometryNamespace {
-	enum DIMENSIONS
-	{
-		D2 = 2,
-		D3 = 3
+	class GeometryParameters {
+		static double TOLERANCE_GENERAL;
+		static double TOLERANCE_SENSITIVE;
+
+	public:
+		static double getToleranceGeneral()
+		{
+			return TOLERANCE_GENERAL;
+		};
+		static double getToleranceSensitive()
+		{
+			return TOLERANCE_SENSITIVE;
+		};
+		static void setToleranceGeneral(const double& theToleranceGeneral)
+		{
+			TOLERANCE_GENERAL = theToleranceGeneral;
+		};
+		static void setToleranceSensitive(const double& theToleranceSensitive)
+		{
+			TOLERANCE_SENSITIVE = theToleranceSensitive;
+		};
+
+		enum DIMENSIONS
+		{
+			D2 = 2,
+			D3 = 3
+		};
+		enum INTERSECTION1
+		{
+			Skew1 = -1,
+			Intersects1 = 0,
+			Coincides1 = 1
+		};
+		enum INTERSECTION2
+		{
+			Skew2 = -1,
+			Intersects2 = 0,
+			Includes2 = 1
+		};
 	};
-	enum INTERSECTION1
-	{
-		Skew1 = -1,
-		Intersects1 = 0,
-		Coincides1 = 1
-	};
-	enum INTERSECTION2
-	{
-		Skew2 = -1,
-		Intersects2 = 0,
-		Includes2 = 1
-	};
-	const double TOLERANCE_GENERAL = 0.001;
-	const double TOLERANCE_SENSITIVE = 0.000001;
 }
 
 #endif

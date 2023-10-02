@@ -111,13 +111,18 @@ namespace GeometryNamespace {
 				"T must inherit from VectorBase");
 
 			// Get the item in my reference CS
-			std::array<double, 3> localCoords{
-				GeometryMath::sumArrays(
-					c_localComponents,
-					getVectorWithMyCoordSystem(std::forward<T>(theVector))->getLocalComponents()
-				)
-			};
-			if (GeometryMath::equalsZero(localCoords, TOLERANCE_GENERAL)) {
+			std::array<double, 3> localCoords{ {} };
+			std::transform(
+				c_localComponents.cbegin(),
+				c_localComponents.cend(),
+				getVectorWithMyCoordSystem(std::forward<T>(theVector))->getLocalComponents().cbegin(),
+				localCoords.begin(),
+				std::plus<double>());
+			if (
+				std::all_of(
+					localCoords.cbegin(),
+					localCoords.cend(),
+					[](double i) { return GeometryMath::zero_g(i); })) {
 				throw ZeroVectorException();
 			}
 			return std::make_shared<Vector3D>(
@@ -135,13 +140,18 @@ namespace GeometryNamespace {
 				"T must inherit from VectorBase");
 
 			// Get the item in my reference CS
-			std::array<double, 3> localCoords{
-				GeometryMath::subtructArrays(
-					c_localComponents,
-					getVectorWithMyCoordSystem(std::forward<T>(theVector))->getLocalComponents()
-				)
-			};
-			if (GeometryMath::equalsZero(localCoords, TOLERANCE_GENERAL)) {
+			std::array<double, 3> localCoords{ {} };
+			std::transform(
+				c_localComponents.cbegin(),
+				c_localComponents.cend(),
+				getVectorWithMyCoordSystem(std::forward<T>(theVector))->getLocalComponents().cbegin(),
+				localCoords.begin(),
+				std::minus<double>());
+			if (
+				std::all_of(
+					localCoords.cbegin(),
+					localCoords.cend(),
+					[](double i) { return GeometryMath::zero_g(i); })) {
 				throw ZeroVectorException();
 			}
 			return std::make_shared<Vector3D>(

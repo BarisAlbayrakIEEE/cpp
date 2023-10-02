@@ -86,11 +86,8 @@ namespace GeometryNamespace {
 		friend class Plane;
 
 		// Members
-		int c_dimensionCount = DIMENSIONS::D3;
+		int c_dimensionCount = GeometryParameters::DIMENSIONS::D3;
 		std::shared_ptr<CoordSystem> c_referenceCoordSystem = nullptr;
-
-		// Private default ctor used for cloning the object
-		ReferenceObject() = default;
 
 		// ctor / dtor / operators
 		explicit ReferenceObject(const int theDimensionCount);
@@ -100,6 +97,7 @@ namespace GeometryNamespace {
 			const std::shared_ptr<CoordSystem>& theReferenceCoordSystem);
 
 	public:
+		ReferenceObject() = default;
 		ReferenceObject(const ReferenceObject& rhs) = default;
 		ReferenceObject& operator=(const ReferenceObject& rhs) = default;
 		ReferenceObject(ReferenceObject&& rhs) = default;

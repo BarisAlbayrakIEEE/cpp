@@ -2,8 +2,8 @@
 
 #include "Macros.h"
 #include "GeometryObject.hxx"
-#include "GeometryParameters.hxx"
 #include "GeometryMath.hxx"
+#include "GeometryParameters.hxx"
 #include "GeometryException.hxx"
 #include "ReferenceObject.hxx"
 #include "CoordSystem.hxx"
@@ -32,7 +32,6 @@ namespace GeometryNamespace {
 
 	/// <summary>
 	/// The main constructor
-	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	VectorBase::VectorBase(
 		const int theDimensionCount,
@@ -46,11 +45,10 @@ namespace GeometryNamespace {
 	VectorBase::VectorBase(
 		const int theDimensionCount,
 		const std::array<double, 3>& theLocalComponents)
-		: ReferenceObject(theDimensionCount),
-		c_localComponents{ theLocalComponents }
+		: ReferenceObject(theDimensionCount)
 	{
-		inspectLocalComponents(theLocalComponents);
-		c_magnitude = calculateMagnitude(theLocalComponents);
+		inspectLocalComponents(theLocalComponents.cbegin(), theLocalComponents.cend());
+		setLocalComponents(theLocalComponents);
 	}
 
 	/// <summary>
@@ -62,6 +60,7 @@ namespace GeometryNamespace {
 		const std::vector<double, std::allocator<double>>& theLocalComponents)
 		: ReferenceObject(theDimensionCount)
 	{
+		inspectLocalComponents(theLocalComponents.cbegin(), theLocalComponents.cend());
 		setLocalComponents(theLocalComponents);
 	}
 
@@ -73,11 +72,10 @@ namespace GeometryNamespace {
 		const int theDimensionCount,
 		const std::shared_ptr<CoordSystem>& theReferenceCoordSystem,
 		const std::array<double, 3>& theLocalComponents)
-		: ReferenceObject(theDimensionCount, theReferenceCoordSystem),
-		c_localComponents{ theLocalComponents }
+		: ReferenceObject(theDimensionCount, theReferenceCoordSystem)
 	{
-		inspectLocalComponents(theLocalComponents);
-		c_magnitude = calculateMagnitude(theLocalComponents);
+		inspectLocalComponents(theLocalComponents.cbegin(), theLocalComponents.cend());
+		setLocalComponents(theLocalComponents);
 	}
 
 	/// <summary>
@@ -90,6 +88,7 @@ namespace GeometryNamespace {
 		const std::vector<double, std::allocator<double>>& theLocalComponents)
 		: ReferenceObject(theDimensionCount, theReferenceCoordSystem)
 	{
+		inspectLocalComponents(theLocalComponents.cbegin(), theLocalComponents.cend());
 		setLocalComponents(theLocalComponents);
 	}
 
@@ -112,13 +111,15 @@ namespace GeometryNamespace {
 			throw CoordSystemMismatchException(); // CSs
 		}
 
-		auto localComponents = GeometryMath::subtructArrays(
-			thePoint1.getLocalCoords(),
-			thePoint0.getLocalCoords());
-		inspectLocalComponents(localComponents);
-
-		c_localComponents = localComponents;
-		c_magnitude = calculateMagnitude(localComponents);
+		std::array<double, 3> localComponents = { {} };
+		std::transform(
+			thePoint1.getLocalCoords().begin(),
+			thePoint1.getLocalCoords().end(),
+			thePoint0.getLocalCoords().begin(),
+			localComponents.begin(),
+			std::minus<double>());
+		inspectLocalComponents(localComponents.cbegin(), localComponents.cend());
+		setLocalComponents(localComponents);
 	}
 
 	/// <summary>
@@ -129,7 +130,10 @@ namespace GeometryNamespace {
 	{
 		if (&rhs == this) return true;
 		if (ReferenceObject::operator!=(rhs)) return false;
-		return GeometryMath::equals(c_localComponents, rhs.getLocalComponents(), getToleranceGeneral());
+		return std::equal(
+			c_localComponents.cbegin(),
+			c_localComponents.cend(),
+			rhs.getLocalComponents().cbegin());
 	}
 
 	/// <summary>
@@ -143,13 +147,16 @@ namespace GeometryNamespace {
 
 	/// <summary>
 	/// This method inspects final geometrical equality which is actually the coincicience.
-	/// Point coordinates and vector components are inspected wrt the global CS.
-	/// Additionally, inclusion is used rather than the equivalence for the passing points.
 	/// </summary>
 	bool VectorBase::operator+=(const VectorBase& rhs) const
 	{
 		if (&rhs == this) return true;
-		return GeometryMath::equals(getGlobalComponents(), rhs.getGlobalComponents(), getToleranceGeneral());
+		auto globalComponents1{ getGlobalComponents() };
+		auto globalComponents2{ rhs.getGlobalComponents() };
+		return std::equal(
+			globalComponents1.cbegin(),
+			globalComponents1.cend(),
+			globalComponents2.cbegin());
 	}
 
 	/// <summary>
@@ -162,30 +169,25 @@ namespace GeometryNamespace {
 	}
 
 	/// <summary>
-	/// See == operator docstring
-	/// </summary>
-	bool VectorBase::equals(ARGCOPY(VectorBase) theVector) const {
-		if (this == &theVector) return true;
-		if (!ReferenceObject::equalsRef(theVector)) return false;
-		return GeometryMath::equals(c_localComponents, theVector.getLocalComponents(), getToleranceGeneral());
-	}
-
-	/// <summary>
 	/// See += operator docstring
 	/// </summary>
 	bool VectorBase::equalsGeometrically(ARGCOPY(VectorBase) theVector) const
 	{
-		if (this == &theVector) return true;
-		return GeometryMath::equals(getGlobalComponents(), theVector.getGlobalComponents(), getToleranceGeneral());
+		return VectorBase::operator+=(theVector);
 	}
 
 	/// <summary>
 	/// Inspect local components
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
-	void VectorBase::inspectLocalComponents(const std::array<double, 3>& theLocalComponents) const
+	template <typename It>
+	void VectorBase::inspectLocalComponents(const It theBegin, const It theEnd) const
 	{
-		if (GeometryMath::equalsZero(theLocalComponents, getToleranceGeneral()))
+		if (
+			std::all_of(
+				theBegin,
+				theEnd,
+				[](double i) { return GeometryMath::zero_g(i); }))
 		{
 			throw ZeroVectorException();
 		}
@@ -261,7 +263,7 @@ namespace GeometryNamespace {
 
 		auto axesVectors{ c_referenceCoordSystem->getAxesAsVector() }; // By definition, the reference CS is the global CS
 		std::array<double, 3> outGlobalComponents = { {} };
-		for (int iAxis = 0; iAxis < DIMENSIONS::D3; iAxis++) {
+		for (int iAxis = 0; iAxis < GeometryParameters::DIMENSIONS::D3; iAxis++) {
 			std::array<double, 3> componentsVector = { {} };
 			try {
 				componentsVector = axesVectors[iAxis]->multiply(c_localComponents[iAxis])->getLocalComponents();
@@ -269,7 +271,12 @@ namespace GeometryNamespace {
 			catch (ZeroVectorException&) {
 				continue;
 			}
-			outGlobalComponents = GeometryMath::sumArrays(outGlobalComponents, componentsVector);
+			std::transform(
+				outGlobalComponents.begin(),
+				outGlobalComponents.end(),
+				componentsVector.begin(),
+				outGlobalComponents.begin(),
+				std::plus<double>());
 		}
 		return outGlobalComponents;
 	}
@@ -281,24 +288,15 @@ namespace GeometryNamespace {
 	/// </summary>
 	auto VectorBase::getSlopes() const -> std::array<double, 3>
 	{
-		// Inspect the local components
-		if (
-			(GeometryMath::equals(c_localComponents[0], 0., getToleranceGeneral())) &&
-			(GeometryMath::equals(c_localComponents[1], 0., getToleranceGeneral())) &&
-			(GeometryMath::equals(c_localComponents[2], 0., getToleranceGeneral())))
-		{
-			throw ZeroVectorException();
-		}
-
 		// Determine the slopes
-		std::array<std::array<int, 2>, DIMENSIONS::D3> componentIndicies = { { { {0, 1} }, { { 1, 2} }, {{2, 0}} } };
+		std::array<std::array<int, 2>, GeometryParameters::DIMENSIONS::D3> componentIndicies = { { { {0, 1} }, { { 1, 2} }, {{2, 0}} } };
 		std::array<double, 3> outSlopes = { {0., 0., std::numeric_limits<unsigned int>::max()} };
 		if (is2D()) {
 			outSlopes[0] = calculateSlope(c_localComponents[0], c_localComponents[1]);
 			return outSlopes;
 		}
 
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
+		for (int iCoord = 0; iCoord < GeometryParameters::DIMENSIONS::D3; iCoord++) {
 			outSlopes[iCoord] = calculateSlope(componentIndicies[iCoord][0], componentIndicies[iCoord][1]);
 		}
 		return outSlopes;
@@ -312,8 +310,8 @@ namespace GeometryNamespace {
 	auto VectorBase::getAngles() const {
 		auto slopes { getSlopes() };
 		std::array<double, 3> outAngles = { {} };
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
-			outAngles[iCoord] = std::atan(slopes[iCoord]);
+		for (int iCoord = 0; iCoord < GeometryParameters::DIMENSIONS::D3; iCoord++) {
+			outAngles[iCoord] = std::tan(slopes[iCoord]);
 		}
 		return outAngles;
 	}
@@ -322,7 +320,11 @@ namespace GeometryNamespace {
 	/// Getter - Magnitude
 	/// </summary>
 	double VectorBase::getMagnitude() const {
-		return c_magnitude;
+		double magnitude = 0.;
+		for (int i = 0; i < GeometryParameters::DIMENSIONS::D3; i++) {
+			magnitude += std::pow(c_localComponents[i], 2.);
+		}
+		return std::pow(magnitude, 0.5);
 	}
 
 	/// <summary>
@@ -330,7 +332,14 @@ namespace GeometryNamespace {
 	/// </summary>
 	auto VectorBase::getUnitVectorComponents() const -> std::array<double, 3>
 	{
-		return GeometryMath::factorizeArray(c_localComponents, 1. / c_magnitude);
+		std::array<double, 3> output = { {} };
+		auto magnitude = getMagnitude();
+		std::transform(
+			c_localComponents.begin(),
+			c_localComponents.end(),
+			output.begin(),
+			[magnitude](double i) { return i / magnitude; });
+		return output;
 	}
 
 	/// <summary>
@@ -353,8 +362,7 @@ namespace GeometryNamespace {
 	void VectorBase::setMembers(
 		int theDimensionCount,
 		const std::shared_ptr<CoordSystem>& theCoordSystem,
-		const std::vector<double,
-		std::allocator<double>>& theLocalComponents)
+		const std::vector<double, std::allocator<double>>& theLocalComponents)
 	{
 		ReferenceObject::setMembersRef(theDimensionCount, theCoordSystem);
 		setLocalComponents(theLocalComponents);
@@ -379,7 +387,7 @@ namespace GeometryNamespace {
 		else if (theCoordSystem->isGlobal()) {
 			if (c_referenceCoordSystem->isGlobal()) checkCoordSystem = true;
 		}
-		else if (theCoordSystem->equals(*c_referenceCoordSystem)) checkCoordSystem = true;
+		else if (*theCoordSystem == *c_referenceCoordSystem) checkCoordSystem = true;
 		if (checkCoordSystem) {
 			ReferenceObject::setReferenceCoordSystemBase(theCoordSystem);
 			return;
@@ -404,8 +412,10 @@ namespace GeometryNamespace {
 	/// </summary>
 	void VectorBase::setLocalComponentX(const double& theLocalComponentX)
 	{
+		std::array<double, 3> localComponents = c_localComponents;
+		localComponents[0] = theLocalComponentX;
+		inspectLocalComponents(localComponents.cbegin(), localComponents.cend());
 		c_localComponents[0] = theLocalComponentX;
-		c_magnitude = calculateMagnitude(c_localComponents);
 	}
 
 	/// <summary>
@@ -413,8 +423,10 @@ namespace GeometryNamespace {
 	/// </summary>
 	void VectorBase::setLocalComponentY(const double& theLocalComponentY)
 	{
+		std::array<double, 3> localComponents = c_localComponents;
+		localComponents[1] = theLocalComponentY;
+		inspectLocalComponents(localComponents.cbegin(), localComponents.cend());
 		c_localComponents[1] = theLocalComponentY;
-		c_magnitude = calculateMagnitude(c_localComponents);
 	}
 
 	/// <summary>
@@ -422,8 +434,10 @@ namespace GeometryNamespace {
 	/// </summary>
 	void VectorBase::setLocalComponentZ(const double& theLocalComponentZ)
 	{
+		std::array<double, 3> localComponents = c_localComponents;
+		localComponents[2] = theLocalComponentZ;
+		inspectLocalComponents(localComponents.cbegin(), localComponents.cend());
 		c_localComponents[2] = theLocalComponentZ;
-		c_magnitude = calculateMagnitude(c_localComponents);
 	}
 
 	/// <summary>
@@ -431,8 +445,8 @@ namespace GeometryNamespace {
 	/// </summmary>
 	void VectorBase::setLocalComponents(const std::array<double, 3>& theLocalComponents)
 	{
+		inspectLocalComponents(theLocalComponents.cbegin(), theLocalComponents.cend());
 		c_localComponents = theLocalComponents;
-		c_magnitude = calculateMagnitude(theLocalComponents);
 	}
 
 	/// <summary>
@@ -442,22 +456,9 @@ namespace GeometryNamespace {
 	{
 		std::array<double, 3> localComponents = { {} };
 		std::copy(theLocalComponents.begin(), theLocalComponents.end(), localComponents.begin());
-		inspectLocalComponents(localComponents);
+		inspectLocalComponents(localComponents.cbegin(), localComponents.cend());
 
 		c_localComponents = localComponents;
-		c_magnitude = calculateMagnitude(localComponents);
-	}
-
-	/// <summary>
-	/// Calculates the magnitude of the vector
-	/// </summary>
-	double VectorBase::calculateMagnitude(const std::array<double, 3>& theLocalComponents) const
-	{
-		double magnitude = 0.;
-		for (int i = 0; i < DIMENSIONS::D3; i++) {
-			magnitude += std::pow(theLocalComponents[i], 2.);
-		}
-		return std::pow(magnitude, 0.5);
 	}
 
 	/// <summary>
@@ -472,31 +473,12 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	bool VectorBase::isParallel(ARGCOPY(VectorBase) theVector) const
 	{
-		return isParallel(theVector, getToleranceGeneral());
-	}
-
-	/// <summary>
-	/// Inspects parallelism considering the input tolerance
-	/// Compares the components (not the slopes) to determine the required condition
-	/// Hence, the tolerance for the distance analysis (not sensitive) shall be preferred
-	/// Additionally, keep in mind that the parallel vectors may be in reversed directions
-	/// Use isInTheSameDirection if the same direction is required
-	/// </summary>
-	/// <exception> NullptrException </exception>
-	bool VectorBase::isParallel(ARGCOPY(VectorBase) theVector, const double& theTolerance) const
-	{
 		auto globalComponents0{ getGlobalComponents() };
 		auto globalComponents1{ theVector.getGlobalComponents() };
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
-			if (
-				!GeometryMath::equals(
-					std::fabs(globalComponents0[iCoord]),
-					std::fabs(globalComponents1[iCoord]),
-					theTolerance)) {
-				return false;
-			}
-		}
-		return true;
+		return GeometryMath::allAbsoluteEqual_g<double>(
+			globalComponents0.cbegin(),
+			globalComponents0.cend(),
+			globalComponents1.cbegin());
 	}
 
 	/// <summary>
@@ -511,29 +493,12 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	bool VectorBase::isInTheSameDirection(ARGCOPY(VectorBase) theVector) const
 	{
-		return isInTheSameDirection(theVector, getToleranceGeneral());
-	}
-
-	/// <summary>
-	/// Inspects if in the same direction considering the input tolerance
-	/// Compares the components (not the slopes) to determine the required condition
-	/// Hence, a general tolerance shall be preferred
-	/// Additionally, keep in mind that the parallel vectors may be in reversed directions
-	/// Use isParallel, if the reversed direction is also acceptable
-	/// </summary>
-	/// <exception> NullptrException </exception>
-	bool VectorBase::isInTheSameDirection(
-		ARGCOPY(VectorBase) theVector,
-		const double& theTolerance) const
-	{
 		auto globalComponents0{ getGlobalComponents() };
 		auto globalComponents1{ theVector.getGlobalComponents() };
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
-			if (!GeometryMath::equals(globalComponents0[iCoord], globalComponents1[iCoord], theTolerance)) {
-				return false;
-			}
-		}
-		return true;
+		return std::equal(
+			globalComponents0.cbegin(),
+			globalComponents0.cend(),
+			globalComponents1.cbegin());
 	}
 
 	/// <summary>
@@ -548,21 +513,10 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	bool VectorBase::isNormal(ARGCOPY(VectorBase) theVector) const
 	{
-		return isNormal(theVector, getToleranceSensitive());
-	}
-
-	/// <summary>
-	/// Inspects if normal (perpandicular) by measuring the angle between considering the input tolerance
-	/// Compares the slopes (not the components) to determine the required condition
-	/// Hence, a sensitive tolerance shall be preferred
-	/// </summary>
-	/// <exception> NullptrException </exception>
-	bool VectorBase::isNormal(ARGCOPY(VectorBase) theVector, const double& theTolerance) const
-	{
 		double angle{ std::fabs(calculateAngle(theVector)) };
-		return bool(
-			GeometryMath::equals(angle, M_PI / 2., theTolerance) ||
-			GeometryMath::equals(angle, M_PI * 3. / 2., theTolerance));
+		double pi2 = M_PI / 2.;
+		double pi32 = M_PI * 3. / 2.;
+		return GeometryMath::equal_s(angle, pi2) || GeometryMath::equal_s(angle, pi32);
 	}
 
 	/// <summary>
@@ -584,10 +538,10 @@ namespace GeometryNamespace {
 		auto localComponents0{ getGlobalComponents() };
 		auto localComponents1{ theVector.getGlobalComponents() };
 		double outDotProduct = 0.;
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
+		for (int iCoord = 0; iCoord < GeometryParameters::DIMENSIONS::D3; iCoord++) {
 			outDotProduct += localComponents0[iCoord] * localComponents1[iCoord];
 		}
-		if (std::fabs(outDotProduct) < getToleranceGeneral()) return 0.;
+		if (GeometryMath::zero_g(outDotProduct)) return 0.;
 		return outDotProduct;
 	}
 
@@ -604,9 +558,7 @@ namespace GeometryNamespace {
 		vectorComponents[0] = c_localComponents[1] * localComponents[2] - c_localComponents[2] * localComponents[1];
 		vectorComponents[1] = c_localComponents[2] * localComponents[0] - c_localComponents[0] * localComponents[2];
 		vectorComponents[2] = c_localComponents[0] * localComponents[1] - c_localComponents[1] * localComponents[0];
-		if (GeometryMath::equalsZero<double, 3>(vectorComponents, getToleranceGeneral())) {
-			throw ZeroVectorException();
-		}
+		inspectLocalComponents(vectorComponents.cbegin(), vectorComponents.cend());
 
 		return std::make_shared<Vector3D>(vectorComponents);
 	}
@@ -620,12 +572,25 @@ namespace GeometryNamespace {
 		const double& theFactor) const
 		-> std::shared_ptr<Point3D>
 	{
-		// Get the item in my reference CS
-		auto translation{ GeometryMath::factorizeArray(c_localComponents, theFactor) };
-		auto finalCoords{
-			GeometryMath::sumArrays(
-				getPointWithMyCoordSystem(thePoint)->getLocalCoords(),
-				translation) };
+		// Transform the point by the factor
+		std::array<double, 3> translation = { {} };
+		std::transform(
+			c_localComponents.begin(),
+			c_localComponents.end(),
+			translation.begin(),
+			[theFactor](double i) { return i * theFactor; });
+
+		// Get the point coords in the reference CS
+		auto pointCoords = getPointWithMyCoordSystem(thePoint)->getLocalCoords();
+
+		// Get the final coords
+		std::array<double, 3> finalCoords = { {} };
+		std::transform(
+			pointCoords.begin(),
+			pointCoords.end(),
+			translation.begin(),
+			finalCoords.begin(),
+			std::plus<double>());
 
 		return std::make_shared<Point3D>(c_referenceCoordSystem, finalCoords);
 	}
@@ -661,8 +626,8 @@ namespace GeometryNamespace {
 	///         coord1 / coord0
 	/// </summary>
 	double VectorBase::calculateSlope(const double& theCoord0, const double& theCoord1) const {
-		if (GeometryMath::equals(theCoord0, 0., getToleranceGeneral())) {
-			if (GeometryMath::equals(theCoord1, 0., getToleranceGeneral()))
+		if (GeometryMath::zero_g(theCoord0)) {
+			if (GeometryMath::zero_g(theCoord1))
 			{
 				return 0.;
 			}
@@ -671,7 +636,7 @@ namespace GeometryNamespace {
 			}
 			return std::numeric_limits<long int>::min();
 		}
-		if (GeometryMath::equals(theCoord1, 0., getToleranceGeneral())) {
+		if (GeometryMath::zero_g(theCoord1)) {
 			return 0.;
 		}
 		return theCoord1 / theCoord0;
@@ -692,7 +657,22 @@ namespace GeometryNamespace {
 	///         atan(coord1 / coord0)
 	/// </summary>
 	double VectorBase::calculateAngle(const double& theCoord0, const double& theCoord1) const {
-		return atan(calculateSlope(theCoord0, theCoord1));
+		return std::atan(calculateSlope(theCoord0, theCoord1));
+	}
+
+	/// <summary>
+	/// Ensures the angle is between -2PI and 2PI
+	/// </summary>
+	double VectorBase::normalizeAngle(const double& theAngle)
+	{
+		double outAngle = theAngle;
+		while (outAngle > M_PI * 2.) {
+			outAngle -= M_PI * 2.;
+		}
+		while (outAngle < -M_PI * 2.) {
+			outAngle += M_PI * 2.;
+		}
+		return outAngle;
 	}
 
 	/// <summary>
@@ -706,39 +686,40 @@ namespace GeometryNamespace {
 		// Inspect the input angles
 		std::array<double, 3> outComponents = { {} };
 		if (
-			(GeometryMath::equals(theAngles[0], 0., getToleranceSensitive())) &&
-			(GeometryMath::equals(theAngles[1], 0., getToleranceSensitive())) &&
-			(GeometryMath::equals(theAngles[2], 0., getToleranceSensitive())))
+			std::all_of(
+				theAngles.cbegin(),
+				theAngles.cend(),
+				[](double i) { return GeometryMath::zero_g(i); }))
 		{
 			return outComponents;
 		}
 
 		// Normalize the angles
 		std::array<double, 3> normalizedAngles = { {} };
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
-			normalizedAngles[iCoord] = GeometryMath::normalizeAngle(theAngles[iCoord]);
+		for (int iCoord = 0; iCoord < GeometryParameters::DIMENSIONS::D3; iCoord++) {
+			normalizedAngles[iCoord] = VectorBase::normalizeAngle(theAngles[iCoord]);
 		}
 
 		// Calculate slopes
 		std::array<double, 3> slopes = { {} };
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
-			slopes[iCoord] = std::tan(normalizedAngles[iCoord]);
+		for (int iCoord = 0; iCoord < GeometryParameters::DIMENSIONS::D3; iCoord++) {
+			slopes[iCoord] = std::atan(normalizedAngles[iCoord]);
 		}
 
 		// Set critical angle values
 		double angle90{ M_PI / 2. };
-		std::array<double, 4> criticals90 {{angle90, angle90, angle90 * 3., -angle90 * 3.}};
+		std::array<double, 4> criticals90 {{angle90, angle90, angle90 * 3., angle90 * (-3.)}};
 
 		// Find a non-zero component using the angles
 		bool checkNonZeroComponent{};
 		int iCoord{ -1 };
 		int nonZeroComponent{};
-		while (!checkNonZeroComponent && iCoord < DIMENSIONS::D3 - 1) {
+		while (!checkNonZeroComponent && iCoord < GeometryParameters::DIMENSIONS::D3 - 1) {
 			iCoord++;
 			int iAngle{ -1 };
 			while (!checkNonZeroComponent && iAngle < 3) {
 				iAngle++;
-				if (!GeometryMath::equals(normalizedAngles[iCoord], criticals90[iAngle], getToleranceSensitive())) {
+				if (!GeometryMath::equal_s(normalizedAngles[iCoord], criticals90[iAngle])) {
 					checkNonZeroComponent = true;
 					nonZeroComponent = iCoord;
 				}

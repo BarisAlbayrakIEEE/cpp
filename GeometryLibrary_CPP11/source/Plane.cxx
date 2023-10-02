@@ -2,8 +2,8 @@
 
 #include "Macros.h"
 #include "GeometryObject.hxx"
-#include "GeometryParameters.hxx"
 #include "GeometryMath.hxx"
+#include "GeometryParameters.hxx"
 #include "GeometryException.hxx"
 #include "ReferenceObject.hxx"
 #include "CoordSystem.hxx"
@@ -27,7 +27,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
 	Plane::Plane(const std::array<double, 4>& theEC)
-		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
+		: GeometryObject()
 	{
 		setMembers(theEC);
 	}
@@ -38,7 +38,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
 	Plane::Plane(const std::vector<double, std::allocator<double>>& theEC)
-		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
+		: GeometryObject()
 	{
 		setMembers(theEC);
 	}
@@ -51,7 +51,7 @@ namespace GeometryNamespace {
 	Plane::Plane(
 		const std::shared_ptr<Point3D>& thePassingPoint,
 		const std::shared_ptr<Vector3D>& theNormalVector)
-		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
+		: GeometryObject()
 	{
 		setMembers(thePassingPoint, theNormalVector);
 	}
@@ -65,7 +65,7 @@ namespace GeometryNamespace {
 		const std::shared_ptr<Point3D>& thePassingPoint,
 		ARGCOPY(Vector3D) theInPlaneVector0,
 		ARGCOPY(Vector3D) theInPlaneVector1)
-		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE),
+		: GeometryObject(),
 		c_passingPoint{ thePassingPoint },
 		c_normalVector{ theInPlaneVector0.crossProduct(theInPlaneVector1) } { }
 
@@ -79,7 +79,7 @@ namespace GeometryNamespace {
 		const std::shared_ptr<Point3D>& thePassingPoint,
 		ARGCOPY(Point3D) thePoint1,
 		ARGCOPY(Point3D) thePoint2)
-		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
+		: GeometryObject()
 	{
 		// Inspect inputs
 		if (thePassingPoint->coincides(thePoint1)) throw CoincidenceException();
@@ -104,8 +104,7 @@ namespace GeometryNamespace {
 	bool Plane::operator==(const Plane& rhs) const
 	{
 		if (&rhs == this) return true;
-		if (*c_passingPoint != *rhs.getPassingPoint()) return false;
-		return *c_normalVector == *rhs.getNormalVector();
+		return *c_passingPoint == *rhs.getPassingPoint() && *c_normalVector == *rhs.getNormalVector();
 	}
 
 	/// <summary>
@@ -125,8 +124,11 @@ namespace GeometryNamespace {
 	bool Plane::operator+=(const Plane& rhs) const
 	{
 		if (&rhs == this) return true;
-		if (!c_normalVector->equalsGeometrically(*rhs.getNormalVector())) return false;
-		return includes(*rhs.getPassingPoint());
+
+		// The passing points may be different even for eqivalent planes.
+		// Hence, unequivalence of passing points does not mean unequivalence of the planes.
+		// However, equivalence of passing points and normal vectors means equivalent planes.
+		return (*c_normalVector += *rhs.getNormalVector()) && includes(*rhs.getPassingPoint());
 	}
 
 	/// <summary>
@@ -150,7 +152,7 @@ namespace GeometryNamespace {
 	{
 		if (
 			!c_passingPoint->is2D() &&
-			!GeometryMath::equals(c_passingPoint->getLocalCoordZ(), 0., getToleranceGeneral()))
+			!GeometryMath::zero_g(c_passingPoint->getLocalCoordZ()))
 		{
 			return false;
 		}
@@ -171,28 +173,11 @@ namespace GeometryNamespace {
 	}
 
 	/// <summary>
-	/// See == operator docstring
-	/// </summary>
-	bool Plane::equals(ARGCOPY(Plane) thePlane) const
-	{
-		if (this == &thePlane) return true;
-		if (!c_passingPoint->equals(*thePlane.getPassingPoint())) return false;
-		if (!c_normalVector->equals(*thePlane.getNormalVector())) return false;
-		return true;
-	}
-
-	/// <summary>
 	/// See += operator docstring
 	/// </summary>
 	bool Plane::equalsGeometrically(ARGCOPY(Plane) thePlane) const
 	{
-		if (this == &thePlane) return true;
-
-		// The passing points may be different even for eqivalent planes.
-		// Hence, unequivalence of passing points does not mean unequivalence of the planes.
-		// However, equivalence of passing points and normal vectors means equivalent planes.
-		if (c_normalVector->equalsGeometrically(*thePlane.getNormalVector())) return false;
-		return includes(*thePlane.getPassingPoint());
+		return operator+=(thePlane);
 	}
 
 	/// <summary>
@@ -202,10 +187,8 @@ namespace GeometryNamespace {
 	/// <exception> ZeroVectorException </exception>
 	void Plane::inspectEC(const std::array<double, 4>& theEC) const
 	{
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
-			if (!GeometryMath::equals(theEC[iCoord], 0., getToleranceGeneral())) {
-				return;
-			}
+		for (auto it : theEC) {
+			if (!GeometryMath::zero_g(it)) return;
 		}
 		throw ZeroVectorException();
 	}
@@ -216,10 +199,8 @@ namespace GeometryNamespace {
 	/// <exception> ZeroVectorException </exception>
 	void Plane::inspectEC(const std::vector<double, std::allocator<double>>& theEC) const
 	{
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
-			if (!GeometryMath::equals(theEC[iCoord], 0., getToleranceGeneral())) {
-				return;
-			}
+		for (auto it : theEC) {
+			if (!GeometryMath::zero_g(it)) return;
 		}
 		throw ZeroVectorException();
 	}
@@ -250,7 +231,7 @@ namespace GeometryNamespace {
 		double EC3 = 0.;
 		auto globalCoords{ c_passingPoint->getGlobalCoords() };
 		auto globalComponents{ c_normalVector->getLocalComponents() };
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
+		for (int iCoord = 0; iCoord < GeometryParameters::DIMENSIONS::D3; iCoord++) {
 			EC[iCoord] = globalComponents[iCoord];
 			EC3 -= globalComponents[iCoord] * globalCoords[iCoord];
 		}
@@ -349,12 +330,7 @@ namespace GeometryNamespace {
 		double coordX{ globalCoords[0] };
 		double coordY{ globalCoords[1] };
 		std::pair<bool, double> coordPair{ calculateCoordZ(coordX, coordY) };
-		return (
-			!coordPair.first ||
-			GeometryMath::equals(
-				coordPair.second,
-				globalCoords[2],
-				getToleranceGeneral()));
+		return !coordPair.first || GeometryMath::equal_g(coordPair.second, globalCoords[2]);
 	}
 
 	/// <summary>
@@ -401,11 +377,11 @@ namespace GeometryNamespace {
 		double EC3{ EC[3] };
 
 		// Check if the plane includes the input coordinates
-		if (GeometryMath::equals(EC0, 0., getToleranceGeneral())) return outResults;
+		if (GeometryMath::zero_g(EC0)) return outResults;
 		outResults.first = true;
 
 		// The output coordinate
-		outResults.second = -(EC1 * coord1 + EC2 * coord2 + EC3) / EC0;
+		outResults.second = (EC1 * coord1 + EC2 * coord2 + EC3) * (-1) / EC0;
 		return outResults;
 	}
 
@@ -429,11 +405,11 @@ namespace GeometryNamespace {
 		double EC3{ EC[3] };
 
 		// Check if the plane includes the input coordinates
-		if (GeometryMath::equals(EC0, 0., getToleranceGeneral())) return outResults;
+		if (GeometryMath::zero_g(EC0)) return outResults;
 		outResults.first = true;
 
 		// The output coordinate
-		outResults.second = -(EC1 * coord1 + EC2 * coord2 + EC3) / EC0;
+		outResults.second = (EC1 * coord1 + EC2 * coord2 + EC3) * (-1) / EC0;
 		return outResults;
 	}
 
@@ -457,11 +433,11 @@ namespace GeometryNamespace {
 		double EC3{ EC[3] };
 
 		// Check if the plane includes the input coordinates
-		if (GeometryMath::equals(EC0, 0., getToleranceGeneral())) return outResults;
+		if (GeometryMath::zero_g(EC0)) return outResults;
 		outResults.first = true;
 
 		// The output coordinate
-		outResults.second = -(EC1 * coord1 + EC2 * coord2 + EC3) / EC0;
+		outResults.second = (EC1 * coord1 + EC2 * coord2 + EC3) * (-1) / EC0;
 		return outResults;
 	}
 
@@ -484,42 +460,44 @@ namespace GeometryNamespace {
 		double EC3{ EC[3] };
 
 		// Check if the plane includes the input coordinate
-		if (GeometryMath::equals(EC0, 0., getToleranceGeneral()) && GeometryMath::equals(EC1, 0., getToleranceGeneral()))
+		if (GeometryMath::zero_g(EC0) && GeometryMath::zero_g(EC1))
 		{
 			return outResults;
 		}
 		outResults.first = true;
 
 		// Check if the plane is dependent only on the st output direction
-		if (GeometryMath::equals(EC1, 0., getToleranceGeneral()) && GeometryMath::equals(EC2, 0., getToleranceGeneral()))
+		if (GeometryMath::zero_g(EC1) && GeometryMath::zero_g(EC2))
 		{
-			outResults.second[0] = -EC3 / EC0;
+			outResults.second[0] = EC3 * (-1) / EC0;
 			return outResults;
 		}
 
 		// Check if the plane is dependent only on the 2nd output direction
-		if (GeometryMath::equals(EC0, 0., getToleranceGeneral()) && GeometryMath::equals(EC2, 0., getToleranceGeneral()))
+		if (GeometryMath::zero_g(EC0) && GeometryMath::zero_g(EC2))
 		{
-			outResults.second[1] = -EC3 / EC1;
+			outResults.second[1] = EC3 * (-1) / EC1;
 			return outResults;
 		}
 
 		// Check if the plane is independent of the st output direction
-		if (GeometryMath::equals(EC0, 0., getToleranceGeneral())) {
-			outResults.second[1] = -(EC3 + EC2 * coord2) / EC1;
+		if (GeometryMath::zero_g(EC0))
+		{
+			outResults.second[1] = (EC3 + EC2 * coord2) * (-1) / EC1;
 			return outResults;
 		}
 
 		// Check if the plane is independent of the 2nd output direction
-		if (GeometryMath::equals(EC1, 0., getToleranceGeneral())) {
-			outResults.second[0] = -(EC3 + EC2 * coord2) / EC0;
+		if (GeometryMath::zero_g(EC1))
+		{
+			outResults.second[0] = (EC3 + EC2 * coord2) * (-1) / EC0;
 			return outResults;
 		}
 
 		// All exceptional cases inspected.
 		// All directions are dependent
 		// Keep the 1st output direction with zero initial value and calculate the 2nd direction correspondingly
-		outResults.second[1] = -(EC3 + EC2 * coord2) / EC1;
+		outResults.second[1] = (EC3 + EC2 * coord2) * (-1) / EC1;
 		return outResults;
 	}
 
@@ -542,42 +520,44 @@ namespace GeometryNamespace {
 		double EC3{ EC[3] };
 
 		// Check if the plane includes the input coordinate
-		if (GeometryMath::equals(EC0, 0., getToleranceGeneral()) && GeometryMath::equals(EC1, 0., getToleranceGeneral()))
+		if (GeometryMath::zero_g(EC0) && GeometryMath::zero_g(EC1))
 		{
 			return outResults;
 		}
 		outResults.first = true;
 
 		// Check if the plane is dependent only on the st output direction
-		if (GeometryMath::equals(EC1, 0., getToleranceGeneral()) && GeometryMath::equals(EC2, 0., getToleranceGeneral()))
+		if (GeometryMath::zero_g(EC1) && GeometryMath::zero_g(EC2))
 		{
-			outResults.second[0] = -EC3 / EC0;
+			outResults.second[0] = EC3 * (-1) / EC0;
 			return outResults;
 		}
 
 		// Check if the plane is dependent only on the 2nd output direction
-		if (GeometryMath::equals(EC0, 0., getToleranceGeneral()) && GeometryMath::equals(EC2, 0., getToleranceGeneral()))
+		if (GeometryMath::zero_g(EC0) && GeometryMath::zero_g(EC2))
 		{
-			outResults.second[1] = -EC3 / EC1;
+			outResults.second[1] = EC3 * (-1) / EC1;
 			return outResults;
 		}
 
 		// Check if the plane is independent of the st output direction
-		if (GeometryMath::equals(EC0, 0., getToleranceGeneral())) {
-			outResults.second[1] = -(EC3 + EC2 * coord2) / EC1;
+		if (GeometryMath::zero_g(EC0))
+		{
+			outResults.second[1] = (EC3 + EC2 * coord2) * (-1) / EC1;
 			return outResults;
 		}
 
 		// Check if the plane is independent of the 2nd output direction
-		if (GeometryMath::equals(EC1, 0., getToleranceGeneral())) {
-			outResults.second[0] = -(EC3 + EC2 * coord2) / EC0;
+		if (GeometryMath::zero_g(EC1))
+		{
+			outResults.second[0] = (EC3 + EC2 * coord2) * (-1) / EC0;
 			return outResults;
 		}
 
 		// All exceptional cases inspected.
 		// All directions are dependent
 		// Keep the st output direction with zero initial value and calculatethe 2nd direction correspondingly
-		outResults.second[1] = -(EC3 + EC2 * coord2) / EC1;
+		outResults.second[1] = (EC3 + EC2 * coord2) * (-1) / EC1;
 		return outResults;
 	}
 
@@ -600,42 +580,44 @@ namespace GeometryNamespace {
 		double EC3{ EC[3] };
 
 		// Check if the plane includes the input coordinate
-		if (GeometryMath::equals(EC0, 0., getToleranceGeneral()) && GeometryMath::equals(EC1, 0., getToleranceGeneral()))
+		if (GeometryMath::zero_g(EC0) && GeometryMath::zero_g(EC1))
 		{
 			return outResults;
 		}
 		outResults.first = true;
 
 		// Check if the plane is dependent only on the st output direction
-		if (GeometryMath::equals(EC1, 0., getToleranceGeneral()) && GeometryMath::equals(EC2, 0., getToleranceGeneral()))
+		if (GeometryMath::zero_g(EC1) && GeometryMath::zero_g(EC2))
 		{
-			outResults.second[0] = -EC3 / EC0;
+			outResults.second[0] = EC3 * (-1) / EC0;
 			return outResults;
 		}
 
 		// Check if the plane is dependent only on the 2nd output direction
-		if (GeometryMath::equals(EC0, 0., getToleranceGeneral()) && GeometryMath::equals(EC2, 0., getToleranceGeneral()))
+		if (GeometryMath::zero_g(EC0) && GeometryMath::zero_g(EC2))
 		{
-			outResults.second[1] = -EC3 / EC1;
+			outResults.second[1] = EC3 * (-1) / EC1;
 			return outResults;
 		}
 
 		// Check if the plane is independent of the 1st output direction
-		if (GeometryMath::equals(EC0, 0., getToleranceGeneral())) {
-			outResults.second[1] = -(EC3 + EC2 * coord2) / EC1;
+		if (GeometryMath::zero_g(EC0))
+		{
+			outResults.second[1] = (EC3 + EC2 * coord2) * (-1) / EC1;
 			return outResults;
 		}
 
 		// Check if the plane is independent of the 2nd output direction
-		if (GeometryMath::equals(EC1, 0., getToleranceGeneral())) {
-			outResults.second[0] = -(EC3 + EC2 * coord2) / EC0;
+		if (GeometryMath::zero_g(EC1))
+		{
+			outResults.second[0] = (EC3 + EC2 * coord2) * (-1) / EC0;
 			return outResults;
 		}
 
 		// All exceptional cases inspected.
 		// All directions are dependent
 		// Keep the 1st output direction with zero initial value and calculatethe 2nd direction correspondingly
-		outResults.second[1] = -(EC3 + EC2 * coord2) / EC1;
+		outResults.second[1] = (EC3 + EC2 * coord2) * (-1) / EC1;
 		return outResults;
 	}
 
@@ -660,7 +642,7 @@ namespace GeometryNamespace {
 		double value0{};
 		double value1{};
 		auto globalCoords{ point.getGlobalCoords() };
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
+		for (int iCoord = 0; iCoord < GeometryParameters::DIMENSIONS::D3; iCoord++) {
 			value0 += EC[iCoord] * globalCoords[iCoord];
 			value1 += std::pow(EC[iCoord], 2.);
 		}
@@ -691,9 +673,7 @@ namespace GeometryNamespace {
 		if (intersects(theLine)) return 0.;
 
 		// Find distances for the two points
-		return std::fmin(
-			calculateDistance(*theLine.getEndPoint0()), 
-			calculateDistance(*theLine.getEndPoint1()));
+		return std::fmin(calculateDistance(*theLine.getEndPoint0()), calculateDistance(*theLine.getEndPoint1()));
 	}
 
 	/// <summary>
@@ -711,16 +691,16 @@ namespace GeometryNamespace {
 	///	However, this should be done carefully as the intersection line may be independent of one of x, y and z.
 	///	This can be determined by inspecting the planes' ECs.
 	/// </summary>
-	auto Plane::intersect(ARGCOPY(Plane) thePlane) const -> std::pair<INTERSECTION2, std::shared_ptr<Axis>>
+	auto Plane::intersect(ARGCOPY(Plane) thePlane) const -> std::pair<GeometryParameters::INTERSECTION2, std::shared_ptr<Axis>>
 	{
 		// Check parallelism
 		if (c_normalVector->isParallel(*thePlane.getNormalVector()))
 		{
-			if (GeometryMath::equals(calculateDistance(*thePlane.c_passingPoint), 0., getToleranceGeneral()))
+			if (GeometryMath::zero_g(calculateDistance(*thePlane.c_passingPoint)))
 			{
-				return std::pair<INTERSECTION2, std::shared_ptr<Axis>>{ INTERSECTION2::Includes2, nullptr };
+				return std::pair<GeometryParameters::INTERSECTION2, std::shared_ptr<Axis>>{ GeometryParameters::INTERSECTION2::Includes2, nullptr };
 			}
-			return std::pair<INTERSECTION2, std::shared_ptr<Axis>>{ INTERSECTION2::Skew2, nullptr };
+			return std::pair<GeometryParameters::INTERSECTION2, std::shared_ptr<Axis>>{ GeometryParameters::INTERSECTION2::Skew2, nullptr };
 		}
 
 		// Determine a point on the intersection line
@@ -747,7 +727,7 @@ namespace GeometryNamespace {
 		// Trial 1: x = o.
 		coordX = 0.;
 		denominator = EC1[1] * EC2[2] - EC2[1] * EC1[2];
-		if (!GeometryMath::equals(denominator, 0., getToleranceGeneral())) {
+		if (!GeometryMath::zero_g(denominator)) {
 			divisor = EC1[2] * EC2[3] - EC2[2] * EC1[3];
 			coordY = divisor / denominator;
 		}
@@ -755,7 +735,7 @@ namespace GeometryNamespace {
 			// Trial 2: y = 0.
 			coordY = 0.;
 			denominator = EC1[2] * EC2[0] - EC2[2] * EC1[0];
-			if (!GeometryMath::equals(denominator, 0., getToleranceGeneral())) {
+			if (!GeometryMath::zero_g(denominator)) {
 				divisor = EC1[0] * EC2[3] - EC2[0] * EC1[3];
 				coordZ = divisor / denominator;
 			}
@@ -763,7 +743,7 @@ namespace GeometryNamespace {
 				// Trial 3: z = 0.
 				coordZ = 0.;
 				denominator = EC1[0] * EC2[1] - EC2[0] * EC1[1];
-				if (!GeometryMath::equals(denominator, 0., getToleranceGeneral())) {
+				if (!GeometryMath::zero_g(denominator)) {
 					divisor = EC1[1] * EC2[3] - EC2[1] * EC1[3];
 					coordX = divisor / denominator;
 				}
@@ -776,8 +756,8 @@ namespace GeometryNamespace {
 		auto directionVector{ c_normalVector->crossProduct(*thePlane.c_normalVector) };
 
 		// intersection line
-		return std::pair<INTERSECTION2, std::shared_ptr<Axis>>{
-			INTERSECTION2::Intersects2,
+		return std::pair<GeometryParameters::INTERSECTION2, std::shared_ptr<Axis>>{
+			GeometryParameters::INTERSECTION2::Intersects2,
 			std::make_shared<Axis>(std::make_shared<Point3D>(passingPoint), directionVector) };
 	}
 
@@ -791,19 +771,23 @@ namespace GeometryNamespace {
 	/// Approach:
 	/// See wikipedia: Line-plane intersection
 	/// </summary>
-	auto Plane::intersect(ARGCOPY(Axis) theAxis) const -> std::pair<INTERSECTION2, std::shared_ptr<Point3D>>
+	auto Plane::intersect(ARGCOPY(Axis) theAxis) const -> std::pair<GeometryParameters::INTERSECTION2, std::shared_ptr<Point3D>>
 	{
 		// Check parallelism
-		double angle{ std::fabs(c_normalVector->calculateAngle(*theAxis.getDirectionVector())) };
+		auto angle = std::fabs(c_normalVector->calculateAngle(*theAxis.getDirectionVector()));
+		double pi2 = M_PI / 2.;
+		double pi32 = M_PI * 3. / 2.;
 		if (
-			GeometryMath::equals(angle, M_PI / 2., getToleranceSensitive()) ||
-			GeometryMath::equals(angle, M_PI * 3. / 2., getToleranceSensitive()))
+			GeometryMath::equal_s(angle, pi2) ||
+			GeometryMath::equal_s(angle, pi32))
 		{
-			if (GeometryMath::equals(calculateDistance(*theAxis.getPassingPoint()), 0., getToleranceGeneral()))
+			if (GeometryMath::zero_g(calculateDistance(*theAxis.getPassingPoint())))
 			{
-				return std::pair<INTERSECTION2, std::shared_ptr<Point3D>>{ INTERSECTION2::Includes2, nullptr };
+				return std::pair<GeometryParameters::INTERSECTION2, std::shared_ptr<Point3D>>{
+					GeometryParameters::INTERSECTION2::Includes2, nullptr };
 			}
-			return std::pair<INTERSECTION2, std::shared_ptr<Point3D>>{ INTERSECTION2::Skew2, nullptr };
+			return std::pair<GeometryParameters::INTERSECTION2, std::shared_ptr<Point3D>>{
+				GeometryParameters::INTERSECTION2::Skew2, nullptr };
 		}
 
 		// Solve the plane's scalar equation (Ax + By + Cz + D = 0) and line's parametric equation
@@ -812,7 +796,7 @@ namespace GeometryNamespace {
 		// No need to inspect exception as the parallelism is inspected before
 		auto EC1{ getEC() };
 		auto EC2{ theAxis.getEC() };
-		double axisParameter{ -(
+		double axisParameter{ (
 			(
 				EC1[0] * EC2[0][0] +
 				EC1[1] * EC2[0][1] +
@@ -821,7 +805,7 @@ namespace GeometryNamespace {
 			(
 				EC1[0] * EC2[1][0] +
 				EC1[0] * EC2[1][1] +
-				EC1[0] * EC2[1][2])) };
+				EC1[0] * EC2[1][2])) * (-1) };
 
 		// Determine point coords using line1 s parameteric equation with the parameter
 		std::array<double, 3> pointCoords{{
@@ -830,8 +814,8 @@ namespace GeometryNamespace {
 			EC2[0][2] + EC2[1][2] * axisParameter }};
 
 		// Create point
-		return std::pair<INTERSECTION2, std::shared_ptr<Point3D>>{
-			INTERSECTION2::Intersects2,
+		return std::pair<GeometryParameters::INTERSECTION2, std::shared_ptr<Point3D>>{
+			GeometryParameters::INTERSECTION2::Intersects2,
 				std::make_shared<Point3D>(pointCoords) };
 	}
 
@@ -842,7 +826,7 @@ namespace GeometryNamespace {
 	///		Intersect
 	///		Coincide
 	/// </summary>
-	auto Plane::intersect(ARGCOPY(Line) theLine) const -> std::pair<INTERSECTION2, std::shared_ptr<Point3D>>
+	auto Plane::intersect(ARGCOPY(Line) theLine) const -> std::pair<GeometryParameters::INTERSECTION2, std::shared_ptr<Point3D>>
 	{
 		// Inspect intersection for the infinite tine corresponding to the line
 		auto intersectionResults{ intersect(*theLine.getAxis()) };
@@ -854,8 +838,8 @@ namespace GeometryNamespace {
 		// Check if the intersection point is included by the line
 		intersectionResults.first = (
 			theLine.includes(*intersectionResults.second)
-			? INTERSECTION2::Intersects2
-			: INTERSECTION2::Skew2);
+			? GeometryParameters::INTERSECTION2::Intersects2
+			: GeometryParameters::INTERSECTION2::Skew2);
 		return intersectionResults;
 	}
 
@@ -946,17 +930,17 @@ namespace GeometryNamespace {
 		double coordY{};
 		double coordZ{};
 		auto globalCoords{ c_passingPoint->getGlobalCoords() };
-		if (!GeometryMath::equals(EC[0], 0., getToleranceGeneral())) {
+		if (!GeometryMath::zero_g(EC[0])) {
 			coordX = globalCoords[0] + theFactor;
 			auto coordPair{ calculateCoordYZ(coordX) };
 			exists = coordPair.first;
 		}
-		else if (!GeometryMath::equals(EC[1], 0., getToleranceGeneral())) {
+		else if (!GeometryMath::zero_g(EC[1])) {
 			coordY = globalCoords[1] + theFactor;
 			auto coordPair{ calculateCoordZX(coordY) };
 			exists = coordPair.first;
 		}
-		else if (!GeometryMath::equals(EC[2], 0., getToleranceGeneral())) {
+		else if (!GeometryMath::zero_g(EC[2])) {
 			coordZ = globalCoords[2] + theFactor;
 			auto coordPair{ calculateCoordXY(coordZ) };
 			exists = coordPair.first;
@@ -982,40 +966,40 @@ namespace GeometryNamespace {
 		double coordX{};
 		double coordY{};
 		double coordZ{};
-		if (std::fabs(theEC[1]) <= getToleranceGeneral() && std::fabs(theEC[2]) <= getToleranceGeneral())
+		if (GeometryMath::zero_g(theEC[1]) && GeometryMath::zero_g(theEC[2]))
 		{
-			coordX = -theEC[3] / theEC[0];
+			coordX = theEC[3] / theEC[0] * (-1);
 		}
-		else if (std::fabs(theEC[0]) <= getToleranceGeneral() && std::fabs(theEC[2]) <= getToleranceGeneral())
+		else if (GeometryMath::zero_g(theEC[0]) && GeometryMath::zero_g(theEC[2]))
 		{
-			coordY = -theEC[3] / theEC[1];
+			coordY = theEC[3] / theEC[1] * (-1);
 		}
-		else if (std::fabs(theEC[0]) <= getToleranceGeneral() && std::fabs(theEC[1]) <= getToleranceGeneral())
+		else if (GeometryMath::zero_g(theEC[0]) && GeometryMath::zero_g(theEC[1]))
 		{
-			coordZ = -theEC[3] / theEC[2];
+			coordZ = theEC[3] / theEC[2] * (-1);
 		}
-		else if (std::fabs(theEC[0]) <= getToleranceGeneral())
+		else if (GeometryMath::zero_g(theEC[0]))
 		{
-			coordZ = -theEC[3] / theEC[2]; // for y = 0
+			coordZ = theEC[3] / theEC[2] * (-1); // for y = 0
 		}
-		else if (std::fabs(theEC[1]) <= getToleranceGeneral())
+		else if (GeometryMath::zero_g(theEC[1]))
 		{
-			coordX = -theEC[3] / theEC[0]; // for z = 0
+			coordX = theEC[3] / theEC[0] * (-1); // for z = 0
 		}
-		else if (std::fabs(theEC[2]) <= getToleranceGeneral())
+		else if (GeometryMath::zero_g(theEC[2]))
 		{
-			coordY = -theEC[3] / theEC[1]; // for x = 0
+			coordY = theEC[3] / theEC[1] * (-1); // for x = 0
 		}
 		else
 		{
-			coordZ = -theEC[3] / theEC[2]; // for x = 0 and y = 0
+			coordZ = theEC[3] / theEC[2] * (-1); // for x = 0 and y = 0
 		}
 		Point3D passingPoint{ std::array<double, 3>{{ coordX, coordY, coordZ } } };
 		c_passingPoint = std::shared_ptr<Point3D>(&passingPoint);
 
 		// The normal vector
 		std::array<double, 3> globalComponents = { {} };
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
+		for (int iCoord = 0; iCoord < GeometryParameters::DIMENSIONS::D3; iCoord++) {
 			globalComponents[iCoord] = theEC[iCoord];
 		}
 		Vector3D normalVector{ globalComponents };
@@ -1033,40 +1017,40 @@ namespace GeometryNamespace {
 		double coordX{};
 		double coordY{};
 		double coordZ{};
-		if (std::fabs(theEC[1]) <= getToleranceGeneral() && std::fabs(theEC[2]) <= getToleranceGeneral())
+		if (GeometryMath::zero_g(theEC[1]) && GeometryMath::zero_g(theEC[2]))
 		{
-			coordX = -theEC[3] / theEC[0];
+			coordX = theEC[3] / theEC[0] * (-1);
 		}
-		else if (std::fabs(theEC[0]) <= getToleranceGeneral() && std::fabs(theEC[2]) <= getToleranceGeneral())
+		else if (GeometryMath::zero_g(theEC[0]) && GeometryMath::zero_g(theEC[2]))
 		{
-			coordY = -theEC[3] / theEC[1];
+			coordY = theEC[3] / theEC[1] * (-1);
 		}
-		else if (std::fabs(theEC[0]) <= getToleranceGeneral() && std::fabs(theEC[1]) <= getToleranceGeneral())
+		else if (GeometryMath::zero_g(theEC[0]) && GeometryMath::zero_g(theEC[1]))
 		{
-			coordZ = -theEC[3] / theEC[2];
+			coordZ = theEC[3] / theEC[2] * (-1);
 		}
-		else if (std::fabs(theEC[0]) <= getToleranceGeneral())
+		else if (GeometryMath::zero_g(theEC[0]))
 		{
-			coordZ = -theEC[3] / theEC[2]; // for y = 0
+			coordZ = theEC[3] / theEC[2] * (-1); // for y = 0
 		}
-		else if (std::fabs(theEC[1]) <= getToleranceGeneral())
+		else if (GeometryMath::zero_g(theEC[1]))
 		{
-			coordX = -theEC[3] / theEC[0]; // for z = 0
+			coordX = theEC[3] / theEC[0] * (-1); // for z = 0
 		}
-		else if (std::fabs(theEC[2]) <= getToleranceGeneral())
+		else if (GeometryMath::zero_g(theEC[2]))
 		{
-			coordY = -theEC[3] / theEC[1]; // for x = 0
+			coordY = theEC[3] / theEC[1] * (-1); // for x = 0
 		}
 		else
 		{
-			coordZ = -theEC[3] / theEC[2]; // for x = 0 and y = 0
+			coordZ = theEC[3] / theEC[2] * (-1); // for x = 0 and y = 0
 		}
 		Point3D passingPoint{ std::array<double, 3>{{ coordX, coordY, coordZ } } };
 		c_passingPoint = std::shared_ptr<Point3D>(&passingPoint);
 
 		// The normal vector
 		std::array<double, 3> globalComponents = { {} };
-		for (int iCoord = 0; iCoord < DIMENSIONS::D3; iCoord++) {
+		for (int iCoord = 0; iCoord < GeometryParameters::DIMENSIONS::D3; iCoord++) {
 			globalComponents[iCoord] = theEC[iCoord];
 		}
 		Vector3D normalVector{ globalComponents };

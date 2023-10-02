@@ -17,28 +17,15 @@ namespace GeometryNamespace {
 	}
 
 	/// <summary>
-	/// The constructor with tolerance inputs
-	/// </summary>
-	GeometryObject::GeometryObject(const double theToleranceGeneral, const double theToleranceSensitive) noexcept
-		:
-		GeometryObject()
-	{
-		c_toleranceGeneral = theToleranceGeneral;
-		c_toleranceSensitive = theToleranceSensitive;
-	}
-
-	/// <summary>
 	/// Copy ctor
 	/// User defined function is required in order to increment the static ID counter
+	/// SIDE EFFECT: GeometryObject::c_IDCounter
 	/// </summary>
 	GeometryObject::GeometryObject(const GeometryObject& rhs)
 		:
-		c_name { rhs.getName() },
-		c_toleranceGeneral { rhs.getToleranceGeneral() },
-		c_toleranceSensitive { rhs.getToleranceSensitive() }
+		c_name{ rhs.getName() }
 	{
-		GeometryObject::c_IDCounter++;
-		c_ID = GeometryObject::c_IDCounter;
+		c_ID = ++GeometryObject::c_IDCounter;
 	}
 
 	/// <summary>
@@ -51,37 +38,16 @@ namespace GeometryNamespace {
 		GeometryObject::c_IDCounter++;
 		c_ID = GeometryObject::c_IDCounter;
 		c_name = rhs.getName();
-		c_toleranceGeneral = rhs.getToleranceGeneral();
-		c_toleranceSensitive = rhs.getToleranceSensitive();
 		return *this;
 	}
 
 	/// <summary>
-	/// Getter - General tolerance
+	/// Virtual destroctor
+	/// SIDE EFFECT: GeometryObject::c_IDCounter
 	/// </summary>
-	double GeometryObject::getToleranceGeneral() const {
-		return c_toleranceGeneral;
-	}
-
-	/// <summary>
-	/// Getter - Sensitive tolerance
-	/// </summary>
-	double GeometryObject::getToleranceSensitive() const {
-		return c_toleranceSensitive;
-	}
-
-	/// <summary>
-	/// Setter - General tolerance
-	/// </summary>
-	void GeometryObject::setToleranceGeneral(const double& theToleranceGeneral) {
-		c_toleranceGeneral = theToleranceGeneral;
-	}
-
-	/// <summary>
-	/// Setter - Sensitive tolerance
-	/// </summary>
-	void GeometryObject::setToleranceSensitive(const double& theToleranceSensitive) {
-		c_toleranceSensitive = theToleranceSensitive;
+	GeometryObject::~GeometryObject()
+	{
+		--GeometryObject::c_IDCounter;
 	}
 
 	/// <summary>

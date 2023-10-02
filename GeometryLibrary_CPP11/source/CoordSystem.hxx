@@ -105,7 +105,6 @@ namespace GeometryNamespace {
 		// Methods
 		bool is2D() const;
 		bool is3D() const;
-		bool equals(ARGCOPY(CoordSystem) theCoordSystem) const;
 		bool equalsGeometrically(ARGCOPY(CoordSystem) theCoordSystem) const;
 
 		auto getOriginCoords() const -> std::array<double, 3>;

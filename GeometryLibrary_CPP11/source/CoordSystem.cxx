@@ -2,8 +2,8 @@
 
 #include "Macros.h"
 #include "GeometryObject.hxx"
-#include "GeometryParameters.hxx"
 #include "GeometryMath.hxx"
+#include "GeometryParameters.hxx"
 #include "GeometryException.hxx"
 #include "ReferenceObject.hxx"
 #include "CoordSystem.hxx"
@@ -24,7 +24,7 @@ namespace GeometryNamespace {
 	/// <summary>
 	/// Protected ctor which acts like a setter
 	/// Preconditions are not inspected (e.g. is X perpandicular to Y and Z?)
-	/// An internal ctor
+	/// An internal-usage ctor
 	/// </summary>
 	CoordSystem::CoordSystem(
 		const std::array<double, 3>& theOriginCoords,
@@ -32,7 +32,7 @@ namespace GeometryNamespace {
 		const std::array<double, 3>& theAxisComponentsY,
 		const std::array<double, 3>& theAxisComponentsZ)
 	:
-	GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE),
+	GeometryObject(),
 	c_originCoords{ theOriginCoords },
 	c_axisComponentsX{ theAxisComponentsX },
 	c_axisComponentsY{ theAxisComponentsY },
@@ -52,7 +52,7 @@ namespace GeometryNamespace {
 		ARGCOPY(Point3D) theOriginPoint,
 		ARGCOPY(Point3D) thePointOnAxisX,
 		ARGCOPY(Point3D) thePointOnAxisY)
-		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
+		: GeometryObject()
 	{
 		setMembers(theOriginPoint, thePointOnAxisX, thePointOnAxisY);
 	}
@@ -70,20 +70,45 @@ namespace GeometryNamespace {
 		ARGCOPY(Point3D) theOriginPoint,
 		ARGCOPY(Vector3D) theAxisVectorX,
 		ARGCOPY(Vector3D) theAxisVectorY)
-		: GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE)
+		: GeometryObject()
 	{
 		setMembers(theOriginPoint, theAxisVectorX, theAxisVectorY);
 	}
 
 	/// <summary>
 	/// This operator inspects direct equality which requires direct equality of all members.
-	/// The CoordSystem class does not have geometrical equality/unequality methods separately
+	/// The CoordSystem class does not have geometrical equality/inequality methods separately
 	/// (e.g. += operator of PointBase class)
-	/// as the members of CoordSystem class are of fundamental type (array)
+	/// as the members of CoordSystem class are of fundamental type
 	/// </summary>
 	bool CoordSystem::operator==(const CoordSystem& rhs) const
 	{
-		return equals(rhs);
+		if (this == &rhs) return true;
+
+		auto lambda = [](double i, double j) { return GeometryMath::equal_g(i, j); };
+		return std::equal(
+			c_originCoords.cbegin(),
+			c_originCoords.cend(),
+			rhs.getOriginCoords().cbegin(),
+			lambda);
+		if (c_isGlobal != rhs.c_isGlobal) return false;
+		if (
+			!std::equal(
+				c_originCoords.cbegin(),
+				c_originCoords.cend(),
+				rhs.getOriginCoords().cbegin(),
+				lambda)) return false;
+		if (
+			!std::equal(
+				c_axisComponentsX.cbegin(),
+				c_axisComponentsX.cend(),
+				rhs.getAxisComponentsX().cbegin(),
+				lambda)) return false;
+		return std::equal(
+			c_axisComponentsY.cbegin(),
+			c_axisComponentsY.cend(),
+			rhs.getAxisComponentsY().cbegin(),
+			lambda);
 	}
 
 	/// <summary>
@@ -129,24 +154,11 @@ namespace GeometryNamespace {
 	}
 
 	/// <summary>
-	/// This method inspects direct equality which requires direct equality of all members.
-	/// </summary>
-	bool CoordSystem::equals(ARGCOPY(CoordSystem) theCoordSystem) const {
-		if (this == &theCoordSystem) return true;
-		if (c_isGlobal != theCoordSystem.c_isGlobal) return false;
-		if (!GeometryMath::equals(c_originCoords, theCoordSystem.getOriginCoords(), getToleranceGeneral())) return false;
-		if (!GeometryMath::equals(c_axisComponentsX, theCoordSystem.getAxisComponentsX(), getToleranceGeneral())) return false;
-		if (!GeometryMath::equals(c_axisComponentsY, theCoordSystem.getAxisComponentsY(), getToleranceGeneral())) return false;
-		return true;
-	}
-
-	/// <summary>
-	/// Equality and geometrical equality are the same for CoordSystem.
-	/// Hence, same as equals(theCoordSystem)
+	/// See += operator docstring
 	/// </summary>
 	bool CoordSystem::equalsGeometrically(ARGCOPY(CoordSystem) theCoordSystem) const
 	{
-		return equals(theCoordSystem);
+		return *this == theCoordSystem;
 	}
 
 	/// <summary>
@@ -244,9 +256,28 @@ namespace GeometryNamespace {
 
 		auto axisVectorZ = theAxisVectorX.crossProduct(theAxisVectorY);
 		auto axisVectorY = axisVectorZ->crossProduct(theAxisVectorX);
-		auto axisX{ GeometryMath::factorizeArray(theAxisVectorX.getGlobalComponents(), theAxisVectorX.getMagnitude()) };
-		auto axisY{ GeometryMath::factorizeArray(axisVectorY->getGlobalComponents(), theAxisVectorX.getMagnitude()) };
-		auto axisZ{ GeometryMath::factorizeArray(axisVectorZ->getGlobalComponents(), theAxisVectorX.getMagnitude()) };
+		auto magnitude{ theAxisVectorX.getMagnitude() };
+		auto globalComponents1{ theAxisVectorX.getGlobalComponents() };
+		auto globalComponents2{ axisVectorY->getGlobalComponents() };
+		auto globalComponents3{ axisVectorZ->getGlobalComponents() };
+		std::array<double, 3> axisX{ {} };
+		std::array<double, 3> axisY{ {} };
+		std::array<double, 3> axisZ{ {} };
+		std::transform(
+			globalComponents1.begin(),
+			globalComponents1.end(),
+			axisX.begin(),
+			[magnitude](double i) { return i * magnitude; });
+		std::transform(
+			globalComponents2.begin(),
+			globalComponents2.end(),
+			axisY.begin(),
+			[magnitude](double i) { return i * magnitude; });
+		std::transform(
+			globalComponents3.begin(),
+			globalComponents3.end(),
+			axisZ.begin(),
+			[magnitude](double i) { return i * magnitude; });
 
 		setMembers(theOriginPoint.getGlobalCoords(), axisX, axisY, axisZ);
 	}
@@ -287,8 +318,16 @@ namespace GeometryNamespace {
 	/// </summary>
 	bool CoordSystem::isParallel(ARGCOPY(CoordSystem) theCoordSystem) const
 	{
-		if (!GeometryMath::equals(c_axisComponentsX, theCoordSystem.getAxisComponentsX(), getToleranceGeneral())) return false;
-		if (!GeometryMath::equals(c_axisComponentsY, theCoordSystem.getAxisComponentsY(), getToleranceGeneral())) return false;
+		if (
+			!std::equal(
+				c_axisComponentsX.cbegin(),
+				c_axisComponentsX.cend(),
+				theCoordSystem.getAxisComponentsX().cbegin())) return false;
+		if (
+			!std::equal(
+				c_axisComponentsY.cbegin(),
+				c_axisComponentsY.cend(),
+				theCoordSystem.getAxisComponentsY().cbegin())) return false;
 		return true;
 	}
 
@@ -298,7 +337,11 @@ namespace GeometryNamespace {
 	bool CoordSystem::isIdentical(ARGCOPY(CoordSystem) theCoordSystem) const
 	{
 		if (c_isGlobal != theCoordSystem.c_isGlobal) return false;
-		if (!GeometryMath::equals(c_originCoords, theCoordSystem.getOriginCoords(), getToleranceGeneral())) return false;
+		if (
+			!std::equal(
+				c_originCoords.cbegin(),
+				c_originCoords.cend(),
+				theCoordSystem.getOriginCoords().cbegin())) return false;
 		return isParallel(theCoordSystem);
 	}
 
@@ -316,7 +359,7 @@ namespace GeometryNamespace {
 	auto CoordSystem::measurePointCoords(ARGCOPY(PointBase) thePoint) const -> std::array<double, 3>
 	{
 		// Check if the point reference CS is the same
-		if (equals(*thePoint.getReferenceCoordSystem())) return thePoint.getLocalCoords();
+		if (*this == *thePoint.getReferenceCoordSystem()) return thePoint.getLocalCoords();
 
 		// Determine the inverse of the matrix
 		// No need to catch exception as not possible (member inspection performed at the beginning)
@@ -327,15 +370,15 @@ namespace GeometryNamespace {
 		basisVectors[0] = c_axisComponentsX;
 		basisVectors[1] = c_axisComponentsY;
 		basisVectors[2] = c_axisComponentsZ;
-		auto inverseMatrix = GeometryMath::calculateMatrixInverseS33(basisVectors, getToleranceSensitive());
+		auto inverseMatrix = GeometryMath::calculateMatrixInverseS33(basisVectors);
 
 		// Measure the point coords wrt this
 		auto originCoords = getOriginCoords();
 		auto globalCoords = thePoint.getGlobalCoords();
 		std::array<double, 3> outCoords = { {} };
-		for (int iCoord0 = 0; iCoord0 < DIMENSIONS::D3; iCoord0++) {
+		for (int iCoord0 = 0; iCoord0 < GeometryParameters::DIMENSIONS::D3; iCoord0++) {
 			outCoords[iCoord0] = 0.;
-			for (int iCoord1 = 0; iCoord1 < DIMENSIONS::D3; iCoord1++)
+			for (int iCoord1 = 0; iCoord1 < GeometryParameters::DIMENSIONS::D3; iCoord1++)
 				outCoords[iCoord0] += inverseMatrix[iCoord0][iCoord1] * (globalCoords[iCoord1] - originCoords[iCoord1]);
 		}
 
@@ -349,7 +392,7 @@ namespace GeometryNamespace {
 	auto CoordSystem::measureVectorComponents(ARGCOPY(VectorBase) theVector) const -> std::array<double, 3>
 	{
 		// Check if the vector reference CS is the same
-		if (equals(*theVector.getReferenceCoordSystem())) return theVector.getLocalComponents();
+		if (*this == *theVector.getReferenceCoordSystem()) return theVector.getLocalComponents();
 
 		// Determine the inverse of the matrix
 		// No need to catch exception as not possible (member inspection performed at the beginning)
@@ -360,7 +403,7 @@ namespace GeometryNamespace {
 		basisVectors[0] = c_axisComponentsX;
 		basisVectors[1] = c_axisComponentsY;
 		basisVectors[2] = c_axisComponentsZ;
-		auto inverseMatrix = GeometryMath::calculateMatrixInverseS33(basisVectors, getToleranceSensitive());
+		auto inverseMatrix = GeometryMath::calculateMatrixInverseS33(basisVectors);
 
 		return GeometryMath::multiplyMatrixToVector<double, 3>(inverseMatrix, theVector.getGlobalComponents());
 	}

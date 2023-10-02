@@ -2,8 +2,8 @@
 
 #include "Macros.h"
 #include "GeometryObject.hxx"
-#include "GeometryParameters.hxx"
 #include "GeometryMath.hxx"
+#include "GeometryParameters.hxx"
 #include "GeometryException.hxx"
 #include "ReferenceObject.hxx"
 #include "CoordSystem.hxx"
@@ -27,17 +27,17 @@ namespace GeometryNamespace {
 	/// </summary>
 	ReferenceObject::ReferenceObject(const int theDimensionCount)
 		:
-		GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE),
+		GeometryObject(),
 		c_dimensionCount { theDimensionCount },
 		c_referenceCoordSystem{ GlobalCoordSystem::getGlobalCoordSystem() } { }
 
 	/// <summary>
 	/// Ctor
-	/// Dimension count is DIMENSIONS::D3
+	/// Dimension count is GeometryParameters::DIMENSIONS::D3
 	/// </summary>
 	ReferenceObject::ReferenceObject(const std::shared_ptr<CoordSystem>& theReferenceCoordSystem)
 		:
-		GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE),
+		GeometryObject(),
 		c_referenceCoordSystem{ theReferenceCoordSystem }
 	{
 	}
@@ -49,7 +49,7 @@ namespace GeometryNamespace {
 		const int theDimensionCount,
 		const std::shared_ptr<CoordSystem>& theReferenceCoordSystem)
 		:
-		GeometryObject(TOLERANCE_GENERAL, TOLERANCE_SENSITIVE),
+		GeometryObject(),
 		c_dimensionCount{ theDimensionCount },
 		c_referenceCoordSystem{ theReferenceCoordSystem }
 	{
@@ -62,7 +62,7 @@ namespace GeometryNamespace {
 	{
 		if (&rhs == this) return true;
 		if (c_dimensionCount != rhs.getDimensionCount()) return false;
-		return c_referenceCoordSystem->equals(*rhs.getReferenceCoordSystem());
+		return *c_referenceCoordSystem == *rhs.getReferenceCoordSystem();
 	}
 
 	/// <summary>
@@ -96,7 +96,7 @@ namespace GeometryNamespace {
 	/// Returns if the object is 2D
 	/// </summary>
 	bool ReferenceObject::is2D() const {
-		return c_dimensionCount == DIMENSIONS::D2;
+		return c_dimensionCount == GeometryParameters::DIMENSIONS::D2;
 	}
 
 	/// <summary>
@@ -116,7 +116,7 @@ namespace GeometryNamespace {
 	/// Returns if the object is #D
 	/// </summary>
 	bool ReferenceObject::is3D() const {
-		return c_dimensionCount == DIMENSIONS::D3;
+		return c_dimensionCount == GeometryParameters::DIMENSIONS::D3;
 	}
 
 	/// <summary>
@@ -124,7 +124,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	bool ReferenceObject::equalsRef(ARGCOPY(ReferenceObject) theReference) const
 	{
-		return c_referenceCoordSystem->equals(*theReference.getReferenceCoordSystem());
+		return *c_referenceCoordSystem == *theReference.getReferenceCoordSystem();
 	}
 
 	/// <summary>
@@ -154,7 +154,7 @@ namespace GeometryNamespace {
 	//! </summary>
 	auto ReferenceObject::getPointWithMyCoordSystem(ARGCOPY(PointBase) thePoint) const -> std::shared_ptr<Point3D>
 	{
-		if (c_referenceCoordSystem->equals(*thePoint.getReferenceCoordSystem()))
+		if (*c_referenceCoordSystem == *thePoint.getReferenceCoordSystem())
 		{
 			return std::make_shared<Point3D>(
 				c_referenceCoordSystem,
@@ -171,7 +171,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	auto ReferenceObject::getVectorWithMyCoordSystem(ARGCOPY(VectorBase) theVector) const -> std::shared_ptr<Vector3D>
 	{
-		if (c_referenceCoordSystem->equals(*theVector.getReferenceCoordSystem()))
+		if (*c_referenceCoordSystem == *theVector.getReferenceCoordSystem())
 		{
 			return std::make_shared<Vector3D>(
 				c_referenceCoordSystem,

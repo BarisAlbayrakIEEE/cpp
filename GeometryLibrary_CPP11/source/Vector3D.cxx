@@ -2,8 +2,8 @@
 
 #include "Macros.h"
 #include "GeometryObject.hxx"
-#include "GeometryParameters.hxx"
 #include "GeometryMath.hxx"
+#include "GeometryParameters.hxx"
 #include "GeometryException.hxx"
 #include "ReferenceObject.hxx"
 #include "CoordSystem.hxx"
@@ -24,20 +24,18 @@ namespace GeometryNamespace {
 	/// <summary>
 	/// Ctor
 	/// Reference CS is the global CS
-	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
 		Vector3D::Vector3D(const std::array<double, 3>& theLocalComponents)
-		: VectorBase(DIMENSIONS::D3, theLocalComponents) { }
+		: VectorBase(GeometryParameters::DIMENSIONS::D3, theLocalComponents) { }
 
 	/// <summary>
 	/// Ctor
 	/// Reference CS is the global CS
-	/// CAUTION: Member initialization is not performed to follow RAII
 	/// </summary>
 	/// <exception> ZeroVectorException </exception>
 	Vector3D::Vector3D(const std::vector<double, std::allocator<double>>& theLocalComponents)
-		: VectorBase(DIMENSIONS::D3, theLocalComponents) { }
+		: VectorBase(GeometryParameters::DIMENSIONS::D3, theLocalComponents) { }
 
 	/// <summary>
 	/// Ctor
@@ -50,7 +48,7 @@ namespace GeometryNamespace {
 	Vector3D::Vector3D(
 		const std::array<double, 3>& theAngles,
 		bool&& anyValue)
-		: VectorBase(DIMENSIONS::D3)
+		: VectorBase(GeometryParameters::DIMENSIONS::D3)
 	{
 		setLocalComponentsUsingAngles(theAngles);
 	}
@@ -66,7 +64,7 @@ namespace GeometryNamespace {
 	Vector3D::Vector3D(
 		const std::vector<double, std::allocator<double>>& theAngles,
 		bool&& anyValue)
-		: VectorBase(DIMENSIONS::D3)
+		: VectorBase(GeometryParameters::DIMENSIONS::D3)
 	{
 		setLocalComponentsUsingAngles(theAngles);
 	}
@@ -80,7 +78,7 @@ namespace GeometryNamespace {
 	/// <exception> NullptrException </exception>
 	/// <exception> ZeroVectorException </exception>
 	Vector3D::Vector3D(ARGCOPY(PointBase) thePoint)
-		: VectorBase(DIMENSIONS::D3, thePoint.getReferenceCoordSystem(), thePoint.getLocalCoords()) { }
+		: VectorBase(GeometryParameters::DIMENSIONS::D3, thePoint.getReferenceCoordSystem(), thePoint.getLocalCoords()) { }
 
 	/// <summary>
 	/// Ctor
@@ -94,7 +92,7 @@ namespace GeometryNamespace {
 	Vector3D::Vector3D(
 		ARGCOPY(PointBase) thePoint0,
 		ARGCOPY(PointBase) thePoint1)
-		: VectorBase(DIMENSIONS::D3, thePoint0, thePoint1) { }
+		: VectorBase(GeometryParameters::DIMENSIONS::D3, thePoint0, thePoint1) { }
 
 	/// <summary>
 	/// The main constructor
@@ -105,7 +103,7 @@ namespace GeometryNamespace {
 	Vector3D::Vector3D(
 		const std::shared_ptr<CoordSystem>& theReferenceCoordSystem,
 		const std::array<double, 3>& theLocalComponents)
-		: VectorBase(DIMENSIONS::D3, theReferenceCoordSystem, theLocalComponents) { }
+		: VectorBase(GeometryParameters::DIMENSIONS::D3, theReferenceCoordSystem, theLocalComponents) { }
 
 	/// <summary>
 	/// The main constructor
@@ -116,7 +114,7 @@ namespace GeometryNamespace {
 	Vector3D::Vector3D(
 		const std::shared_ptr<CoordSystem>& theReferenceCoordSystem,
 		const std::vector<double, std::allocator<double>>& theLocalComponents)
-		: VectorBase(DIMENSIONS::D3, theReferenceCoordSystem, theLocalComponents) { }
+		: VectorBase(GeometryParameters::DIMENSIONS::D3, theReferenceCoordSystem, theLocalComponents) { }
 
 	/// <summary>
 	/// int* argument theNull is required to distinguish from the constructor:
@@ -128,14 +126,14 @@ namespace GeometryNamespace {
 		const std::shared_ptr<CoordSystem>& theReferenceCoordSystem,
 		const std::array<double, 3>& theAngles,
 		bool&& anyValue)
-		: VectorBase(DIMENSIONS::D3, theReferenceCoordSystem, std::array<double, 3>{{}})
+		: VectorBase(GeometryParameters::DIMENSIONS::D3, theReferenceCoordSystem, std::array<double, 3>{{}})
 	{
 		setLocalComponentsUsingAngles(theAngles);
 	}
 
 	/// <summary>
 	/// int* argument theNull is required to distinguish from the constructor:
-	///	Vector3D{CoordSystem8, theReferenceCoordSystem, const std::vector-double theLocalComponents}
+	///	Vector3D{CoordSystem8, theReferenceCoordSystem, const std::vector-GeometryMath theLocalComponents}
 	/// Can have any value: null_ptr or 0 or or 9999 or else
 	/// </summary>
 	/// <exception> NullptrException </exception>
@@ -143,7 +141,7 @@ namespace GeometryNamespace {
 		const std::shared_ptr<CoordSystem>& theReferenceCoordSystem,
 		const std::vector<double, std::allocator<double>>& theAngles,
 		bool&& anyValue)
-		: VectorBase(DIMENSIONS::D3, theReferenceCoordSystem, std::array<double, 3>{{}})
+		: VectorBase(GeometryParameters::DIMENSIONS::D3, theReferenceCoordSystem, std::array<double, 3>{{}})
 	{
 		setLocalComponentsUsingAngles(theAngles);
 	}
@@ -155,9 +153,9 @@ namespace GeometryNamespace {
 	/// </summary>
 	/// <exception> NullptrException </exception>
 	Vector3D::Vector3D(ARGCOPY(Vector2D) theVector)
-		: VectorBase(DIMENSIONS::D3)
+		: VectorBase(GeometryParameters::DIMENSIONS::D3)
 	{
-		c_dimensionCount = DIMENSIONS::D3;
+		c_dimensionCount = GeometryParameters::DIMENSIONS::D3;
 		c_referenceCoordSystem = theVector.getReferenceCoordSystem();
 		std::copy(
 			std::begin(theVector.getLocalComponents()),
@@ -202,7 +200,6 @@ namespace GeometryNamespace {
 	{
 		auto localComponents = calculateComponentsFromAngles(theAngles);
 		c_localComponents = localComponents;
-		c_magnitude = calculateMagnitude(localComponents);
 	}
 
 	/// <summary>
@@ -210,7 +207,7 @@ namespace GeometryNamespace {
 	/// </summary>
 	void Vector3D::setLocalComponentsUsingAngles(const std::vector<double, std::allocator<double>>& theAngles)
 	{
-		if (theAngles.size() != DIMENSIONS::D3)
+		if (theAngles.size() != GeometryParameters::DIMENSIONS::D3)
 		{
 			throw ArraySizeException();
 		}
@@ -219,7 +216,6 @@ namespace GeometryNamespace {
 		std::copy(theAngles.begin(), theAngles.end(), angles.begin());
 		auto localComponents = calculateComponentsFromAngles(angles);
 		c_localComponents = localComponents;
-		c_magnitude = calculateMagnitude(localComponents);
 	}
 
 	/// <summary>
@@ -245,13 +241,20 @@ namespace GeometryNamespace {
 	/// <exception> ZeroVectorException </exception>
 	auto Vector3D::multiply(const double& theFactor) const -> std::shared_ptr<Vector3D>
 	{
-		if (GeometryMath::equals(theFactor, 0., getToleranceGeneral())) throw ZeroVectorException();
+		if (GeometryMath::zero_g(theFactor)) throw ZeroVectorException();
 
-		auto finalCoords = GeometryMath::factorizeArray(c_localComponents, theFactor);
+		std::array<double, 3> finalCoords = { {} };
+		std::transform(
+			c_localComponents.begin(),
+			c_localComponents.end(),
+			finalCoords.begin(),
+			[theFactor](double i) { return i * theFactor; });
+
 		return std::make_shared<Vector3D>(
 			c_referenceCoordSystem,
 			finalCoords);
 	}
+
 	/// <summary>
 	/// Vector summation - Global function
 	/// </summary>

@@ -56,10 +56,8 @@ namespace GeometryNamespace {
 		friend class Plane;
 
 		// Members
-		std::shared_ptr<Axis> c_axis = nullptr;
 		std::shared_ptr<Point3D> c_endPoint0 = nullptr;
 		std::shared_ptr<Point3D> c_endPoint1 = nullptr;
-		double c_length = 0.;
 
 		// Private default ctor used for cloning the object
 		Line() = default;
@@ -84,7 +82,6 @@ namespace GeometryNamespace {
 		// Methods:
 		bool is2D() const;
 		bool is3D() const;
-		bool equals(ARGCOPY(Line) theLine) const;
 		bool equalsGeometrically(ARGCOPY(Line) theLine) const;
 
 		bool includes(ARGCOPY(Point3D) thePoint) const;
@@ -95,22 +92,26 @@ namespace GeometryNamespace {
 		bool isSkew(ARGCOPY(Axis) theAxis) const;
 		bool isSkew(ARGCOPY(Line) theLine) const;
 		auto intersect(ARGCOPY(Axis) theAxis) const;
-		auto intersect(ARGCOPY(Line) theLine) const -> std::pair<INTERSECTION1, std::shared_ptr<Point3D>>;
+		auto intersect(ARGCOPY(Line) theLine) const -> std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>;
 		auto project(ARGCOPY(Point3D) thePoint) const -> std::shared_ptr<Point3D>;
 		double calculateDistance(ARGCOPY(Point3D) thePoint) const;
 		double calculateDistance(ARGCOPY(Axis) theAxis) const;
 		double calculateDistance(ARGCOPY(Line) theLine) const;
 
-		auto getAxis() const -> std::shared_ptr<Axis>;
-		auto getDirectionVector() const -> std::shared_ptr<Vector3D>;
 		auto getEndPoint0() const -> std::shared_ptr<Point3D>;
 		auto getEndPoint1() const -> std::shared_ptr<Point3D>;
+		auto getAxis() const->std::shared_ptr<Axis>;
+		auto getDirectionVector() const->std::shared_ptr<Vector3D>;
 		double getLength() const;
 		auto getCommonReferenceCoordSystem() const -> std::shared_ptr<CoordSystem>;
-		void setAxis(const std::shared_ptr<Axis>& theAxis);
 		void setEndPoint0(const std::shared_ptr<Point3D>& theEndPoint0);
 		void setEndPoint1(const std::shared_ptr<Point3D>& theEndPoint1);
 		auto createMidpoint() const -> std::shared_ptr<Point3D>;
+
+	private:
+		void inspectEndPoints(
+			const std::shared_ptr<Point3D>& theEndPoint0,
+			const std::shared_ptr<Point3D>& theEndPoint1);
 	};
 }
 
