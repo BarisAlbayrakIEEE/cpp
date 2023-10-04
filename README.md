@@ -7,13 +7,13 @@
 /// 
 /// SUMMARY:
 /// THIS REPOSITORY CONTAINS THREE SOLUTIONS FOR A PRIMITIVE GEOMETRY LIBRARY:
-///     1. GeometryLibrary_OCCT:
+///     a. GeometryLibrary_OCCT:
 ///         The solution mainly with C++98 although some of C++11 futures are used
 ///         See the readme file (or the docstring of the GeometryObject header file) in GeometryLibrary_OCCT
-///     2. GeometryLibrary_CPP11:
+///     b. GeometryLibrary_CPP11:
 ///         The solution with C++11 and C++14
 ///         See below with heading 'A. GeometryLibrary_CPP11'
-///     3. GeometryLibrary_MultiThread:
+///     c. GeometryLibrary_MultiThread:
 ///         An updated version of GeometryLibrary_CPP11 to cover a solution supporting the multi threading.
 ///         See the readme file (or the docstring of the GeometryObject header file) in GeometryLibrary_MultiThread
 ///         Implementation process started recently.
@@ -38,7 +38,7 @@
 /// Followings are the key points for this library:
 ///     1. Class/function invariants and preconditions are analyzed in detail.
 ///        Header file docstrings decribe the class invariants
-///        and docstrings of some of the functions (e.g. Circle::Circle(Point3D thePoint0, Point3D thePoint1, Point3D thePoint2))
+///        and docstrings of some of the functions (e.g. Circle ctor with three points)
 ///        also describe the invariants and preconditions.
 ///        Exception definitions (and RAII) follow the invariants and preconditions.
 /// 
@@ -46,22 +46,29 @@
 ///        In GeometryLibrary_OCCT, these classes also stores the Equation Coefficients (EC)
 ///        which are derived from the passing point and direction/normal vector.
 ///        This causes four problems:
-///            1. Data duplication
-///            2. More complexity is introduced into the exception determination
-///            3. Increased code complexity
-///            4. Increased side effects
+///            a. Data duplication
+///            b. More complexity is introduced into the exception determination
+///            c. Increased code complexity
+///            d. Increased side effects
 ///        Hence, in GeometryLibrary_CPP11, EC values are not stored as a member anymore
 ///        but are calculated and returned when requested.
 ///     2. Rule of Zero is applied to all classes
-///        accept for GeometryObject base class having a user defined special functions
+///        accept for GeometryObject base class having user defined special functions.
+///        See below for the related resource management issue.
+///        GeometryObject uses user defined special functions
 ///        due to the incrementation and decrementation requirement of the static ID counter.
-///        An important discussion related to this issue is GlobalCoordSystem class.
-///        The discussion is quite long, hence, refer to the docstring of GlobalCoordSystem header file.
+///        
+///        Besides, the exception safety is considered
+///        while implementing the functions, especially the constructors.
+///        If possible, throw statements are located before any memory allocation or
+///        side effects like global/static data modification (e.g. reference count incrementation)
+///        Together with Rule of zero, this exception safety applications
+///        provides a code more appropriate to RAII idiom.
 ///     3. Resource management to achieve RAII is based on the smart pointers.
 ///        The new operator is used only once in GlobalCoordSystem singleton static function
 ///        together with the shared pointer constructor.
 ///        The library does not use resources like I/O streams.
-///        However, speccial data structures (containers) for the library are CURRENTLY under construction.
+///        However, special data structures (containers) for the library are CURRENTLY under construction.
 ///        
 ///        In order to have a well-established code in terms of RAII,
 ///        a strong guarantee for the exception safety is required to eliminate all memory leaks
@@ -82,14 +89,14 @@
 ///        Most of the CAE tools (e.g. Catia) support parametric design.
 ///        Consider, a line defined by two points.
 ///        Consider one of the points is updated.
-///            1. Parametric Framework (Catia): Updates the line accordingly
+///            a. Parametric Framework (Catia): Updates the line accordingly
 ///               Actually, the data of the line is not updated.
 ///               Only, the visual representation of the line on the GUI is updated.
-///            2. Non-parametric Framework (MSC.PATRAN): Does not update the line.
+///            b. Non-parametric Framework (MSC.PATRAN): Does not update the line.
 ///        The reason of the above results is as follows:
-///            1. Parametric Framework (Catia): Line object is defined by two point objects
+///            a. Parametric Framework (Catia): Line object is defined by two point objects
 ///               Hence, the line is updated when points are updated.
-///            2. Non-parametric Framework (MSC.PATRAN): Line object is defined by numeric data.
+///            b. Non-parametric Framework (MSC.PATRAN): Line object is defined by numeric data.
 ///               When the ctor of the line object is called with two points
 ///               the ctor calculates the required parameters to define the line by two points
 ///               and stores these numeric data into the new object instead of the points.
@@ -113,31 +120,47 @@
 ///        Smart pointers are used in function arguments in order to transfer ownership into the function.
 ///        If ownership transfer is not required,
 ///        the traditional const reference approach (const Type&) is followed.
-///     5. The side effects must be considered together with the exception safety and memory leaks
-///        as they may cause problems to achieve at least a strong exception guarantee.
-///        Followings are some of the sources of the side effects in this library.
-///        and will be studied in more detail during GeometryLibrary_MultiThread implementation: 
-///            1. Some of the constructors, copy constructors and assignments.
-///               For example, Circle constructor by 3 points
+///     5. The shared ownership between the objects
+///        is actually the implementation of an association/aggregation relationship
+///        between the objects of this library.
+///        For example, an axis object delegates the space calculus calculations to the Vector member.
+///        The class hierarchy is studied at the beginning of GeometryLibrary_CPP11 project.
+///        A Line object is decided to delegate some geometrical functions to an Axis object
+///        passing through the line
+///        while the inheritance relationship could also be used.
+///        However, there is no solid need to have more complex class hierarchy
+///        while the aggregation works well.
+///     6. The objects in the library are defined in an implementation hyerarchy.
+///        The slicing problem that comes with the inheritance is
+///        solved by using pointers and references.
+///        THE CLIENTS OF THE LIBRARY SHOULD PAY ATTENTION ON THIS BASIC RULE.
+///     7. The side effects must be considered together with the exception safety and memory leaks
+///        as they may cause vital problems
+///        The side effects must be inspected to achieve at least a strong exception guarantee.
+///        Followings are some of the cases where there exist side effects:
+///            a. Some of the constructors, copy constructors and assignments.
+///               For example, CURRENT version of GeometryObject contains the static ID member
+///               which is incremented and decremented in the constructor and destructor respectively.
+///               This issue is explained below in more detail.
+///               Another example, Circle constructor by 3 points,
 ///               creates a Point object as the center point and a Plane object as the reference plane.
-///            2. The containers currently being implemented are another source of side effects
-///               as any GeometryObject creation must update a container respectively
-///               accept for the temporary objects.
-///               Even the object creation is delegated to a factory located in the containers,
-///               the copy constructors and operators of the GeometryObjects
-///               will still cause side effects.
-///            3. The static counter for the GeometryObjects (GeometryObject::c_IDCounter).
+///            b. The static counter for the GeometryObjects (GeometryObject::c_IDCounter).
 ///               The counter is incremented when a GeometryObject is created
 ///               and decremented when destructed.
 ///               Both actions are side effects but the decrement operation is more problematic.
 ///               See below with CAUTION FOR STATIC ID COUNTER heading for the details.
 ///               The side effect in the destructor can be defeated
-///               by removing the decrement in the GeometryObjects destructor
+///               by removing the decrement in the GeometryObject's destructor
 ///               and letting it to have large values.
 ///               But, this is not preferable
 ///               as the ID member of GeometryObjects is used for the container hashing
 ///               and large values will reduce the effectivity of the hash function.
-///            4. As specified before, the Equation Coefficients (EC) members of Axis and Plane objects
+///            c. The containers currently being implemented are configured based on the three issues:
+///                   a. Container and iterator
+///                   b. The factory for the geometry objects
+///                   c. The static ID counter
+///               The 2nd and the 3rd issues contains side effects.
+///            d. As specified before, the Equation Coefficients (EC) members of Axis and Plane objects
 ///               of GeometryLibrary_OCCT are removed in GeometryLibrary_CPP11.
 ///               Similarly, magnitude and length members of Vector and Line objects respectively are also removed.
 ///               All of these members cause side effects
@@ -145,7 +168,7 @@
 ///               together with the actual member to be set.
 ///               The fundamental rule requires a unique setter for each member.
 ///               Hence, these inter-related members are all removed.
-///            5. Some of the setters has side effects too.
+///            e. Some of the setters has side effects too.
 ///               Consider a Line object with two points
 ///               The points by definition of a line cannot be coincident
 ///               which is inspecteed during the construction of the line objects.
@@ -161,7 +184,7 @@
 ///               as we do not inspect all objects sharing the ownership of an object
 ///               when the object is modified.
 ///               Hence, the coordinate setter of Point class has side effects.
-///            6. Many people consider that, for C++, the exceptions are side effects,
+///            f. Many people consider that, for C++, the exceptions are side effects,
 ///               as C++ does not have exception specification in the function definition (e.g. Java).
 ///               The clients are not constrained to take the required action
 ///               when an exception is thrown by the called function.
@@ -170,12 +193,12 @@
 /// 
 ///               The library contains many functions, even ctors, throwing.
 ///               These functions may all be considered to have side effects.
-///     6. Template and auto type deductions are CURRENTLY studied carefully.
+///     8. Template and auto type deductions are CURRENTLY studied carefully.
 ///        The initializer lists are not used together with auto types to simplify initializer list initializations.
 ///        Both of the C++11 and C++14 type deduced function declarations are used
 ///            C++11: auto identifier(args...) -> return_type
 ///            C++14: auto identifier(args...)  OR  decltype(auto) identifier(args...)
-///     7. Rvalue references are considered (if reasonable) together with the lvalue references for optimization.
+///     9. Rvalue references are considered (if reasonable) together with the lvalue references for optimization.
 ///        However, this library rarely has a separate function for the rvalue reference argument
 ///            Ex: GeometryObject::setName(std::string&& theName)
 /// 
@@ -198,28 +221,46 @@
 ///        Keep in mind that, despite of having a similar functionality,
 ///        GeometryObject::Clone, does not use universal reference for the input argument
 ///        as it does not make sence to clone a temporary object.
-///     8. Copy elision, RVO and NRVO studied carefully.
+///    10. Copy elision, RVO and NRVO studied carefully.
 ///        Most of the time, even standards on the issue differ between C++11 and C++17,
 ///        leaving the optimization to the compiler is mostly more efficient.
 ///        Explicit actions blocking the copy elision, RVO and NRVO has held only in a few locations:
 ///            returning an rvalue reference with std::move
 ///            returning a universal reference with std::forward
 ///            returning with a trinary operator
-///     9. C++98 enums used in GeometryLibrary_OCCT are still in use in this library (GeometryLibrary_CPP11)
+///    11. C++98 enums used in GeometryLibrary_OCCT are still in use in this library (GeometryLibrary_CPP11)
 ///        as a quite long time is required to update
 ///        the library for the new enum class of C++11
 ///        because enum variables are used in too many locations as integer variables.
-///    10. The source files (e.g. Axis.cxx) includes all headers
+///    12. The source files (e.g. Axis.cxx) includes all headers
 ///        and the header files are include guarded (i.e. #ifndef directive).
 ///        This is the current strategy which is quite easy to compile the library without linking errors.
 ///        However, this approach creates too much code at the end of the preprocess
 ///        due to the inclusion of all headers some of which are redundant for the source file.
 ///        The header file include directives will be rearranged for each source file ASAP.
-///    11. The interface base class ReferenceAbstractObject in GeometryLibrary_OCCT
+///    13. The interface base class ReferenceAbstractObject in GeometryLibrary_OCCT
 ///        is removed to have a simple class hyerarchy as it was totally redundant.
-///    12. Protected class members in GeometryLibrary_OCCT is made private in this library for encapsulation.
+///    14. Protected class members in GeometryLibrary_OCCT is made private in this library for encapsulation.
 ///        As is well known, protected variables are accessible by just simple inheritance
 ///        and this breaks LSP (Liskov Substitution Principle), OCP (Open-Closed Principle).
+///    15. GlobalCoordSystem is a singleton class
+///        as a space can be defined by only one global CS.
+///        However, the singleton static private member is defined by a shared pointer
+///        as ReferenceObjects must have a CS member with a shared owvership.
+///        A ReferenceObject object is created refering to the global CS
+///        if a CS is not supplied by the user.
+///        Hence, despite being a singleton, GlobalCoordSystem's
+///        private static member is defined by a shared pointer.
+///        The reference count of the private static shared pointer member
+///        incremented to 1 when the public getter (getGlobalCoordSystem) is called.
+///        Hence, the reference counter is 1 for the global CS
+///        even all the objects refering to it are out off scope.
+///        Besides, despite of being a singleton, the dtor is not removed.
+///        The discussion is quite long, hence, refer to the docstring of GlobalCoordSystem header file.
+///        
+///        
+///        
+///        
 /// 
 /// 
 /// 
@@ -241,7 +282,7 @@
 /// 
 /// CAUTION FOR STATIC ID COUNTER:
 ///   GeometryObject stores a static member to hold the last used ID for any object.
-///   An important issue to note is that the non-static ID of an object is coppied
+///   An important issue to note that the non-static ID of an object is coppied
 ///   with the default copy and move operations.
 ///   Hence, default copying of an object results with two objects having the same ID.
 ///   This is solved easily by user defined copy ctor and assignment functions.
@@ -255,14 +296,13 @@
 ///   and suppose in the ctor we created 3 temporary objects.
 ///   Hence, the ID for the new circle object will be 104
 ///   but the static ID counter will be 101.
-///   Hence, we need to inform the GeometryObject class whether the new object is a temporary or not.
-///   THIS WILL BE IMPLEMENTED LATER.
+///   THE SOLUTION TO THIS PROBLEM IS BEING STUDIED CURRENTLY.
 /// 
 /// Additionally, the library contains two static tolerance values to be used in the calculations:
 ///     GeometryParameters::TOLERANCE_GENERAL and GeometryParameters::TOLERANCE_SENSITIVE
 /// The use of the tolerance consists of two cases:
-///     1. To eliminate any kind of computational errors (e.g. truncation errors),
-///     2. To be able to perform approximate calculations.
+///     a. To eliminate any kind of computational errors (e.g. truncation errors),
+///     b. To be able to perform approximate calculations.
 ///        For example, intersection of two line may not exist theoritically
 ///        but an approximate point can be found.
 ///        A tolerance value is required for such approximations.
@@ -272,8 +312,8 @@
 /// ReferenceObject is the base class for CS dependent objects (i.e. points and vectors).
 /// It owns a CS member.
 /// The geometry basically defined wrt to coordinate systems (CSs) in order to
-///   1. simplify the tracebility of the objects
-///   2. switch between spaces, especially 3D to 2D (or 2D to 3D)
+///     a. simplify the tracebility of the objects
+///     b. switch between spaces, especially 3D to 2D (or 2D to 3D)
 /// The 1st functionality is a fundamental issue in engineering applications.
 /// For example, an assembly of bodies is defined in a global CS
 /// while each body has its own CS.
@@ -315,10 +355,6 @@
 /// 
 /// 
 /// 
-/// The objects in the library are defined in an implementation hyerarchy.
-/// The slicing problem that comes with the inheritance is
-/// solved by using pointers and references.
-/// THE CLIENTS OF THE LIBRARY SHOULD PAY ATTENTION ON THIS BASIC RULE.
 /// 
 /// 
 /// 
