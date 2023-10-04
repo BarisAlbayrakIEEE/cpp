@@ -233,7 +233,8 @@ namespace GeometryNamespace {
 	/// <summary>
 	/// See += operator docstring
 	/// </summary>
-	bool Circle::equalsGeometrically(ARGCOPY(Circle) theCircle) const {
+	bool Circle::equalsGeometrically(ARGCOPY(Circle) theCircle) const
+	{
 		return operator+=(theCircle);
 	}
 
@@ -271,10 +272,7 @@ namespace GeometryNamespace {
 		auto coordSystem1 = c_centerPoint->getReferenceCoordSystem();
 		auto coordSystem2 = c_referencePlane->getCommonReferenceCoordSystem();
 		if (!coordSystem2) { return nullptr; }
-		if (*coordSystem2 != *coordSystem1)
-		{
-			return nullptr;
-		}
+		if (*coordSystem2 != *coordSystem1) { return nullptr; }
 		return coordSystem2;
 	}
 

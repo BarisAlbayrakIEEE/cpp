@@ -85,17 +85,6 @@ namespace GeometryNamespace {
 		friend class Circle;
 		friend class Plane;
 
-		// Members
-		int c_dimensionCount = GeometryParameters::DIMENSIONS::D3;
-		std::shared_ptr<CoordSystem> c_referenceCoordSystem = nullptr;
-
-		// ctor / dtor / operators
-		explicit ReferenceObject(const int theDimensionCount);
-		explicit ReferenceObject(const std::shared_ptr<CoordSystem>& theReferenceCoordSystem);
-		ReferenceObject(
-			const int theDimensionCount,
-			const std::shared_ptr<CoordSystem>& theReferenceCoordSystem);
-
 	public:
 		ReferenceObject() = default;
 		ReferenceObject(const ReferenceObject& rhs) = default;
@@ -128,6 +117,18 @@ namespace GeometryNamespace {
 		void setDimensionCount(const int theDimensionCount);
 		void setMembersRef(const int theDimensionCount, const std::shared_ptr<CoordSystem>& theReferenceCoordSystem);
 		void setReferenceCoordSystemBase(const std::shared_ptr<CoordSystem>& theReferenceCoordSystem);
+
+	private:
+		// Private ctors
+		explicit ReferenceObject(const int theDimensionCount);
+		explicit ReferenceObject(const std::shared_ptr<CoordSystem>& theReferenceCoordSystem);
+		ReferenceObject(
+			const int theDimensionCount,
+			const std::shared_ptr<CoordSystem>& theReferenceCoordSystem);
+
+		// Members
+		int c_dimensionCount = GeometryParameters::DIMENSIONS::D3;
+		std::shared_ptr<CoordSystem> c_referenceCoordSystem = nullptr;
 	};
 }
 

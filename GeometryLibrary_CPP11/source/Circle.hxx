@@ -8,7 +8,7 @@
 /// 
 /// A 3D object currently.
 /// Hence, does not have 2D and 3D child classes.
-/// Later, will be defined as a reference object type and 2D and 3D child classes will be generated.
+/// Later, will be defined as a reference object type.
 /// See ReferenceObject header file docstring for details.
 /// 
 /// See GeometryObject.hxx for the details about this library.
@@ -54,15 +54,6 @@ namespace GeometryNamespace {
 		friend class Line;
 		friend class Plane;
 
-		// Members
-		// The reference CS of the point member is assumed to be the reference CS.
-		std::shared_ptr<Plane> c_referencePlane = nullptr;
-		std::shared_ptr<Point3D> c_centerPoint = nullptr;
-		double c_radius = 0.;
-
-		// Private default ctor used for cloning the object
-		Circle() = default;
-
 	public:
 		// ctor / dtor / operators
 		Circle(
@@ -102,10 +93,20 @@ namespace GeometryNamespace {
 		int analyzePoint(ARGCOPY(Point3D) thePoint) const; // See method docstring
 
 	private:
+		// Private default ctor used for cloning the object
+		Circle() = default;
+
+		// Private methods
 		void setMembers(
 			const std::shared_ptr<Plane>& theReferencePlane,
 			const std::shared_ptr<Point3D>& theCenterPoint,
 			const double& theRadius);
+		
+		// Members
+		std::shared_ptr<Plane> c_referencePlane = nullptr;
+		std::shared_ptr<Point3D> c_centerPoint = nullptr;
+		double c_radius = 0.;
+
 	};
 }
 

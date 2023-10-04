@@ -248,7 +248,7 @@ namespace GeometryNamespace {
 	{
 		if (GeometryMath::zero_g(theFactor))
 		{
-			return c_passingPoint;
+			return std::make_shared<Point3D>(*c_passingPoint);
 		}
 		return getDirectionVector()->transformPoint(*getPassingPoint(), theFactor);
 	}
@@ -450,9 +450,13 @@ namespace GeometryNamespace {
 		} catch (ZeroVectorException&) {
 			if (includes(*theAxis.getPassingPoint()))
 			{
-				return std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>{ GeometryParameters::INTERSECTION1::Coincides1, nullptr };
+				return std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>{
+					GeometryParameters::INTERSECTION1::Coincides1,
+					nullptr };
 			}
-			return std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>{ GeometryParameters::INTERSECTION1::Skew1, nullptr };
+			return std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>{
+				GeometryParameters::INTERSECTION1::Skew1,
+				nullptr };
 		}
 	}
 
@@ -468,7 +472,9 @@ namespace GeometryNamespace {
 		// The axis
 		auto intersectionResults{ intersect(*theLine.getAxis()) };
 		if (intersectionResults.first != 0)
-			return std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>{ intersectionResults.first, nullptr };
+			return std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>{
+			intersectionResults.first,
+			nullptr };
 
 		// The line
 		intersectionResults.first = (
@@ -825,7 +831,9 @@ namespace GeometryNamespace {
 			!GeometryMath::equal_g(globalCoord0_y, globalCoord1_y) ||
 			!GeometryMath::equal_g(globalCoord0_z, globalCoord1_z))
 		{
-			return std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>{ GeometryParameters::INTERSECTION1::Skew1, nullptr };
+			return std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>{
+				GeometryParameters::INTERSECTION1::Skew1,
+				nullptr };
 		}
 
 		std::array<double, 3> intersectionCoords {{ globalCoord0_x, globalCoord0_y, globalCoord0_z}};

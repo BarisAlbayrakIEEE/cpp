@@ -10,7 +10,7 @@
 /// 
 /// A 3D object currently.
 /// Hence, does not have 2D and 3D child classes.
-/// Later, will be defined as a reference object type and 2D and 3D child classes will be generated.
+/// Later, will be defined as a reference object type.
 /// See ReferenceObject header file docstring for details.
 /// 
 /// See GeometryObject.hxx for the details about this library.
@@ -55,19 +55,6 @@ namespace GeometryNamespace {
 		friend class Line;
 		friend class Circle;
 		friend class Plane;
-
-		// Members
-		// The reference CS of the point member is assumed to be the reference CS.
-		// The axis Equation Coefficients(EC) of the form : (x - x0) / Vx = (y - y0) / Vy = (z - z0) / Vz
-		// x0, y0 and z0 are coordinates of the passing point
-		// Vx, Vy and Vz are the components of the direction vector
-		// c_EC[0][i] = Passing point coord in ith direction
-		// c_EC[1][i] = Direction vector component in ith direction
-		std::shared_ptr<Point3D> c_passingPoint = nullptr;
-		std::shared_ptr<Vector3D> c_directionVector = nullptr;
-
-		// Private default ctor used for cloning the object
-		Axis() = default;
 
 	public:
 		// ctor / dtor / operators
@@ -130,6 +117,10 @@ namespace GeometryNamespace {
 		double calculateCoordZ_fromCoordY(const double& theCoordY) const;
 
 	private:
+		// Private default ctor used for cloning the object
+		Axis() = default;
+
+		// Private methods
 		void setMembers(const std::array<std::array<double, 3>, 2>& theEC);
 		void setMembers(const std::vector<std::vector<double, std::allocator<double>>>& theEC);
 		void setMembers(
@@ -148,6 +139,16 @@ namespace GeometryNamespace {
 			ARGCOPY(Axis) theAxis,
 			const std::array<double, 3>& theCrossProductComponents) const
 			-> std::pair<GeometryParameters::INTERSECTION1, std::shared_ptr<Point3D>>;
+		
+		// Members
+		// The reference CS of the point member is assumed to be the reference CS.
+		// The axis Equation Coefficients(EC) of the form : (x - x0) / Vx = (y - y0) / Vy = (z - z0) / Vz
+		// x0, y0 and z0 are coordinates of the passing point
+		// Vx, Vy and Vz are the components of the direction vector
+		// c_EC[0][i] = Passing point coord in ith direction
+		// c_EC[1][i] = Direction vector component in ith direction
+		std::shared_ptr<Point3D> c_passingPoint = nullptr;
+		std::shared_ptr<Vector3D> c_directionVector = nullptr;
 	};
 }
 

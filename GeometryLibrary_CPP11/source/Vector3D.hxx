@@ -53,9 +53,6 @@ namespace GeometryNamespace {
 		friend class Circle;
 		friend class Plane;
 
-		// Private default ctor used for cloning the object
-		Vector3D() = default;
-
 	public:
 		// ctor / dtor / operators
 		explicit Vector3D(const std::array<double, 3>& theLocalComponents);
@@ -160,6 +157,10 @@ namespace GeometryNamespace {
 		};
 
 		auto multiply(const double& theFactor) const -> std::shared_ptr<Vector3D>;
+
+	private:
+		// Private default ctor used for cloning the object
+		Vector3D() = default;
 	};
 
 	template<typename T>

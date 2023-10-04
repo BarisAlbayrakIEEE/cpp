@@ -49,25 +49,8 @@ namespace GeometryNamespace {
 		friend class Circle;
 		friend class Plane;
 
-		using ReferenceObject::is2D; // To disable 4250 warning
-		using ReferenceObject::is3D; // To disable 4250 warning
-
-		// Members
-		std::array<double, 3> c_localCoords = { {} };
-
-	protected:
-		// ctor / dtor / operators
-		PointBase() = default;
-		explicit PointBase(const int theDimensionCount);
-		PointBase(
-			const int theDimensionCount,
-			const std::shared_ptr<CoordSystem>& theReferenceCoordSystem);
-		PointBase(
-			const int theDimensionCount,
-			const std::array<double, 3>& theLocalCoords);
-		PointBase(
-			const int theDimensionCount,
-			const std::vector<double, std::allocator<double>>& theLocalCoords);
+		using ReferenceObject::is2D;
+		using ReferenceObject::is3D;
 
 	public:
 		PointBase(
@@ -124,6 +107,20 @@ namespace GeometryNamespace {
 			-> std::shared_ptr<PointBase>;
 
 	protected:
+		// Protected ctors
+		PointBase() = default;
+		explicit PointBase(const int theDimensionCount);
+		PointBase(
+			const int theDimensionCount,
+			const std::shared_ptr<CoordSystem>& theReferenceCoordSystem);
+		PointBase(
+			const int theDimensionCount,
+			const std::array<double, 3>& theLocalCoords);
+		PointBase(
+			const int theDimensionCount,
+			const std::vector<double, std::allocator<double>>& theLocalCoords);
+
+		// Protected methods
 		void setMembers(
 			const int theDimensionCount,
 			const std::shared_ptr<CoordSystem>& theReferenceCoordSystem,
@@ -138,6 +135,9 @@ namespace GeometryNamespace {
 			const double& theFactor);
 		template<typename T>
 		static T Clone(const T& arg);
+
+	private:
+		std::array<double, 3> c_localCoords = { {} };
 	};
 }
 

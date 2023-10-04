@@ -53,9 +53,6 @@ namespace GeometryNamespace {
 		friend class Circle;
 		friend class Plane;
 
-		// Private default ctor used for cloning the object
-		Vector2D() = default;
-
 	public:
 		// ctor / dtor / operators
 		explicit Vector2D(const std::array<double, 2>& theLocalComponents);
@@ -106,6 +103,10 @@ namespace GeometryNamespace {
 		auto subtruct(T&& theVector) const
 			-> std::shared_ptr<typename std::remove_const_t<std::remove_reference_t<decltype(theVector)>>>;
 		auto multiply(const double& theFactor) const->std::shared_ptr<Vector2D>;
+
+	private:
+		// Private default ctor used for cloning the object
+		Vector2D() = default;
 	};
 
 	template<typename T>

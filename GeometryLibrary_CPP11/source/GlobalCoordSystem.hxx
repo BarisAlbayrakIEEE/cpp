@@ -28,7 +28,7 @@
 ///             too many CSs are created (cloned) to simulate the global CS.
 ///          2. Keep the destructor of the GlobalCoordSystem as public default
 ///             and convert the static GlobalCoordSystem pointer member into a shared pointer.
-///             The static member will increment the share count when it is created.
+///             The public getter will increment the reference count by creating the private static GlobalCoordSystem member.
 ///             Hence, even all reference objects owning the global CS go out of scope,
 ///             the GlobalCoordSystem object will not be deleted
 ///             as the static member will still have the ownership on the object.
@@ -85,12 +85,6 @@ namespace GeometryNamespace {
 		using CoordSystem::is2D;
 		using CoordSystem::is3D;
 
-		// Members
-		static std::shared_ptr<GlobalCoordSystem> c_globalCoordSystem;
-
-		// Private ctor of singleton
-		GlobalCoordSystem();
-
 	public:
 		// copy / move / operators
 		GlobalCoordSystem(const GlobalCoordSystem&) = delete;
@@ -103,6 +97,13 @@ namespace GeometryNamespace {
 		// See the header docstring for details
 		~GlobalCoordSystem() final = default;
 		static std::shared_ptr<GlobalCoordSystem> getGlobalCoordSystem();
+
+	private:
+		// Private ctor of singleton
+		GlobalCoordSystem();
+
+		// Members
+		static std::shared_ptr<GlobalCoordSystem> c_globalCoordSystem;
 	};
 }
 

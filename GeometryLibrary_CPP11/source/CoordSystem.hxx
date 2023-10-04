@@ -72,9 +72,6 @@ namespace GeometryNamespace {
 		std::array<double, 3> c_axisComponentsZ = { {} };
 		bool c_isGlobal = false;
 
-		// Private default ctor used for cloning the object
-		CoordSystem() = default;
-
 	public:
 		// ctor / dtor / operators
 		CoordSystem(
@@ -133,6 +130,10 @@ namespace GeometryNamespace {
 		inline void setIsGlobal(bool theIsGlobal) { c_isGlobal = theIsGlobal; };
 
 	private:
+		// Private default ctor used for cloning the object
+		CoordSystem() = default;
+
+		// Private methods
 		void setMembers(
 			ARGCOPY(Point3D) theOriginPoint,
 			ARGCOPY(Point3D) thePointX,

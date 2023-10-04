@@ -9,7 +9,7 @@
 /// 
 /// A 3D object currently.
 /// Hence, does not have 2D and 3D child classes.
-/// Later, will be defined as a reference object type and 2D and 3D child classes will be generated.
+/// Later, will be defined as a reference object type.
 /// See ReferenceObject header file docstring for details.
 /// 
 /// See GeometryObject.hxx for the details about this library
@@ -54,13 +54,6 @@ namespace GeometryNamespace {
 		friend class Axis;
 		friend class Circle;
 		friend class Plane;
-
-		// Members
-		std::shared_ptr<Point3D> c_endPoint0 = nullptr;
-		std::shared_ptr<Point3D> c_endPoint1 = nullptr;
-
-		// Private default ctor used for cloning the object
-		Line() = default;
 
 	public:
 		// ctor / dtor / operators
@@ -109,9 +102,17 @@ namespace GeometryNamespace {
 		auto createMidpoint() const -> std::shared_ptr<Point3D>;
 
 	private:
+		// Private default ctor used for cloning the object
+		Line() = default;
+
+		// Private methods
 		void inspectEndPoints(
 			const std::shared_ptr<Point3D>& theEndPoint0,
 			const std::shared_ptr<Point3D>& theEndPoint1);
+
+		// Members
+		std::shared_ptr<Point3D> c_endPoint0 = nullptr;
+		std::shared_ptr<Point3D> c_endPoint1 = nullptr;
 	};
 }
 

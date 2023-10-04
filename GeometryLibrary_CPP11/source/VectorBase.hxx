@@ -51,28 +51,8 @@ namespace GeometryNamespace{
 		friend class Circle;
 		friend class Plane;
 
-		using ReferenceObject::is2D; // To disable 4250 warning
-		using ReferenceObject::is3D; // To disable 4250 warning
-
-		// Members
-		// The reference CS of the point member is assumed to be the reference CS.
-		std::array<double, 3> c_localComponents = { {} };
-
-	protected:
-		// Private default ctor used for cloning the object
-		VectorBase() = default;
-
-		// ctor / dtor / operators
-		explicit VectorBase(const int theDimensionCount);
-		VectorBase(
-			const int theDimensionCount,
-			const std::shared_ptr<CoordSystem>& theReferenceCoordSystem);
-		VectorBase(
-			const int theDimensionCount,
-			const std::array<double, 3>& theLocalComponents);
-		VectorBase(
-			const int theDimensionCount,
-			const std::vector<double, std::allocator<double>>& theLocalComponents);
+		using ReferenceObject::is2D;
+		using ReferenceObject::is3D;
 
 	public:
 		VectorBase(
@@ -135,6 +115,22 @@ namespace GeometryNamespace{
 		static auto createUnitVectorZ(const std::shared_ptr<CoordSystem>& theCoordSystem) -> std::shared_ptr<Vector3D>;
 
 	protected:
+		// Private default ctor used for cloning the object
+		VectorBase() = default;
+
+		// ctor / dtor / operators
+		explicit VectorBase(const int theDimensionCount);
+		VectorBase(
+			const int theDimensionCount,
+			const std::shared_ptr<CoordSystem>& theReferenceCoordSystem);
+		VectorBase(
+			const int theDimensionCount,
+			const std::array<double, 3>& theLocalComponents);
+		VectorBase(
+			const int theDimensionCount,
+			const std::vector<double, std::allocator<double>>& theLocalComponents);
+
+		// Methods
 		void setMembers(
 			const int theDimensionCount,
 			const std::shared_ptr<CoordSystem>& theCoordSystem,
@@ -151,6 +147,9 @@ namespace GeometryNamespace{
 		auto calculateComponentsFromAngles(const std::array<double, 3>& theAngles) const -> std::array<double, 3>;
 		template<typename T>
 		static T Clone(const T& arg);
+
+	private:
+		std::array<double, 3> c_localComponents = { {} };
 	};
 }
 

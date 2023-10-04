@@ -53,13 +53,6 @@ namespace GeometryNamespace {
 		friend class Line;
 		friend class Circle;
 
-		// Members
-		std::shared_ptr<Point3D> c_passingPoint = nullptr;
-		std::shared_ptr<Vector3D> c_normalVector = nullptr;
-
-		// Private default ctor used for cloning the object
-		Plane() = default;
-
 	public:
 		// ctor / dtor / operators
 		explicit Plane(const std::array<double, 4>& theEC);
@@ -129,10 +122,18 @@ namespace GeometryNamespace {
 		auto createPoint(const double& theFactor) const;
 
 	private:
+		// Private default ctor used for cloning the object
+		Plane() = default;
+
+		// Private methods
 		void inspectEC(const std::array<double, 4>& theEC) const;
 		void inspectEC(const std::vector<double, std::allocator<double>>& theEC) const;
 		void applyEC(const std::array<double, 4>& theEC);
 		void applyEC(const std::vector<double, std::allocator<double>>& theEC);
+
+		// Members
+		std::shared_ptr<Point3D> c_passingPoint = nullptr;
+		std::shared_ptr<Vector3D> c_normalVector = nullptr;
 	};
 }
 
